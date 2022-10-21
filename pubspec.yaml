@@ -24,7 +24,7 @@ dependencies:
 
 dev_dependencies:
   flutter_lints: ^2.0.0
-  lints: 2.0.0
+  lints: ^2.0.1
   build_runner: ^2.1.5
   json_serializable: ^6.0.1
   flutter_test:
@@ -32,7 +32,15 @@ dev_dependencies:
 
 
 flutter:
+  fonts:
+    - family: Lato
+      fonts:
+        - asset: assets/fonts/lato/Lato-Regular.ttf
+
   assets:
     - assets/pari-profile.png
+
+
+
   uses-material-design: true
 

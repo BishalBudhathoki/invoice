@@ -2,15 +2,17 @@
 class Assets {
   Assets._();
 
-  static const String fontsRaleway-VariableFontWght = 'C:/Users/bisha/StudioProjects/Invoice/assets/fonts/Raleway-VariableFont_wght.ttf';
-  static const String imagesDemo-png-card-view = 'C:/Users/bisha/StudioProjects/Invoice/assets/images/demo-png-card-view.png';
-  static const String imagesImgPlaceholderProfile = 'C:/Users/bisha/StudioProjects/Invoice/assets/images/img_placeholder_profile.png';
-  static const String imagesPari-profile = 'C:/Users/bisha/StudioProjects/Invoice/assets/images/pari-profile.png';
-  static const String imagesPlaceholderProduct = 'C:/Users/bisha/StudioProjects/Invoice/assets/images/placeholder_product.png';
-  static const String latoLato-Black = 'C:/Users/bisha/StudioProjects/Invoice/assets/fonts/lato/Lato-Black.ttf';
-  static const String latoLato-Bold = 'C:/Users/bisha/StudioProjects/Invoice/assets/fonts/lato/Lato-Bold.ttf';
-  static const String latoLato-Light = 'C:/Users/bisha/StudioProjects/Invoice/assets/fonts/lato/Lato-Light.ttf';
-  static const String latoLato-Regular = 'C:/Users/bisha/StudioProjects/Invoice/assets/fonts/lato/Lato-Regular.ttf';
-  static const String latoLato-Thin = 'C:/Users/bisha/StudioProjects/Invoice/assets/fonts/lato/Lato-Thin.ttf';
+  static const String fontsRalewayVariableFontWght = 'assets/fonts/Raleway-VariableFont_wght.ttf';
+  static const String imagesClientProfile = 'assets/images/client-profile.png';
+  static const String imagesDemoPngCardView = 'assets/images/demo-png-card-view.png';
+  static const String imagesHourglass = 'assets/images/hourglass.svg';
+  static const String imagesImgPlaceholderProfile = 'assets/images/img_placeholder_profile.png';
+  static const String imagesPariProfile = 'assets/images/pari-profile.png';
+  static const String imagesPlaceholderProduct = 'assets/images/placeholder_product.png';
+  static const String latoLatoBlack = 'assets/fonts/lato/Lato-Black.ttf';
+  static const String latoLatoBold = 'assets/fonts/lato/Lato-Bold.ttf';
+  static const String latoLatoLight = 'assets/fonts/lato/Lato-Light.ttf';
+  static const String latoLatoRegular = 'assets/fonts/lato/Lato-Regular.ttf';
+  static const String latoLatoThin = 'assets/fonts/lato/Lato-Thin.ttf';
 
 }

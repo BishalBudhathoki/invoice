@@ -16,6 +16,7 @@ dependencies:
   json_annotation: ^4.5.0
   provider: ^6.0.1
   email_validator: ^2.0.1
+  iconsax: ^0.0.8
   flutter:
     sdk: flutter
 
@@ -39,7 +40,7 @@ flutter:
 
   assets:
     - assets/pari-profile.png
-
+    - assets/images/client-profile.png
 
 
   uses-material-design: true

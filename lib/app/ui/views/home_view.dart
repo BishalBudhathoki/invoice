@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:invoice/app/ui//widgets/profile_placeholder_widget.dart';
 import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:invoice/app/ui/widgets/appointment_card_widget.dart';
+import 'package:invoice/app/ui/widgets/card_label_text_widget.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -21,8 +25,8 @@ class HomeView extends StatelessWidget {
               lastName: 'Tiwari',
               image: Image.asset('assets/images/pari-profile.png'),
             ),
-            const SizedBox(
-              height: 30,
+            SizedBox(
+                height: context.height * 0.023
             ),
             const Text('Your Appointments',
                 style: TextStyle(
@@ -31,135 +35,59 @@ class HomeView extends StatelessWidget {
                   fontWeight: FontWeight.w800,
                   fontFamily: 'Lato',
                 )),
-            const SizedBox(
-              height: 30,
+            SizedBox(
+                height: context.height * 0.023
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: [
-                  Container(
-                    height: 300,
-                    width: 300,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(25)),
-                      color: AppColors.colorWhite,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('Appointments',
-                              style: TextStyle(
-                                color: AppColors.colorPrimary,
-                                fontSize: AppDimens.fontSizeXXXMedium,
-                                fontWeight: FontWeight.w900,
-                                fontFamily: 'Lato',
-                              )),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: const [
-                              Text('Client\'s Name:',
-                                  style: TextStyle(
-                                    color: AppColors.colorPrimary,
-                                    fontSize: AppDimens.fontSizeMedium,
-                                    fontWeight: FontWeight.w900,
-                                    fontFamily: 'Loto',
-                                  )),
-                              Text('Matthew Perry',
-                                  style: TextStyle(
-                                    color: AppColors.colorFontSecondary,
-                                    fontSize: AppDimens.fontSizeMedium,
-                                    fontFamily: 'Lato',
-                                    //fontWeight: FontWeight.w900,
-                                  )),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text('Address:',
-                                  style: TextStyle(
-                                    color: AppColors.colorPrimary,
-                                    fontSize: AppDimens.fontSizeMedium,
-                                    fontWeight: FontWeight.w900,
-                                    fontFamily: 'Loto',
-                                  )),
-                              Text('13 Carlton Cres, Summerhill, \n NSW 2130',
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                    color: AppColors.colorFontSecondary,
-                                    fontSize: AppDimens.fontSizeMedium,
-                                    //fontWeight: FontWeight.w900,
-                                  )),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: const [
-                              Text('Start Time:',
-                                  style: TextStyle(
-                                    color: AppColors.colorPrimary,
-                                    fontSize: AppDimens.fontSizeMedium,
-                                    fontWeight: FontWeight.w900,
-                                    fontFamily: 'Helvetica Neue',
-                                  )),
-                              Text('05:00 PM',
-                                  style: TextStyle(
-                                    color: AppColors.colorFontSecondary,
-                                    fontSize: AppDimens.fontSizeMedium,
-                                    //fontWeight: FontWeight.w900,
-                                  )),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: const [
-                              Text('End Time:',
-                                  style: TextStyle(
-                                    color: AppColors.colorPrimary,
-                                    fontSize: AppDimens.fontSizeMedium,
-                                    fontWeight: FontWeight.w900,
-                                    fontFamily: 'Loto',
-                                  )),
-                              Text('10:00 PM',
-                                  style: TextStyle(
-                                    color: AppColors.colorFontSecondary,
-                                    fontSize: AppDimens.fontSizeMedium,
-                                    //fontWeight: FontWeight.w900,
-                                  )),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                children:  [
+                  const AppointmentCard(
+                    title: 'Appointments',
+
+                    iconData: Iconsax.user_square,
+                    label: 'Client\'s Name:',
+                    text: 'Matthew Perry',
+
+                    iconData1: Iconsax.location,
+                    label1: 'Address:',
+                    text1: '13 Carlton Cres, Summerhill',
+
+                    iconData2: Iconsax.timer_start,
+                    label2: 'Start Time:',
+                    text2: '05:00 PM',
+
+                    iconData3: Iconsax.timer_pause,
+                    label3: 'End Time:',
+                    text3: '10:00 PM',
+
                   ),
-                  const SizedBox(
-                    width: 25,
+                  SizedBox(
+                    width: context.width * 0.04,
                   ),
-                  Container(
-                    height: 300,
-                    width: 300,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(25)),
-                      color: AppColors.colorWhite,
-                    ),
-                  )
+                  const AppointmentCard(
+                    title: 'Appointments',
+
+                    iconData: Iconsax.user_square,
+                    label: 'Client\'s Name:',
+                    text: 'Tim Crook',
+
+                    iconData1: Iconsax.location,
+                    label1: 'Address:',
+                    text1: '13 Friday Cres, Ashfield',
+
+                    iconData2: Iconsax.timer_start,
+                    label2: 'Start Time:',
+                    text2: '04:00 PM',
+
+                    iconData3: Iconsax.timer_pause,
+                    label3: 'End Time:',
+                    text3: '09:00 PM',
+
+                  ),
                 ],
-              )
-
-
-            )
+              ),
+            ),
           ],
         ),
       ),

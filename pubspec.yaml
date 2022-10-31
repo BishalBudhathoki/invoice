@@ -41,6 +41,7 @@ flutter:
   assets:
     - assets/pari-profile.png
     - assets/images/client-profile.png
+    - assets/images/placeholder_product.png
 
 
   uses-material-design: true

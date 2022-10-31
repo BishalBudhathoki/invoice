@@ -26,10 +26,10 @@ class ProfilePlaceholder extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
               Text('Welcome back',
-                  style: TextStyle(
-                    color: AppColors.colorWhite,
-                    fontSize: AppDimens.fontSizeMedium,
-                    //fontWeight: AppDimens.fontSizeSmall,
+                   style: TextStyle(
+                        color: AppColors.colorWhite,
+                        fontSize: AppDimens.fontSizeMedium,
+                        //fontWeight: AppDimens.fontSizeSmall,
                   )),
               SizedBox(
                 height: 10,

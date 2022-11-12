@@ -1,28 +1,60 @@
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:invoice/app/ui/widgets/alertDialog_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:invoice/app/core/controllers/login_controller.dart';
 import 'package:invoice/app/core/view-models/login_model.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
 import 'package:invoice/app/ui/views/home_view.dart';
+import 'package:invoice/app/ui/views/signup_view.dart';
 import 'package:invoice/app/ui/widgets/button_widget.dart';
 import 'package:invoice/app/ui/widgets/textField_widget.dart';
 import 'package:invoice/app/ui/widgets/wave_animation_widget.dart';
+import 'package:invoice/backend/apiError.dart';
+import 'package:invoice/backend/apiResponse.dart';
+import 'package:invoice/backend/api_method.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
+
+  @override
+  _LoginUserNameControllerState createState() {
+    return _LoginUserNameControllerState();
+  }
+}
+
+
+class _LoginUserNameControllerState extends State<LoginView> {
+  final _formKey = GlobalKey<FormState>();
+  final _userEmailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+
+  @override
+  void dispose() {
+    _userEmailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     final model = Provider.of<LoginModel>(context);
+    final LoginController login_controller = new LoginController();
 
     return Scaffold(
       backgroundColor: AppColors.colorWhite,
       body: Stack(children: <Widget>[
-
         Container(
           height: 400,
           color: AppColors.colorPrimary,
-
         ),
         Container(
           height: 350,
@@ -63,21 +95,30 @@ class LoginView extends StatelessWidget {
                 obscureText: false,
                 prefixIconData: Icons.mail_outline,
                 suffixIconData: model.isValid ? Icons.check : null,
+                controller: _userEmailController,
                 onChanged: (value) {
                   model.isValidEmail(value);
+                },
+                onSaved: (value) {
+                  login_controller.email = value!;
                 },
               ),
               SizedBox(
                 height: size.height * 0.02,
               ),
               TextFieldWidget(
+               // key: Key("_password"),
                 hintText: 'Password',
                 obscureText: model.isVisible ? false : true,
                 prefixIconData: Icons.lock,
                 suffixIconData:
-                    model.isVisible ? Icons.visibility : Icons.visibility_off,
+                model.isVisible ? Icons.visibility : Icons.visibility_off,
+                controller: _passwordController,
                 onChanged: (value) {
                   model.isValidEmail(value);
+                },
+                onSaved: (value) {
+                  login_controller.password = value!;
                 },
               ),
               SizedBox(
@@ -98,11 +139,34 @@ class LoginView extends StatelessWidget {
               ButtonWidget(
                 title: 'Login',
                 hasBorder: false,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const HomeView()),
-                  );
+                onPressed: () async {
+                  showAlertDialog(context);
+                  print('Login button pressed');
+                    Future.delayed(const Duration(seconds: 3), () async {
+                      var response = await _handleSubmitted();
+
+                      if (response['message'] == 'user found') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) =>
+                               HomeView(
+                                email:_userEmailController.text,
+                                // lastName: _signUpUserLastNameController.text,
+                              )),
+                        );
+                      } else {
+                        print('Error at login');
+                        Navigator.of(context, rootNavigator: true).pop();
+                      }
+
+                      //_login();
+                    });
+
+                    //clearText();
+
+
+                  //login_controller.login(_userNameController.text, _passwordController.text);
+
                 },
               ),
               SizedBox(
@@ -111,7 +175,12 @@ class LoginView extends StatelessWidget {
               ButtonWidget(
                 title: 'Sign Up',
                 hasBorder: true,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SignUpView()),
+                  );
+                },
               ),
               SizedBox(
                 height: size.height * 0.05,
@@ -122,4 +191,31 @@ class LoginView extends StatelessWidget {
       ]),
     );
   }
-}
+  void clearText() {
+    _userEmailController.clear();
+    _passwordController.clear();
+  }
+
+  ApiMethod apiMethod = new ApiMethod();
+  //LoginModel model = LoginModel();
+  ApiResponse _apiResponse = new ApiResponse();
+  Future<dynamic> _handleSubmitted() async {
+    print("Username:  ${_userEmailController.text}");
+    print("Password:  ${_passwordController.text}");
+    var ins = await apiMethod.login(_userEmailController.text, _passwordController.text);
+    //print("Response: "+ ins['email'].toString() + ins['password'].toString());
+      return ins;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+

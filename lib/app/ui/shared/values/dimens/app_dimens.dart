@@ -12,4 +12,6 @@ class AppDimens {
   static const double fontSizeLarge = 30;
   static const double fontSizeXLarge = 40;
   static const double fontSizeXXMax = 70;
+
+  static const double padding = 15;
 }

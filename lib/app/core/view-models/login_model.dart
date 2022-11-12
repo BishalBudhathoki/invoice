@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:invoice/app/ui/shared/values/strings/asset_strings.dart';
@@ -7,6 +8,12 @@ class LoginModel extends ChangeNotifier {
   bool _isVisible = false;
   set isVisible(value) {
     _isVisible = value;
+    notifyListeners();
+  }
+  get isVisible1 => _isVisible1;
+  bool _isVisible1 = false;
+  set isVisible1(value) {
+    _isVisible1 = value;
     notifyListeners();
   }
   bool _isValid = false;
@@ -20,4 +27,6 @@ class LoginModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+
 }

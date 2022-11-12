@@ -29,7 +29,7 @@ class CardLabelTextWidget extends StatelessWidget {
             Text(
                 label,
                 style: const TextStyle(
-                  color: AppColors.colorPrimary,
+                  color: AppColors.colorFontPrimary,
                   fontSize: AppDimens.fontSizeMedium,
                   fontWeight: FontWeight.w900,
                   fontFamily: 'Loto',
@@ -40,7 +40,7 @@ class CardLabelTextWidget extends StatelessWidget {
             Text(
                 text,
                 style: const TextStyle(
-                  color: AppColors.colorFontSecondary,
+                  color: AppColors.colorFontPrimary,
                   fontSize: AppDimens.fontSizeMedium,
                   fontFamily: 'Lato',
                   //fontWeight: FontWeight.w900,

@@ -5,25 +5,34 @@ import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
 import 'package:provider/provider.dart';
 
 class TextFieldWidget extends StatelessWidget {
+  //final Key key;
+  final TextEditingController controller;
   final String hintText;
   final IconData? prefixIconData;
   final IconData? suffixIconData;
   late final bool obscureText;
   final Function(String) onChanged;
+  final Function(String?)? onSaved;
 
   TextFieldWidget({
+    //required this.key,
     required this.hintText,
     this.prefixIconData,
     this.suffixIconData,
     required this.obscureText,
     required this.onChanged,
+    required this.onSaved,
+    required this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
     final model = Provider.of<LoginModel>(context);
 
-    return TextField(
+    return TextFormField(
+      controller: controller,
+      //key: key,
+      onSaved: onSaved,
       onChanged: onChanged,
       obscureText: obscureText,
       cursorColor: AppColors.colorPrimary,

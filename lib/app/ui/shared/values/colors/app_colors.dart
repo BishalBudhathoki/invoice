@@ -11,6 +11,7 @@ class AppColors {
   static const colorBackground = Color(0xFFF5F4F6);
   static const colorBlack = Color(0xFF000000);
   static const colorFontPrimary = Color(0xFF000000);
-  static const colorFontSecondary = Color(0xFF878787);
+  static const colorFontSecondary = Color(0xFFF5F3F3);
   static const colorFontAccent = Color(0xFF1C0D32);
+  static const colorTry = Color(0xFFFDFEFF);
 }

@@ -24,20 +24,20 @@ class ProfilePlaceholder extends StatelessWidget {
         children:  [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text('Welcome back',
+            children: [
+              const Text('Welcome back',
                    style: TextStyle(
-                        color: AppColors.colorWhite,
+                        color: AppColors.colorFontPrimary,
                         fontSize: AppDimens.fontSizeMedium,
                         //fontWeight: AppDimens.fontSizeSmall,
                   )),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
-              Text('Pratiksha Tiwari',
-                  style: TextStyle(
-
-                    color: AppColors.colorWhite,
+              Text(
+                  '$firstName $lastName',
+                  style: const TextStyle(
+                    color: AppColors.colorFontPrimary,
                     fontSize: AppDimens.fontSizeLarge,
                     fontWeight: FontWeight.w900,
                   )),

@@ -54,7 +54,7 @@ class AppointmentCard extends StatelessWidget {
           width: context.width * 0.85,
             decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(25)),
-            color: AppColors.colorWhite,
+            color: AppColors.colorFontSecondary,
             ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
@@ -64,7 +64,7 @@ class AppointmentCard extends StatelessWidget {
                 Text(
                     title,
                     style: const TextStyle(
-                      color: AppColors.colorPrimary,
+                      color: AppColors.colorFontPrimary,
                       fontSize: AppDimens.fontSizeXXXMedium,
                       fontWeight: FontWeight.w900,
                       fontFamily: 'Lato',

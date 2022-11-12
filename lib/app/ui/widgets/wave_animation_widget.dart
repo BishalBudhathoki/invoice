@@ -51,7 +51,6 @@ class _WaveAnimationState extends State<WaveAnimation>
   void dispose() {
     super.dispose();
     animationController.dispose();
-
   }
 
   @override

@@ -70,6 +70,12 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                 SizedBox(height: context.height * 0.023),
                 TextFieldWidget(
                   hintText: 'First Name',
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter first name';
+                    }
+                    return null;
+                  },
                   obscureText: false,
                   prefixIconData: Icons.person,
                   suffixIconData: null,
@@ -80,6 +86,12 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                 SizedBox(height: context.height * 0.023),
                 TextFieldWidget(
                   hintText: 'Last Name',
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter last name';
+                    }
+                    return null;
+                  },
                   obscureText: false,
                   prefixIconData: Icons.person,
                   suffixIconData: null,
@@ -90,6 +102,12 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                 SizedBox(height: context.height * 0.023),
                 TextFieldWidget(
                   hintText: 'Email',
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter correct email';
+                    }
+                    return null;
+                  },
                   obscureText: false,
                   prefixIconData: Icons.email,
                   suffixIconData: null,
@@ -100,6 +118,12 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                 SizedBox(height: context.height * 0.023),
                 TextFieldWidget(
                   hintText: 'Password',
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter password';
+                    }
+                    return null;
+                  },
                   obscureText: true,
                   prefixIconData: Icons.lock,
                   suffixIconData: null,
@@ -112,6 +136,12 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                 SizedBox(height: context.height * 0.023),
                 TextFieldWidget(
                   hintText: 'Confirm Password',
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter correct password';
+                    }
+                    return null;
+                  },
                   obscureText: true,
                   prefixIconData: Icons.lock,
                   suffixIconData: models.isValid ? Icons.check : null,
@@ -130,7 +160,7 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                     if(models.isValid) {
                       showAlertDialog(context);
                       Future.delayed(const Duration(seconds: 3), () async {
-                        final response = await _signupUser(_signUpEmailController.text);
+                        final response = await _signupUser();
                         if (response) {
                           print('Signup button pressed');
                           Navigator.push(
@@ -184,7 +214,7 @@ class _SignupUserNameControllerState extends State<SignUpView> {
   }
 
   ApiMethod apiMethod = new ApiMethod();
-  Future<bool> _signupUser(String email) async {
+  Future<bool> _signupUser() async {
     var ins = await apiMethod.signupUser(
         _signUpUserFirstNameController.text,
         _signUpUserLastNameController.text,

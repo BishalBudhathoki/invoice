@@ -7,6 +7,8 @@ import 'package:invoice/app/ui//widgets/profile_placeholder_widget.dart';
 import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:invoice/app/ui/shared/values/strings/asset_strings.dart';
+import 'package:invoice/app/ui/views/add_business_details_view.dart';
+import 'package:invoice/app/ui/views/add_client_details_view.dart';
 import 'package:invoice/app/ui/widgets/appointment_card_widget.dart';
 import 'package:invoice/app/ui/widgets/home-detail-card-widget.dart';
 import 'package:invoice/backend/api_method.dart';
@@ -147,6 +149,14 @@ class _HomeViewControllerState extends State<HomeView> {
                           buttonLabel: 'Add Details',
                           cardLabel: 'Know Your Client!',
                           image: Image.asset(AssetsStrings.cardImageGirl),
+                          onPressed: () {
+                            print("Client Button Pressed");
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddClientDetails()),
+                            );
+                          },
                         ),
                         SizedBox(height: context.height * 0.023),
                         const Text('Add Business\'s Details ?',
@@ -160,7 +170,15 @@ class _HomeViewControllerState extends State<HomeView> {
                         HomeDetailCard(
                           buttonLabel: 'Add Details',
                           cardLabel: 'Know Your Business!',
-                          image: Image.asset(AssetsStrings.cardImageBoy)
+                          image: Image.asset(AssetsStrings.cardImageBoy),
+                          onPressed: () {
+                            print("Business Button Pressed");
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddBusinessDetails()),
+                            );
+                          },
                         )
                       ])),
             ],

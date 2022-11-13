@@ -13,6 +13,7 @@ class TextFieldWidget extends StatelessWidget {
   late final bool obscureText;
   final Function(String) onChanged;
   final Function(String?)? onSaved;
+  final String? Function(String?)? validator;
 
   TextFieldWidget({
     //required this.key,
@@ -23,6 +24,7 @@ class TextFieldWidget extends StatelessWidget {
     required this.onChanged,
     required this.onSaved,
     required this.controller,
+    required this.validator,
   });
 
   @override
@@ -31,6 +33,7 @@ class TextFieldWidget extends StatelessWidget {
 
     return TextFormField(
       controller: controller,
+      validator: validator,
       //key: key,
       onSaved: onSaved,
       onChanged: onChanged,

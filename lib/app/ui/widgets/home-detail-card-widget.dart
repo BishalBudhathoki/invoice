@@ -9,11 +9,14 @@ class HomeDetailCard extends StatelessWidget {
   final String buttonLabel;
   final String cardLabel;
   final Image image;
+  final VoidCallback onPressed;
+
   const HomeDetailCard({
     Key? key,
     required this.buttonLabel,
     required this.cardLabel,
     required this.image,
+    required this.onPressed,
   }) : super(key: key);
 
   @override
@@ -61,31 +64,35 @@ class HomeDetailCard extends StatelessWidget {
                 child: image,
               ),
             ),
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 200, left: 16, right: 16),
-                  child: Container(
-                    height: context.height * 0.06,
-                    width: context.width,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(25)),
-                      color: AppColors.colorPrimary,
-                    ),
-                    child: Center(
-                      child: Text(
-                        buttonLabel,
-                        style: const TextStyle(
-                          color: AppColors.colorWhite,
-                          fontSize: AppDimens.fontSizeMedium,
-                          fontWeight: FontWeight.w900,
-                          fontFamily: 'Lato',
+
+            InkWell(
+              onTap: onPressed,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 200, left: 16, right: 16),
+                    child: Container(
+                      height: context.height * 0.06,
+                      width: context.width,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(25)),
+                        color: AppColors.colorPrimary,
+                      ),
+                      child: Center(
+                        child: Text(
+                          buttonLabel,
+                          style: const TextStyle(
+                            color: AppColors.colorWhite,
+                            fontSize: AppDimens.fontSizeMedium,
+                            fontWeight: FontWeight.w900,
+                            fontFamily: 'Lato',
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

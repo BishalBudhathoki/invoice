@@ -102,12 +102,19 @@ class _LoginUserNameControllerState extends State<LoginView> {
                 onSaved: (value) {
                   login_controller.email = value!;
                 },
+                validator: (value ) {
+                  if (value!.isEmpty) {
+                    return 'Please enter email';
+                  }
+                  return null;
+                },
+
               ),
               SizedBox(
                 height: size.height * 0.02,
               ),
               TextFieldWidget(
-               // key: Key("_password"),
+                // key: Key("_password"),
                 hintText: 'Password',
                 obscureText: model.isVisible ? false : true,
                 prefixIconData: Icons.lock,
@@ -119,6 +126,11 @@ class _LoginUserNameControllerState extends State<LoginView> {
                 },
                 onSaved: (value) {
                   login_controller.password = value!;
+                }, validator: (value ) { // this is the new line
+                  if (value!.isEmpty) {
+                    return 'Password is Required';
+                  }
+                  return null;
                 },
               ),
               SizedBox(
@@ -142,27 +154,27 @@ class _LoginUserNameControllerState extends State<LoginView> {
                 onPressed: () async {
                   showAlertDialog(context);
                   print('Login button pressed');
-                    Future.delayed(const Duration(seconds: 3), () async {
-                      var response = await _handleSubmitted();
+                  Future.delayed(const Duration(seconds: 3), () async {
+                    var response = await _handleSubmitted();
 
-                      if (response['message'] == 'user found') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) =>
-                               HomeView(
-                                email:_userEmailController.text,
-                                // lastName: _signUpUserLastNameController.text,
-                              )),
-                        );
-                      } else {
-                        print('Error at login');
-                        Navigator.of(context, rootNavigator: true).pop();
-                      }
+                    if (response['message'] == 'user found') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) =>
+                            HomeView(
+                              email:_userEmailController.text,
+                              // lastName: _signUpUserLastNameController.text,
+                            )),
+                      );
+                    } else {
+                      print('Error at login');
+                      Navigator.of(context, rootNavigator: true).pop();
+                    }
 
-                      //_login();
-                    });
+                    //_login();
+                  });
 
-                    //clearText();
+                  //clearText();
 
 
                   //login_controller.login(_userNameController.text, _passwordController.text);
@@ -204,10 +216,9 @@ class _LoginUserNameControllerState extends State<LoginView> {
     print("Password:  ${_passwordController.text}");
     var ins = await apiMethod.login(_userEmailController.text, _passwordController.text);
     //print("Response: "+ ins['email'].toString() + ins['password'].toString());
-      return ins;
-    }
+    return ins;
   }
-
+}
 
 
 

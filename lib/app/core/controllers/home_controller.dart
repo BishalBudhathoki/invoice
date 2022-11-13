@@ -1,6 +1,4 @@
 import 'package:get/get.dart';
-import 'package:invoice/app/core/view-models/login_model.dart';
-import 'package:invoice/app/ui/views/signup_view.dart';
 
 class HomeController extends GetxController {
   late dynamic _email='';

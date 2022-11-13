@@ -5,13 +5,14 @@ import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 class ButtonWidget extends StatelessWidget {
   final String title;
   final bool hasBorder;
-  VoidCallback onPressed;
+  final VoidCallback onPressed;
 
-  ButtonWidget({
+  const ButtonWidget({
+    Key? key,
     required this.title,
     required this.hasBorder,
     required this.onPressed,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

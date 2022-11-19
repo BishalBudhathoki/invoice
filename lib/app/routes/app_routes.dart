@@ -8,6 +8,7 @@ abstract class Routes {
   static const home = "/home";
   static const addClientDetails = "/home/addClientDetails";
   static const addBusinessDetails = "/home/addBusinessDetails";
+  static const displayClientDetails = "/popUpClientDetails";
   static const profileView = "/profile/view";
   static const profileEdit = "/profile/edit";
   static const changePassword = "/profile/change_password";

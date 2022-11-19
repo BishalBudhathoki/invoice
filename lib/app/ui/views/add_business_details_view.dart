@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
 import 'package:invoice/app/ui/shared/values/strings/appbar_title.dart';
+import 'package:invoice/app/ui/views/popupClientDetails.dart';
 import 'package:invoice/app/ui/widgets/alertDialog_widget.dart';
 import 'package:invoice/app/ui/widgets/button_widget.dart';
 import 'package:invoice/app/ui/widgets/textField_widget.dart';
@@ -43,7 +44,9 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: const AppBarTitle(title: "Add Business Details",),
+      appBar: const AppBarTitle(
+        title: "Add Business Details",
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -167,8 +170,8 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
               },
             ),
             SizedBox(
-                height: size.height * 0.02,
-              ),
+              height: size.height * 0.02,
+            ),
             TextFieldWidget(
               hintText: 'Business Zip',
               validator: (value) {
@@ -186,7 +189,6 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
                 _businessZipController.text = value!;
               },
             ),
-
             const SizedBox(height: 16),
             ButtonWidget(
               title: 'Add Business',
@@ -196,13 +198,14 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
                   showAlertDialog(context);
                   Future.delayed(const Duration(seconds: 3), () async {
                     final response = await _addBusiness();
-
                     if (response == "success") {
                       print('Add button pressed');
                       Navigator.of(context, rootNavigator: true).pop();
+                      popUpClientDetails(context, "success", "Business");
                     } else {
                       print('Error at business adding');
                       Navigator.of(context, rootNavigator: true).pop();
+                      popUpClientDetails(context, "error", "Business");
                     }
                   });
                 }

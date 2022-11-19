@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:invoice/app/ui/shared/values/strings/appbar_title.dart';
+import 'package:invoice/app/ui/views/popupClientDetails.dart';
 import 'package:invoice/app/ui/widgets/alertDialog_widget.dart';
 import 'package:invoice/app/ui/widgets/button_widget.dart';
 import 'package:invoice/app/ui/widgets/textField_widget.dart';
@@ -219,13 +220,14 @@ class _AddClientDetailsState extends State<AddClientDetails> {
                     showAlertDialog(context);
                     Future.delayed(const Duration(seconds: 3), () async {
                       final response = await _addClient();
-
                       if (response == "success") {
                         print('Add button pressed');
                         Navigator.of(context, rootNavigator: true).pop();
+                        popUpClientDetails(context, "success", "Client");
                       } else {
                         print('Error at client adding');
                         Navigator.of(context, rootNavigator: true).pop();
+                        popUpClientDetails(context, "error", "Client");
                       }
                     });
                   }

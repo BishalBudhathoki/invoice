@@ -184,27 +184,6 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                     //login_controller.login(_userNameController.text, _passwordController.text);
                   },
                 ),
-                SizedBox(height: context.height * 0.023),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const <Widget>[
-                    Text(
-                      'Already have an account?',
-                      style: TextStyle(
-                        fontSize: AppDimens.fontSizeNormal,
-                        color: AppColors.colorFontSecondary,
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    Text(
-                      'Login',
-                      style: TextStyle(
-                        fontSize: AppDimens.fontSizeNormal,
-                        color: AppColors.colorPrimary,
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),

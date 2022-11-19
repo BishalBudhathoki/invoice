@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:invoice/app/ui/views/adminDashBoard.dart';
 import 'package:invoice/app/ui/widgets/alertDialog_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
@@ -161,10 +162,13 @@ class _LoginUserNameControllerState extends State<LoginView> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) =>
-                            HomeView(
-                              email:_userEmailController.text,
-                              // lastName: _signUpUserLastNameController.text,
-                            )),
+                            // HomeView(
+                            //   email:_userEmailController.text.trim(),
+                            // ),
+                              AdminDashboardView(
+                            email:_userEmailController.text.trim(),
+                          ),
+                        ),
                       );
                     } else {
                       print('Error at login');
@@ -191,6 +195,7 @@ class _LoginUserNameControllerState extends State<LoginView> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const SignUpView()),
+
                   );
                 },
               ),
@@ -212,9 +217,10 @@ class _LoginUserNameControllerState extends State<LoginView> {
   //LoginModel model = LoginModel();
   ApiResponse _apiResponse = new ApiResponse();
   Future<dynamic> _handleSubmitted() async {
-    print("Username:  ${_userEmailController.text}");
-    print("Password:  ${_passwordController.text}");
-    var ins = await apiMethod.login(_userEmailController.text, _passwordController.text);
+    print("Username:  ${_userEmailController.text.trim()}");
+    print("Password:  ${_passwordController.text.trim()}");
+    var ins = await apiMethod.login(_userEmailController.text.trim(),
+        _passwordController.text.trim());
     //print("Response: "+ ins['email'].toString() + ins['password'].toString());
     return ins;
   }

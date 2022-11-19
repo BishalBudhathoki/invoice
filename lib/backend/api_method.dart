@@ -1,11 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:invoice/app/core/view-models/login_model.dart';
+import 'package:invoice/app/core/view-models/user_model.dart';
+import 'package:invoice/app/core/view-models/client_model.dart';
 
 class ApiMethod {
 //API to authenticate user login
   final String _baseUrl = "http://192.168.20.6:9001/";
   //String _baseUrl = "https://backend-rest-apis.herokuapp.com/";
+
   Future<dynamic> authenticateUser(String email, String password) async {
     // ApiResponse _apiResponse = new ApiResponse();
     var data;
@@ -25,12 +29,36 @@ class ApiMethod {
     return data;
   }
 
+  Future<List<User>> fetchUserData() async {
+    print(Uri.parse('${_baseUrl}getUsers'));
+    final response = await http.get(Uri.parse('${_baseUrl}getUsers'));
+    if (response.statusCode == 200) {
+      print("I am a response user: "+response.body);
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((data) => new User.fromJson(data)).toList();
+    } else {
+      throw Exception('Unexpected error occured!');
+    }
+  }
+
+  Future<List<Patient>> fetchPatientData() async {
+    print(Uri.parse('${_baseUrl}getClients'));
+    final response = await http.get(Uri.parse('${_baseUrl}getClients'));
+    if (response.statusCode == 200) {
+      print("I am a response client: \n" +response.body );
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((data) => new Patient.fromJson(data)).toList();
+    } else {
+      throw Exception('Unexpected error occured!');
+    }
+  }
+
   Future<dynamic> getInitData(String email) async {
     // ApiResponse _apiResponse = new ApiResponse();
     var data;
     try {
       print('${_baseUrl}initData/$email');
-      final response = await http.get(Uri.parse('${_baseUrl}initData/$email'));
+      final response =    await http.get(Uri.parse('${_baseUrl}initData/$email'));
       //print(response.body);
       switch (response.statusCode) {
         case 200:

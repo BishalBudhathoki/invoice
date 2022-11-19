@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
@@ -9,10 +8,10 @@ import 'package:iconsax/iconsax.dart';
 import 'package:invoice/app/ui/shared/values/strings/asset_strings.dart';
 import 'package:invoice/app/ui/views/add_business_details_view.dart';
 import 'package:invoice/app/ui/views/add_client_details_view.dart';
+import 'package:invoice/app/ui/views/adminDashBoard.dart';
 import 'package:invoice/app/ui/widgets/appointment_card_widget.dart';
 import 'package:invoice/app/ui/widgets/home-detail-card-widget.dart';
 import 'package:invoice/backend/api_method.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeView extends StatefulWidget {
   final String email;
@@ -54,34 +53,65 @@ class _HomeViewControllerState extends State<HomeView> {
       });
       return ins;
     }
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // // var email = prefs.getString('email');
-    //
-    // bool CheckValue = prefs.containsKey('email');
-    // print ("Here" +CheckValue.toString());
-    //var data = await ApiMethod().getInitData(prefs.getString('email')!);
-    //return data;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.colorTry,
+      backgroundColor: AppColors.colorWhite,
+      appBar: PreferredSize(
+
+        preferredSize: Size.fromHeight(context.height * 0.1),
+        child:  AppBar(
+          toolbarHeight: context.height * 0.1,
+          backgroundColor: AppColors.colorWhite,
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          title: Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Column(
+              children: [
+                ProfilePlaceholder(
+                  firstName: ins['firstName'] ?? 'First Name',
+                  lastName: ins['lastName'] ?? 'Last Name',
+                  //image: Image.asset(AssetStrings.profileImage),
+                  // onPressed: () {
+                  //   // NavDrawer();
+                  //
+                  // },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: SizedBox(
+                height: 55,
+                width: 55,
+                child: InkWell(
+                    onTap: () {
+                      print('clicked');
+                    },
+
+                    child: Image.asset('assets/images/pari-profile.png',)
+                ),
+              ),
+            ),
+
+
+          ],
+        ),
+      ),
       body: Padding(
+
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 45),
-                child: ProfilePlaceholder(
-                  firstName: ins['firstName'] ?? 'First Name',
-                  lastName: ins['lastName'] ?? 'Last Name',
-                  image: Image.asset('assets/images/pari-profile.png'),
-                ),
-              ),
-              SizedBox(height: context.height * 0.023),
+              // SizedBox(height: context.height * 0.023),
               const Text('Your Appointments',
                   style: TextStyle(
                     color: AppColors.colorFontPrimary,
@@ -185,6 +215,7 @@ class _HomeViewControllerState extends State<HomeView> {
           ),
         ),
       ),
+      //bottomNavigationBar: _showBottomNav(),
     );
   }
 }

@@ -8,7 +8,7 @@ showAlertDialog(BuildContext context) {
   AlertDialog alert = AlertDialog(
     content: Row(
       children: [
-        Container(
+        SizedBox(
           width: context.width * 0.65,
           child: Row(
             children: const [
@@ -25,8 +25,6 @@ showAlertDialog(BuildContext context) {
               ),
             ]
           ),
-
-
         ),
       ],
     ),

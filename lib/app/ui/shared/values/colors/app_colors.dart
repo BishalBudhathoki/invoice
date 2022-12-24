@@ -14,4 +14,6 @@ class AppColors {
   static const colorFontSecondary = Color(0xFFF5F3F3);
   static const colorFontAccent = Color(0xFF1C0D32);
   static const colorTry = Color(0xFFEC0C0C);
+  static const error = Color(0xFFEC0C0C);
+
 }

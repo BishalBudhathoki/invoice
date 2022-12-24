@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:invoice/app/ui/views/assignC2E_view.dart';
 import 'package:invoice/app/ui/widgets/dropDown_widget.dart';
+import 'package:invoice/app/ui/widgets/dynamic_appointment_card_widget.dart';
 
 class NavBarWidget extends StatelessWidget {
   const NavBarWidget({super.key});
@@ -56,7 +57,7 @@ class NavBarWidget extends StatelessWidget {
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DropDownMenu(),
+                  builder: (context) => DynamicAppointmentCardWidget(),
                 ),
               )
 

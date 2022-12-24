@@ -43,7 +43,10 @@ class _AssignC2EState extends State<AssignC2E> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DropDownMenu(),
+                            builder: (context) => DropDownMenu(
+                              userName: snapshot.data![index].firstName,
+                              userEmail: snapshot.data![index].email,
+                            ),
                           ),
                         );
                       },

@@ -20,11 +20,12 @@ dependencies:
   http: ^0.13.1
   shared_preferences: ^2.0.6
   curved_navigation_bar: ^1.0.3
+  another_flushbar: ^1.10.28
+  flutter_calendar_widget: ^0.0.2
+  table_calendar: ^3.0.8
   flutter:
     sdk: flutter
-
-
-
+  iconify_flutter: ^0.0.5
 
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -47,7 +48,8 @@ flutter:
     - assets/images/placeholder_product.png
     - assets/images/she_with_phone.png
     - assets/images/he_sitting_with_notebook.png
-
+    - assets/icons/fav-folder-dynamic-color.png
+    - assets/icons/fav-folder-dynamic-premium.png
 
   uses-material-design: true
 

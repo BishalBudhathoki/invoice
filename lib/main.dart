@@ -12,6 +12,7 @@ import 'package:invoice/app/ui/views/assignClient_view.dart';
 import 'package:invoice/app/ui/views/home_view.dart';
 import 'package:invoice/app/ui/views/login_view.dart';
 import 'package:invoice/app/ui/views/signup_view.dart';
+import 'package:invoice/app/ui/views/timeAndDatePicker_view.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -34,8 +35,9 @@ void main() {
           '/signup': (context) => SignUpView(),
           '/home/addClientDetails': (context) => AddClientDetails(),
           '/home/addBusinessDetails': (context) => AddBusinessDetails(),
-          '/admin/assifnClients': (context) => AssignClient(),
+          '/admin/assignClients': (context) => AssignClient(),
           '/assignC2E': (context) => AssignC2E(),
+          // '/admin/assignClients/timeAndDatePicker': (context) => TimeAndDatePicker(),
         },
       ),
     ),

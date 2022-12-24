@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar_widget/flutter_calendar_widget.dart';
 import 'package:get/get.dart';
 import 'package:invoice/app/core/view-models/login_model.dart';
 import 'package:invoice/app/core/view-models/user_model.dart';
@@ -11,6 +12,7 @@ import 'package:invoice/app/ui/views/add_business_details_view.dart';
 import 'package:invoice/app/ui/views/add_client_details_view.dart';
 import 'package:invoice/app/ui/views/assignClient_view.dart';
 import 'package:invoice/app/ui/widgets/appointment_card_widget.dart';
+import 'package:invoice/app/ui/widgets/button_widget.dart';
 import 'package:invoice/app/ui/widgets/home-detail-card-widget.dart';
 import 'package:invoice/app/ui/widgets/navBar_widget.dart';
 import 'package:invoice/app/ui/widgets/optionMenu_widget.dart';
@@ -33,10 +35,14 @@ class AdminDashboardView extends StatefulWidget {
 }
 
 class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
+  int days = 10;
 
   var eml;
   var ins = {};
   ApiMethod apiMethod = new ApiMethod();
+
+
+
   @override
   void initState() {
     print('init');
@@ -47,6 +53,8 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
     }
     super.initState();
   }
+
+
 
   Future<dynamic> getData() async {
     ins = await apiMethod.getInitData(widget.email);
@@ -59,10 +67,12 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
     }
   }
 
-  @override
+
+@override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
+
 
     return Scaffold(
       key: _scaffoldKey,
@@ -110,61 +120,89 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
         ),
       ),
       endDrawer: const NavBarWidget(),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: SizedBox(
-          height: 348,
-          child: ListView(
-              shrinkWrap: false,
-              physics: const AlwaysScrollableScrollPhysics(),
-              children: [
-                const SizedBox(height: 20),
-                const Text('Add Client\'s Details ?',
-                    style: TextStyle(
-                      color: AppColors.colorFontPrimary,
-                      fontSize: AppDimens.fontSizeLarge,
-                      fontWeight: FontWeight.w800,
-                      fontFamily: 'Lato',
-                    )),
-                HomeDetailCard(
-                  buttonLabel: 'Add Details',
-                  cardLabel: 'Know Your Client!',
-                  image: Image.asset(AssetsStrings.cardImageGirl),
-                  onPressed: () {
-                    print("Client Button Pressed");
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AddClientDetails()),
-                    );
-                  },
-                ),
-                SizedBox(height: context.height * 0.023),
-                const Text('Add Business\'s Details ?',
-                    style: TextStyle(
-                      color: AppColors.colorFontPrimary,
-                      fontSize: AppDimens.fontSizeLarge,
-                      fontWeight: FontWeight.w800,
-                      fontFamily: 'Lato',
-                    )),
-                SizedBox(height: context.height * 0.023),
-                HomeDetailCard(
-                  buttonLabel: 'Add Details',
-                  cardLabel: 'Know Your Business!',
-                  image: Image.asset(AssetsStrings.cardImageBoy),
-                  onPressed: () {
-                    print("Business Button Pressed");
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AddBusinessDetails()),
-                    );
-                  },
-                ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 348,
+                child: ListView(
+                    shrinkWrap: false,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      const SizedBox(height: 20),
+                      const Text('Add Client\'s Details ?',
+                          style: TextStyle(
+                            color: AppColors.colorFontPrimary,
+                            fontSize: AppDimens.fontSizeLarge,
+                            fontWeight: FontWeight.w800,
+                            fontFamily: 'Lato',
+                          )),
+                      HomeDetailCard(
+                        buttonLabel: 'Add Details',
+                        cardLabel: 'Know Your Client!',
+                        image: Image.asset(AssetsStrings.cardImageGirl),
+                        onPressed: () {
+                          print("Client Button Pressed");
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddClientDetails()),
+                          );
+                        },
+                      ),
+                      SizedBox(height: context.height * 0.023),
+                      const Text('Add Business\'s Details ?',
+                          style: TextStyle(
+                            color: AppColors.colorFontPrimary,
+                            fontSize: AppDimens.fontSizeLarge,
+                            fontWeight: FontWeight.w800,
+                            fontFamily: 'Lato',
+                          )),
+                      SizedBox(height: context.height * 0.023),
+                      HomeDetailCard(
+                        buttonLabel: 'Add Details',
+                        cardLabel: 'Know Your Business!',
+                        image: Image.asset(AssetsStrings.cardImageBoy),
+                        onPressed: () {
+                          print("Business Button Pressed");
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddBusinessDetails()),
+                          );
+                        },
+                      ),
+                    ]),
+              ),
+              // FlutterCalendar(
+              //   focusedDate: dateTime,
+              //   isHeaderDisplayed: true,
+              //   startingDayOfWeek: DayOfWeek.mon,
+              //   selectionMode: CalendarSelectionMode.multiple,
+              //
+              //   // onMultipleDates: (List<DateTime> dates) {
+              //   //   for (var date in dates) {
+              //   //     datelist.add(date);
+              //   //     print("Date: $date DateList: $datelist" );
+              //   //   }
+              //   // },
+              //   // onDayPressed: (DateTime date) {
+              //   //   datelist.remove(date);
+              //   //   print("Pressed Date: $date DateList: $datelist");
+              //   // },
+              //   // onDayLongPressed: (DateTime date) {
+              //   //   print("Long Pressed Date: $date");
+              //   //
+              //   // },
+              // ),
 
-              ]),
+            ],
+          ),
         ),
       ),
     );
   }
+
 }

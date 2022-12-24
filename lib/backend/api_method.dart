@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:invoice/app/core/view-models/assignedAppointment_model.dart';
 import 'package:invoice/app/core/view-models/login_model.dart';
 import 'package:invoice/app/core/view-models/user_model.dart';
 import 'package:invoice/app/core/view-models/client_model.dart';
@@ -33,7 +34,7 @@ class ApiMethod {
     print(Uri.parse('${_baseUrl}getUsers'));
     final response = await http.get(Uri.parse('${_baseUrl}getUsers'));
     if (response.statusCode == 200) {
-      print("I am a response user: "+response.body);
+      print("I am a response user: ${response.body}");
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => new User.fromJson(data)).toList();
     } else {
@@ -45,7 +46,7 @@ class ApiMethod {
     print(Uri.parse('${_baseUrl}getClients'));
     final response = await http.get(Uri.parse('${_baseUrl}getClients'));
     if (response.statusCode == 200) {
-      print("I am a response client: \n" +response.body );
+      print("I am a response client: \n${response.body}" );
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => new Patient.fromJson(data)).toList();
     } else {
@@ -67,7 +68,7 @@ class ApiMethod {
           break;
         case 400:
           data = (json.decode(response.body));
-          print("400");
+          print("Get init data: 400");
           break;
       }
     } on SocketException {
@@ -75,6 +76,43 @@ class ApiMethod {
     }
     return data;
   }
+
+  Future<List<Patient>> fetchMultiplePatientData(String emails) async {
+    print(Uri.parse('${_baseUrl}getClients'));
+    final response = await http.get(Uri.parse('${_baseUrl}getMultipleClients/$emails'));
+    if (response.statusCode == 200) {
+      print("I am a response client: \n${response.body}" );
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((data) => new Patient.fromJson(data)).toList();
+    } else {
+      throw Exception('Unexpected error occured!');
+    }
+  }
+
+  Future<dynamic> getAppointmentData(String email) async {
+
+      print('${_baseUrl}loadAppointments/$email');
+      final response = await http.get(
+          Uri.parse('${_baseUrl}loadAppointments/$email'));
+      if (response.statusCode == 200) {
+        print("I am a response client: \n${response.body}");
+        try {
+          var jsonResponse = json.decode(response.body);
+          return jsonResponse;
+        } catch (e) {
+          print("Error: $e");
+        }
+      }
+      else {
+        throw Exception('Unexpected error occured!');
+      }
+
+    // Return a default value after the try-catch block
+
+  }
+
+
+
 
   late Map<String, dynamic> data = {};
 
@@ -107,7 +145,7 @@ class ApiMethod {
     //post method with body
     final response = await http.get(
         Uri.parse('${_baseUrl}login/$email/$password'));
-    print("Resp: " + response.statusCode.toString());
+    print("Resp: ${response.statusCode}");
     switch (response.statusCode) {
       case 200:
         data = new Map<String, dynamic>.from(json.decode(response.body));
@@ -154,7 +192,7 @@ class ApiMethod {
 
       if (data['email'] == "Email not found") {
         try {
-          print("Print me: " + data['email'] + " " + email);
+          print("${"Print me: " + data['email']} $email");
 
           final response1 = await http.post(
             Uri.parse('${_baseUrl}signup/$email'),
@@ -197,7 +235,7 @@ class ApiMethod {
         String State,
         String Zip,) async {
       try {
-        print('${_baseUrl}addClient/ ' + Email);
+        print('${_baseUrl}addClient/ $Email');
         final response = await http.post(
           Uri.parse('${_baseUrl}addClient/'),
           headers: {
@@ -242,7 +280,7 @@ class ApiMethod {
       String businessZip,
       ) async {
     try {
-      print('${_baseUrl}addBusiness/ ' + businessName);
+      print('${_baseUrl}addBusiness/ $businessName');
       final response = await http.post(
         Uri.parse('${_baseUrl}addBusiness/'),
         headers: {
@@ -275,5 +313,87 @@ class ApiMethod {
     }
     return data;
   }
+
+  Future<dynamic> assignClientToUser(
+      String userEmail,
+      String clientEmail,
+      List dateList,
+      List startTimeList,
+      List endTimeList,
+      List breakList
+      ) async {
+    print('${_baseUrl}assignClientToUser');
+    //post method with body
+   try {
+     final response = await http.post(
+         Uri.parse('${_baseUrl}assignClientToUser/'),
+       headers: {
+         "Content-Type": "application/json",
+         "Accept": "application/json"
+       },
+       body: jsonEncode({
+         "userEmail": userEmail,
+         "clientEmail": clientEmail,
+         "dateList": dateList,
+         "startTimeList": startTimeList,
+         "endTimeList": endTimeList,
+         "breakList": breakList,
+       }),
+     );
+     switch (response.statusCode) {
+       case 200:
+         data = new Map<String, dynamic>.from(json.decode(response.body));
+         print("200" + data['message']);
+
+         break;
+       case 400:
+         data = new Map<String, dynamic>.from(json.decode(response.body));
+         print("400" + data['message']);
+
+         break;
+
+     }
+   }
+    catch (e) {
+      print(e);
+    }
+      return data;
+  }
+
+  // Future<dynamic> submitAssignedAppointment(String userEmail, String clientEmail) async {
+  //   print(userEmail);
+  //   print(clientEmail);
+  //
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse('${_baseUrl}assignClientToUser/'),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "Accept": "application/json"
+  //       },
+  //       body: jsonEncode({
+  //         "userEmail": userEmail,
+  //         "clientEmail": clientEmail,
+  //       }),
+  //     );
+  //     switch (response.statusCode) {
+  //       case 200:
+  //         data = new Map<String, dynamic>.from(json.decode(response.body));
+  //         print("200" + data['message']);
+  //
+  //         break;
+  //       case 400:
+  //         data = new Map<String, dynamic>.from(json.decode(response.body));
+  //         print("400" + data['message']);
+  //
+  //         break;
+  //
+  //     }
+  //   }
+  //   catch (e) {
+  //     print(e);
+  //   }
+  //   return data;
+  // }
 
 }

@@ -108,7 +108,7 @@ class AppointmentCard extends StatelessWidget {
                   height: context.height * 0.06,
                   width: context.width,
                   decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                     borderRadius: BorderRadius.all(Radius.circular(25)),
                     color: AppColors.colorPrimary,
                   ),
                   child: const Center(

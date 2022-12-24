@@ -162,19 +162,18 @@ class _LoginUserNameControllerState extends State<LoginView> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) =>
-                            // HomeView(
-                            //   email:_userEmailController.text.trim(),
-                            // ),
-                              AdminDashboardView(
-                            email:_userEmailController.text.trim(),
-                          ),
+                            HomeView(
+                              email:_userEmailController.text.trim(),
+                            ),
+                            //   AdminDashboardView(
+                            // email:_userEmailController.text.trim(),
+                         // ),
                         ),
                       );
                     } else {
                       print('Error at login');
                       Navigator.of(context, rootNavigator: true).pop();
                     }
-
                     //_login();
                   });
 

@@ -3,6 +3,8 @@ class Assets {
   Assets._();
 
   static const String fontsRalewayVariableFontWght = 'assets/fonts/Raleway-VariableFont_wght.ttf';
+  static const String iconsFavFolderDynamicColor = 'assets/icons/fav-folder-dynamic-color.png';
+  static const String iconsFavFolderDynamicPremium = 'assets/icons/fav-folder-dynamic-premium.png';
   static const String imagesClientProfile = 'assets/images/client-profile.png';
   static const String imagesDemoPngCardView = 'assets/images/demo-png-card-view.png';
   static const String imagesHeSittingWithNotebook = 'assets/images/he_sitting_with_notebook.png';

@@ -26,7 +26,7 @@ class _DropdownMenuState extends State<DropDownMenu> {
   @override
   void initState() {
     super.initState();
-    ApiMethod apiMethod = new ApiMethod();
+    ApiMethod apiMethod = ApiMethod();
     futureClientsData = apiMethod.fetchPatientData();
   }
 //_cardList.forEach((widget) {data.add(_focusedDay.toString());});

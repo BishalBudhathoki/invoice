@@ -8,7 +8,7 @@ import 'package:invoice/app/core/view-models/client_model.dart';
 
 class ApiMethod {
 //API to authenticate user login
-  final String _baseUrl = "http://192.168.20.6:9001/";
+  final String _baseUrl = "http://192.168.20.2:9001/";
   //String _baseUrl = "https://backend-rest-apis.herokuapp.com/";
 
   Future<dynamic> authenticateUser(String email, String password) async {
@@ -78,12 +78,13 @@ class ApiMethod {
   }
 
   Future<List<Patient>> fetchMultiplePatientData(String emails) async {
-    print(Uri.parse('${_baseUrl}getClients'));
+    print(Uri.parse('${_baseUrl}getMultipleClients/$emails'));
+    print(emails.toString());
     final response = await http.get(Uri.parse('${_baseUrl}getMultipleClients/$emails'));
     if (response.statusCode == 200) {
       print("I am a response client: \n${response.body}" );
       List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((data) => new Patient.fromJson(data)).toList();
+      return jsonResponse.map((data) => Patient.fromJson(data)).toList();
     } else {
       throw Exception('Unexpected error occured!');
     }
@@ -95,7 +96,7 @@ class ApiMethod {
       final response = await http.get(
           Uri.parse('${_baseUrl}loadAppointments/$email'));
       if (response.statusCode == 200) {
-        print("I am a response client: \n${response.body}");
+        //print("I am a response client: \n${response.body}");
         try {
           var jsonResponse = json.decode(response.body);
           return jsonResponse;

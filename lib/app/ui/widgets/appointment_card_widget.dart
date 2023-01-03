@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
+import 'package:invoice/app/ui/views/client_and_appointment_details_view.dart';
 import 'package:invoice/app/ui/widgets/card_label_text_widget.dart';
 
 class AppointmentCard extends StatelessWidget {
   final String title;
+  final String currentUserEmail;
+  final String currentClientEmail;
+
   final IconData iconData;
   final String label;
   final String text;
@@ -22,9 +26,10 @@ class AppointmentCard extends StatelessWidget {
   final String label3;
   final String text3;
 
-
   const AppointmentCard({
     Key? key,
+    required this.currentClientEmail,
+    required this.currentUserEmail,
     required this.title,
     required this.iconData,
     required this.label,
@@ -104,21 +109,34 @@ class AppointmentCard extends StatelessWidget {
                 SizedBox(
                     height: context.height * 0.01
                 ),
-                Container(
-                  height: context.height * 0.06,
-                  width: context.width,
-                  decoration: const BoxDecoration(
-                     borderRadius: BorderRadius.all(Radius.circular(25)),
-                    color: AppColors.colorPrimary,
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'View Details',
-                      style: TextStyle(
-                        color: AppColors.colorWhite,
-                        fontSize: AppDimens.fontSizeMedium,
-                        fontWeight: FontWeight.w900,
-                        fontFamily: 'Lato',
+                GestureDetector(
+                  onTap: () async => {
+
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ClientAndAppointmentDetails(
+                          email: currentUserEmail,
+                        ),
+                      ),
+                    )
+                  },
+                  child: Container(
+                    height: context.height * 0.06,
+                    width: context.width,
+                    decoration: const BoxDecoration(
+                       borderRadius: BorderRadius.all(Radius.circular(25)),
+                      color: AppColors.colorPrimary,
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'View Details',
+                        style: TextStyle(
+                          color: AppColors.colorWhite,
+                          fontSize: AppDimens.fontSizeMedium,
+                          fontWeight: FontWeight.w900,
+                          fontFamily: 'Lato',
+                        ),
                       ),
                     ),
                   ),

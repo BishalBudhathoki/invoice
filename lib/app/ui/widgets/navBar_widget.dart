@@ -54,12 +54,12 @@ class NavBarWidget extends StatelessWidget {
             title: const Text('Friends'),
             onTap: () async => {
 
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DynamicAppointmentCardWidget(),
-                ),
-              )
+              // await Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => DynamicAppointmentCardWidget(),
+              //   ),
+              // )
 
 
             },

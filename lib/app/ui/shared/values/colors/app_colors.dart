@@ -15,5 +15,6 @@ class AppColors {
   static const colorFontAccent = Color(0xFF1C0D32);
   static const colorTry = Color(0xFFEC0C0C);
   static const error = Color(0xFFEC0C0C);
+  static const colorTransparent = Color(0x00000000);
 
 }

@@ -31,27 +31,24 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewControllerState extends State<HomeView> {
+
   var eml;
   var ins = {};
 
   var setAppointmentData;
   var appointmentData = {};
+  late List<dynamic> clientEmailList = [];
 
   @override
   void initState() {
     print('init');
-    try {
-      getInitData();
-      getAppointmentData();
-      // appointmentData =apiMethod.getAppointmentData(widget.email) as Map;
-    } catch (e) {
-      print(e);
-    }
+    getInitData();
+    getAppointmentData();
     super.initState();
   }
 
+  ApiMethod apiMethod = ApiMethod();
 
-  ApiMethod apiMethod = new ApiMethod();
   Future<dynamic> getInitData() async {
     ins = await apiMethod.getInitData(widget.email);
     if (ins != null) {
@@ -67,18 +64,27 @@ class _HomeViewControllerState extends State<HomeView> {
     if (appointmentData != null) {
       setState(() {
         setAppointmentData = appointmentData;
+        // clientEmailList = appointmentData['data'].map((item) => item['clientEmail']).toList();
+        // print("client email list: "+clientEmailList.toString());
       });
-      print(appointmentData);
       return appointmentData;
+    }
+  }
+
+  int getLength() {
+    if (setAppointmentData != null) {
+      return setAppointmentData['data'].length;
+    } else {
+      return 0;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: AppColors.colorWhite,
       appBar: PreferredSize(
-
         preferredSize: Size.fromHeight(context.height * 0.1),
         child:  AppBar(
           toolbarHeight: context.height * 0.1,
@@ -102,7 +108,6 @@ class _HomeViewControllerState extends State<HomeView> {
             ),
           ),
           actions: [
-
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: SizedBox(
@@ -111,19 +116,20 @@ class _HomeViewControllerState extends State<HomeView> {
                 child: InkWell(
                     onTap: () {
                       print('clicked');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DynamicAppointmentCardWidget()),
-                      );
+                      //print(clientEmailList.toString());
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //
+                      //       builder: (context) => DynamicAppointmentCardWidget(
+                      //         clientEmailList: clientEmailList,)),
+                      // );
                     },
 
                     child: Image.asset('assets/images/pari-profile.png',)
                 ),
               ),
             ),
-
-
           ],
         ),
       ),
@@ -183,10 +189,36 @@ class _HomeViewControllerState extends State<HomeView> {
               //     ],
               //   ),
               // ),
+
               Container(
                   height: context.height * 0.35,
                   width: context.width,
-                  child: const DynamicAppointmentCardWidget()),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    color: AppColors.colorTransparent,
+                  ),
+                  child: ListView.builder(
+                    itemCount: getLength(),
+                    itemBuilder: (BuildContext context, int index) {
+                      // filter the data in the setAppointmentData map based on the client email
+                      var dataForClientEmail = setAppointmentData['data'].map((item) =>
+                      item['clientEmail']).toList();
+                      print("data for client email: $dataForClientEmail ${getLength()}");
+                      // display the data for the client email
+                      return  Container(
+                        height: context.height * 0.35,
+                        width: context.width,
+
+                        child: DynamicAppointmentCardWidget(
+                          currentUserEmail: widget.email,
+                          listLength: dataForClientEmail.length,
+                          clientEmailList: dataForClientEmail,
+                        ),
+                      );
+                    },
+                  )
+
+              ),
               SizedBox(height: context.height * 0.023),
               SizedBox(
                   height: 348,

@@ -149,47 +149,6 @@ class _HomeViewControllerState extends State<HomeView> {
                     fontFamily: 'Lato',
                   )),
               SizedBox(height: context.height * 0.023),
-              // SingleChildScrollView(
-              //   scrollDirection: Axis.horizontal,
-              //   child: Row(
-              //     children: [
-              //       AppointmentCard(
-              //         title: 'Appointments',
-              //         iconData: Iconsax.user_square,
-              //         label: 'Client\'s Name:',
-              //         text: 'Matthew Perry',
-              //         iconData1: Iconsax.location,
-              //         label1: 'Address:',
-              //         text1: '13 Carlton Cres, Summerhill',
-              //         iconData2: Iconsax.timer_start,
-              //         label2: 'Start Time:',
-              //         text2: '05:00 PM',
-              //         iconData3: Iconsax.timer_pause,
-              //         label3: 'End Time:',
-              //         text3: '10:00 PM',
-              //       ),
-              //       SizedBox(
-              //         width: context.width * 0.04,
-              //       ),
-              //       const AppointmentCard(
-              //         title: 'Appointments',
-              //         iconData: Iconsax.user_square,
-              //         label: 'Client\'s Name:',
-              //         text: 'Tim Crook',
-              //         iconData1: Iconsax.location,
-              //         label1: 'Address:',
-              //         text1: '13 Friday Cres, Ashfield',
-              //         iconData2: Iconsax.timer_start,
-              //         label2: 'Start Time:',
-              //         text2: '04:00 PM',
-              //         iconData3: Iconsax.timer_pause,
-              //         label3: 'End Time:',
-              //         text3: '09:00 PM',
-              //       ),
-              //     ],
-              //   ),
-              // ),
-
               Container(
                   height: context.height * 0.35,
                   width: context.width,
@@ -203,10 +162,13 @@ class _HomeViewControllerState extends State<HomeView> {
                       // filter the data in the setAppointmentData map based on the client email
                       var dataForClientEmail = setAppointmentData['data'].map((item) =>
                       item['clientEmail']).toList();
-                      print("data for client email: $dataForClientEmail ${getLength()}");
+                      print("data for client email: $dataForClientEmail ${getLength()} ${index}");
                       // display the data for the client email
                       return  Container(
-                        height: context.height * 0.35,
+                        // change the height calculation to context.height * 0.35 * index,
+                        // so that it takes into account the current index of the item being built
+                        // and not the total item count.
+                        height: context.height * 0.35 * index,
                         width: context.width,
 
                         child: DynamicAppointmentCardWidget(

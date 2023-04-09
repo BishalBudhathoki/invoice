@@ -8,8 +8,8 @@ import 'package:invoice/app/ui/widgets/button_with_variable_width_height_widget.
 import 'package:invoice/app/ui/widgets/flushbar_widget.dart';
 import 'package:invoice/backend/api_method.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:iconify_flutter/iconify_flutter.dart';
-import 'package:colorful_iconify_flutter/icons/flat_color_icons.dart';
+// import 'package:iconify_flutter/iconify_flutter.dart';
+// import 'package:colorful_iconify_flutter/icons/flat_color_icons.dart';
 
 class TimeAndDatePicker extends StatefulWidget {
   final String userEmail;
@@ -31,6 +31,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
   DateTime _focusedDay = DateTime.now();
   TimeOfDay _focusedTime = TimeOfDay.now();
   TimeOfDay _focusedTime1 = TimeOfDay.now();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   var _isVisibleDate = true;
   var _isVisibleTime = true;
   var _isVisibleTime1 = true;
@@ -41,7 +42,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
   void initState() {
     super.initState();
   }
-  ApiMethod apiMethod = new ApiMethod();
+  ApiMethod apiMethod = ApiMethod();
   List dateList = [];
   List startTimeList = [];
   List endTimeList = [];
@@ -290,6 +291,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: const Text('Time and Date Picker',
             style: TextStyle(
@@ -374,7 +376,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                           hintText: "Break Allowed?",
                           labelText: 'Break Allowed?',
                           labelStyle: TextStyle(
-                            color: AppColors.colorPrimary,
+                            color: AppColors.colorFontPrimary,
                               fontWeight: FontWeight.bold
                           ),
                           border: OutlineInputBorder(
@@ -391,7 +393,9 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                         items: breakOptionItems.map((String? item) {
                           return DropdownMenuItem<String>(
                             value: item,
-                            child: Text(item!),
+                            child: Text(item!,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
                           );
                         }).toList(),
                         value:  _selectedBreak,
@@ -447,15 +451,15 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
               title: 'Submit',
               onPressed: () async {
                 print("$dateList $startTimeList $endTimeList $breakList");
-                showAlertDialog(context);
+                showAlertDialog(_scaffoldKey.currentContext!);
                 Future.delayed(const Duration(seconds: 3), () async {
                   var response = await _submitAssignedAppointment();
                   if (response['message'].toString() == "Success") {
                     print("Success");
-                    Navigator.pop(context);
-                        FlushBarWidget fbw = new FlushBarWidget();
+                    Navigator.pop(_scaffoldKey.currentContext!);
+                        FlushBarWidget fbw = FlushBarWidget();
                         fbw.flushBar(
-                          context: context,
+                          context: _scaffoldKey.currentContext!,
                            title: "Success",
                            message: "Client assigned successfully",
                            backgroundColor: AppColors.colorSecondary,
@@ -469,10 +473,10 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                         });
                   } else {
                     print("Failed");
-                    Navigator.pop(context);
+                    Navigator.pop(_scaffoldKey.currentContext!);
                         FlushBarWidget fbw = new FlushBarWidget();
                         fbw.flushBar(
-                          context: context,
+                          context: _scaffoldKey.currentContext!,
                           title: "Error",
                           message: "Client not assigned",
                           backgroundColor: AppColors.error,

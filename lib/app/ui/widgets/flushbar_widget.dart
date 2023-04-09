@@ -1,4 +1,4 @@
-import 'package:another_flushbar/flushbar.dart';
+import 'package:flutter_flushbar/flutter_flushbar.dart';
 import 'package:flutter/material.dart';
 
 class FlushBarWidget {
@@ -10,18 +10,19 @@ class FlushBarWidget {
     required Color backgroundColor,
   }) {
    return Flushbar(
-      icon: Icon(
+      flushbarPosition: FlushbarPosition.BOTTOM,
+      icon: const Icon(
         Icons.email_outlined,
         color: Colors.white,
         size: 30,
       ),
 
       backgroundColor: backgroundColor,
-      duration: Duration(seconds: 4),
+      duration: const Duration(seconds: 4),
       message: message,
       messageSize: 18,
       titleText: Text(title,
-          style: TextStyle(
+          style: const TextStyle(
               fontSize: 16, fontWeight: FontWeight.bold,
               color: Colors.white)),
     )..show(context);

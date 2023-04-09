@@ -24,28 +24,33 @@ class CardLabelTextWidget extends StatelessWidget {
         const SizedBox(
           width: 10,
         ),
-        Row(
-          children: [
-            Text(
-                label,
-                style: const TextStyle(
-                  color: AppColors.colorFontPrimary,
-                  fontSize: AppDimens.fontSizeMedium,
-                  fontWeight: FontWeight.w900,
-                  fontFamily: 'Loto',
-                )),
-            const SizedBox(
-              width: 05,
-            ),
-            Text(
-                text,
-                style: const TextStyle(
-                  color: AppColors.colorFontPrimary,
-                  fontSize: AppDimens.fontSizeMedium,
-                  fontFamily: 'Lato',
-                  //fontWeight: FontWeight.w900,
-                )),
-          ],
+        Flexible(
+          child: Row(
+            children: [
+              Text(
+                  label,
+                  style: const TextStyle(
+                    color: AppColors.colorFontPrimary,
+                    fontSize: AppDimens.fontSizeMedium,
+                    fontWeight: FontWeight.w900,
+                    fontFamily: 'Loto',
+                  )),
+              const SizedBox(
+                width: 05,
+              ),
+              Flexible(
+                child: Text(
+                    text,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: AppColors.colorFontPrimary,
+                      fontSize: AppDimens.fontSizeMedium,
+                      fontFamily: 'Lato',
+                      //fontWeight: FontWeight.w900,
+                    )),
+              ),
+            ],
+          ),
         ),
       ],
     );

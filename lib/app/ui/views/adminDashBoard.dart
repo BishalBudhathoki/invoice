@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_widget/flutter_calendar_widget.dart';
 import 'package:get/get.dart';
-import 'package:invoice/app/core/view-models/login_model.dart';
-import 'package:invoice/app/core/view-models/user_model.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:invoice/app/ui//widgets/profile_placeholder_widget.dart';
 import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:invoice/app/ui/shared/values/strings/asset_strings.dart';
 import 'package:invoice/app/ui/views/add_business_details_view.dart';
 import 'package:invoice/app/ui/views/add_client_details_view.dart';
-import 'package:invoice/app/ui/views/assignClient_view.dart';
-import 'package:invoice/app/ui/widgets/appointment_card_widget.dart';
-import 'package:invoice/app/ui/widgets/button_widget.dart';
+import 'package:invoice/app/ui/views/holidayList_view.dart';
 import 'package:invoice/app/ui/widgets/home-detail-card-widget.dart';
 import 'package:invoice/app/ui/widgets/navBar_widget.dart';
-import 'package:invoice/app/ui/widgets/optionMenu_widget.dart';
 import 'package:invoice/backend/api_method.dart';
+
+import '../widgets/button_widget.dart';
 
 class AdminDashboardView extends StatefulWidget {
   final String email;
@@ -58,13 +53,10 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
 
   Future<dynamic> getData() async {
     ins = await apiMethod.getInitData(widget.email);
-    if (ins != null) {
-      // print("INS: "+ins['firstName']!);
-      setState(() {
-        eml = ins;
-      });
-      return ins;
-    }
+    setState(() {
+      eml = ins;
+    });
+    return ins;
   }
 
 
@@ -119,7 +111,7 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
           ],
         ),
       ),
-      endDrawer: const NavBarWidget(),
+      endDrawer: NavBarWidget(context: context,),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(15.0),
@@ -148,7 +140,7 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AddClientDetails()),
+                                builder: (context) => const AddClientDetails()),
                           );
                         },
                       ),
@@ -170,7 +162,7 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AddBusinessDetails()),
+                                builder: (context) => const AddBusinessDetails()),
                           );
                         },
                       ),
@@ -197,6 +189,23 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
               //   //
               //   // },
               // ),
+              ButtonWidget(
+                  title: 'Edit Holidays',
+                  hasBorder: false,
+                  onPressed: () async {
+                    List<dynamic>? holidays = await apiMethod.getHolidays();
+                    if (holidays != null) {
+                      print(holidays);
+                      Navigator.push(
+                        _scaffoldKey.currentContext!,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                HolidayListView(holidays: holidays)
+                        ),
+                      );
+                    }
+                  }
+              ),
 
             ],
           ),

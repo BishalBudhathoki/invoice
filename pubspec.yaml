@@ -23,9 +23,14 @@ dependencies:
   another_flushbar: ^1.10.28
   flutter_calendar_widget: ^0.0.2
   table_calendar: ^3.0.8
+  animation_list: ^2.2.1
   flutter:
     sdk: flutter
-  iconify_flutter: ^0.0.5
+  mongo_dart: ^0.9.1
+  excel: ^2.0.4
+  flutter_flushbar: ^0.0.2
+  intl: ^0.17.0
+
 
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -43,13 +48,14 @@ flutter:
         - asset: assets/fonts/lato/Lato-Regular.ttf
 
   assets:
-    - assets/pari-profile.png
+    - assets/images/pari-profile.png
     - assets/images/client-profile.png
     - assets/images/placeholder_product.png
     - assets/images/she_with_phone.png
     - assets/images/he_sitting_with_notebook.png
     - assets/icons/fav-folder-dynamic-color.png
     - assets/icons/fav-folder-dynamic-premium.png
+    - lib/main.dart
 
   uses-material-design: true
 

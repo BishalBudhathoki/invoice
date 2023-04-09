@@ -19,6 +19,7 @@ class AddBusinessDetails extends StatefulWidget {
 
 class _AddBusinessDetailsState extends State<AddBusinessDetails> {
   final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _businessNameController = TextEditingController();
   final _businessEmailController = TextEditingController();
   final _businessPhoneController = TextEditingController();
@@ -44,8 +45,13 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: const AppBarTitle(
-        title: "Add Business Details",
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: const Text('Add Business Details',
+          style: TextStyle(
+            color: AppColors.colorFontSecondary,
+          ),
+        ),
       ),
       body: Form(
         key: _formKey,
@@ -200,12 +206,12 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
                     final response = await _addBusiness();
                     if (response == "success") {
                       print('Add button pressed');
-                      Navigator.of(context, rootNavigator: true).pop();
-                      popUpClientDetails(context, "success", "Business");
+                      Navigator.of(_scaffoldKey.currentContext!, rootNavigator: true).pop();
+                      popUpClientDetails(_scaffoldKey.currentContext!, "success", "Business");
                     } else {
                       print('Error at business adding');
-                      Navigator.of(context, rootNavigator: true).pop();
-                      popUpClientDetails(context, "error", "Business");
+                      Navigator.of(_scaffoldKey.currentContext!, rootNavigator: true).pop();
+                      popUpClientDetails(_scaffoldKey.currentContext!, "error", "Business");
                     }
                   });
                 }

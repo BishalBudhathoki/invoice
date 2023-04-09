@@ -32,6 +32,7 @@ class LoginView extends StatefulWidget {
 
 class _LoginUserNameControllerState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _userEmailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -51,6 +52,7 @@ class _LoginUserNameControllerState extends State<LoginView> {
     final LoginController login_controller = new LoginController();
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: AppColors.colorWhite,
       body: Stack(children: <Widget>[
         Container(
@@ -112,7 +114,7 @@ class _LoginUserNameControllerState extends State<LoginView> {
 
               ),
               SizedBox(
-                height: size.height * 0.02,
+                height: size.height * 0.01,
               ),
               TextFieldWidget(
                 // key: Key("_password"),
@@ -155,24 +157,25 @@ class _LoginUserNameControllerState extends State<LoginView> {
                 onPressed: () async {
                   showAlertDialog(context);
                   print('Login button pressed');
+                  var currentContext = context; // capture the current context
                   Future.delayed(const Duration(seconds: 3), () async {
                     var response = await _handleSubmitted();
 
                     if (response['message'] == 'user found') {
                       Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) =>
+                        _scaffoldKey.currentContext!,
+                        MaterialPageRoute(builder: (currentContext) =>
                             HomeView(
                               email:_userEmailController.text.trim(),
                             ),
-                            //   AdminDashboardView(
-                            // email:_userEmailController.text.trim(),
+                         //      AdminDashboardView(
+                         //    email:_userEmailController.text.trim(),
                          // ),
                         ),
                       );
                     } else {
                       print('Error at login');
-                      Navigator.of(context, rootNavigator: true).pop();
+                      Navigator.of(_scaffoldKey.currentContext!, rootNavigator: true).pop();
                     }
                     //_login();
                   });
@@ -214,7 +217,6 @@ class _LoginUserNameControllerState extends State<LoginView> {
 
   ApiMethod apiMethod = new ApiMethod();
   //LoginModel model = LoginModel();
-  ApiResponse _apiResponse = new ApiResponse();
   Future<dynamic> _handleSubmitted() async {
     print("Username:  ${_userEmailController.text.trim()}");
     print("Password:  ${_passwordController.text.trim()}");

@@ -150,7 +150,7 @@ class _HomeViewControllerState extends State<HomeView> {
                   )),
               SizedBox(height: context.height * 0.023),
               Container(
-                  height: context.height * 0.35,
+                  height: context.height * 0.38,
                   width: context.width,
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -168,8 +168,8 @@ class _HomeViewControllerState extends State<HomeView> {
                         // change the height calculation to context.height * 0.35 * index,
                         // so that it takes into account the current index of the item being built
                         // and not the total item count.
-                        height: context.height * 0.35 * index,
-                        width: context.width,
+                        height: context.height * 0.38 * index,
+                        width: context.width  * index,
 
                         child: DynamicAppointmentCardWidget(
                           currentUserEmail: widget.email,
@@ -181,7 +181,7 @@ class _HomeViewControllerState extends State<HomeView> {
                   )
 
               ),
-              SizedBox(height: context.height * 0.023),
+              SizedBox(height: context.height * 0.01),
               SizedBox(
                   height: 348,
                   child: ListView(

@@ -1,14 +1,13 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:invoice/app/ui/shared/values/strings/appbar_title.dart';
 import 'package:invoice/app/ui/views/popupClientDetails.dart';
 import 'package:invoice/app/ui/widgets/alertDialog_widget.dart';
 import 'package:invoice/app/ui/widgets/button_widget.dart';
 import 'package:invoice/app/ui/widgets/textField_widget.dart';
 import 'package:invoice/backend/api_method.dart';
+import '../shared/values/colors/app_colors.dart';
 
 class AddClientDetails extends StatefulWidget {
   const AddClientDetails({super.key});
@@ -18,6 +17,7 @@ class AddClientDetails extends StatefulWidget {
 }
 
 class _AddClientDetailsState extends State<AddClientDetails> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final _clientFirstNameController = TextEditingController();
   final _clientLastNameController = TextEditingController();
@@ -46,8 +46,13 @@ class _AddClientDetailsState extends State<AddClientDetails> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: const AppBarTitle(
-        title: "Add Client Details",
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: const Text('Add Client Details',
+          style: TextStyle(
+            color: AppColors.colorFontSecondary,
+          ),
+        ),
       ),
       body: Form(
         key: _formKey,
@@ -222,12 +227,12 @@ class _AddClientDetailsState extends State<AddClientDetails> {
                       final response = await _addClient();
                       if (response == "success") {
                         print('Add button pressed');
-                        Navigator.of(context, rootNavigator: true).pop();
-                        popUpClientDetails(context, "success", "Client");
+                        Navigator.of(_scaffoldKey.currentContext!, rootNavigator: true).pop();
+                        popUpClientDetails(_scaffoldKey.currentContext!, "success", "Client");
                       } else {
                         print('Error at client adding');
-                        Navigator.of(context, rootNavigator: true).pop();
-                        popUpClientDetails(context, "error", "Client");
+                        Navigator.of(_scaffoldKey.currentContext!, rootNavigator: true).pop();
+                        popUpClientDetails(_scaffoldKey.currentContext!, "error", "Client");
                       }
                     });
                   }

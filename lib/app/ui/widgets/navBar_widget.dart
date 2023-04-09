@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:invoice/app/ui/views/assignC2E_view.dart';
-import 'package:invoice/app/ui/widgets/dropDown_widget.dart';
-import 'package:invoice/app/ui/widgets/dynamic_appointment_card_widget.dart';
+import '../../../backend/api_method.dart';
+import '../shared/values/colors/app_colors.dart';
+import '../views/line_items_view.dart';
+import 'package:flutter_flushbar/flutter_flushbar.dart';
 
 class NavBarWidget extends StatelessWidget {
-  const NavBarWidget({super.key});
+  final BuildContext context;
+  NavBarWidget({required this.context});
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  ApiMethod apiMethod = ApiMethod();
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      key: key,
+      key: _scaffoldKey,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -38,40 +45,64 @@ class NavBarWidget extends StatelessWidget {
             leading: const Icon(Icons.favorite),
             title: const Text('Assign C 2 E'),
             onTap: () async => {
-
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AssignC2E(),
-                  ),
-                )
-
-
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AssignC2E(),
+                ),
+              )
             },
           ),
           ListTile(
             leading: const Icon(Icons.person),
-            title: const Text('Friends'),
+            title: const Text('Line Items'),
             onTap: () async => {
-
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LineItemsView(),
+                ),
+              )
               // await Navigator.push(
               //   context,
               //   MaterialPageRoute(
               //     builder: (context) => DynamicAppointmentCardWidget(),
               //   ),
               // )
-
-
             },
           ),
           ListTile(
-            leading: const Icon(Icons.share),
-            title: const Text('Share'),
-            onTap: () => null,
+            leading: const Icon(Icons.update),
+            title: const Text('Update Holiday'),
+            onTap: () async {
+              var value = await apiMethod.uploadCSV();
+              if (value['message'].toString() == "Upload successful") {
+                Flushbar(
+                  flushbarPosition: FlushbarPosition.BOTTOM,
+                  backgroundColor: AppColors.colorSecondary,
+                  duration: const Duration(seconds: 3),
+                  titleText: const Text(
+                    "Success",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0,
+                        color: AppColors.colorFontSecondary,
+                        fontFamily: "ShadowsIntoLightTwo"),
+                  ),
+                  messageText: const Text(
+                    "Holiday list updated in database",
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: AppColors.colorFontSecondary,
+                        fontFamily: "ShadowsIntoLightTwo"),
+                  ),
+                ).show(_scaffoldKey.currentContext!);
+              }
+            },
           ),
           ListTile(
-            leading: Icon(Icons.notifications),
-            title: Text('Request'),
+            leading: const Icon(Icons.notifications),
+            title: const Text('Request'),
             onTap: () => null,
             trailing: ClipOval(
               child: Container(
@@ -105,7 +136,9 @@ class NavBarWidget extends StatelessWidget {
           ListTile(
             title: const Text('Exit'),
             leading: const Icon(Icons.exit_to_app),
-            onTap: () => null,
+            onTap: () => {
+              SystemNavigator.pop(),
+            },
           ),
         ],
       ),

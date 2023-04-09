@@ -22,6 +22,8 @@ class SignUpView extends StatefulWidget {
 }
 
 class _SignupUserNameControllerState extends State<SignUpView> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   final _signUpUserFirstNameController = TextEditingController();
   final _signUpUserLastNameController = TextEditingController();
   final _signUpEmailController = TextEditingController();
@@ -43,6 +45,7 @@ class _SignupUserNameControllerState extends State<SignUpView> {
     final models = Provider.of<SignupModel>(context);
     bool loading = false;
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: AppColors.colorWhite,
       body: SafeArea(
         child: Padding(
@@ -164,7 +167,7 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                         if (response) {
                           print('Signup button pressed');
                           Navigator.push(
-                            context,
+                            _scaffoldKey.currentContext!,
                             MaterialPageRoute(builder: (context) =>
                                 HomeView(
                                   email: _signUpEmailController.text,
@@ -173,7 +176,7 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                           );
                         } else {
                           print('Error at signup');
-                          Navigator.of(context, rootNavigator: true).pop();
+                          Navigator.of(_scaffoldKey.currentContext!, rootNavigator: true).pop();
                         }
 
                         //_login();

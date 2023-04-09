@@ -41,16 +41,12 @@ class HomeDetailCard extends StatelessWidget {
                 color: AppColors.colorFontSecondary,
               ),
               child: Padding(
-                padding: const EdgeInsets.only(left: 120, top: 40, right: 16),
+                padding: const EdgeInsets.only(left: 10, top: 40, right: 16),
                 child: Text(
                     cardLabel,
                     textAlign: TextAlign.right,
-                    style: const TextStyle(
-                      color: AppColors.colorPrimary,
-                      fontSize: AppDimens.fontSizeXXXMedium,
-                      fontWeight: FontWeight.w900,
-                      fontFamily: 'Lato',
-                    )),
+                    style: Theme.of(context).textTheme.labelLarge,
+                ),
               ),
             ),
           ),
@@ -79,12 +75,7 @@ class HomeDetailCard extends StatelessWidget {
                     child: Center(
                       child: Text(
                         buttonLabel,
-                        style: const TextStyle(
-                          color: AppColors.colorWhite,
-                          fontSize: AppDimens.fontSizeMedium,
-                          fontWeight: FontWeight.w900,
-                          fontFamily: 'Lato',
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ),
                   ),

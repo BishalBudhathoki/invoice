@@ -34,19 +34,15 @@ class AppointmentCard extends StatelessWidget {
     required this.iconData,
     required this.label,
     required this.text,
-
     required this.iconData1,
     required this.label1,
     required this.text1,
-
     required this.iconData2,
     required this.label2,
     required this.text2,
-
     required this.iconData3,
     required this.label3,
     required this.text3,
-
   }) : super(key: key);
 
   @override
@@ -55,68 +51,59 @@ class AppointmentCard extends StatelessWidget {
     return Row(
       children: [
         Container(
-          height: context.height * 0.34,
+          height: context.height * 0.35,
           width: context.width * 0.85,
-            decoration: const BoxDecoration(
+          decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(25)),
-            color: AppColors.colorFontSecondary,
-            ),
+            color: AppColors.colorTransparent,
+          ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                    title,
+                Text(title,
                     style: const TextStyle(
                       color: AppColors.colorFontPrimary,
                       fontSize: AppDimens.fontSizeXXXMedium,
                       fontWeight: FontWeight.w900,
                       fontFamily: 'Lato',
                     )),
-                SizedBox(
-                    height: context.height * 0.01
-                ),
+                SizedBox(height: context.height * 0.01),
                 CardLabelTextWidget(
                   iconData,
                   label,
                   text,
                 ),
-                SizedBox(
-                    height: context.height * 0.01
-                ),
+                SizedBox(height: context.height * 0.01),
                 CardLabelTextWidget(
                   iconData1,
                   label1,
                   text1,
                 ),
-                SizedBox(
-                    height: context.height * 0.01
-                ),
+                SizedBox(height: context.height * 0.01),
                 CardLabelTextWidget(
                   iconData2,
                   label2,
                   text2,
                 ),
-                SizedBox(
-                    height: context.height * 0.01
-                ),
+                SizedBox(height: context.height * 0.01),
                 CardLabelTextWidget(
                   iconData3,
                   label3,
                   text3,
                 ),
                 SizedBox(
-                    height: context.height * 0.01
+                  height: context.height * 0.01,
                 ),
                 GestureDetector(
                   onTap: () async => {
-
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => ClientAndAppointmentDetails(
-                          email: currentUserEmail,
+                          userEmail: currentUserEmail,
+                          clientEmail: currentClientEmail,
                         ),
                       ),
                     )
@@ -125,7 +112,7 @@ class AppointmentCard extends StatelessWidget {
                     height: context.height * 0.06,
                     width: context.width,
                     decoration: const BoxDecoration(
-                       borderRadius: BorderRadius.all(Radius.circular(25)),
+                      borderRadius: BorderRadius.all(Radius.circular(25)),
                       color: AppColors.colorPrimary,
                     ),
                     child: const Center(
@@ -145,9 +132,7 @@ class AppointmentCard extends StatelessWidget {
             ),
           ),
         ),
-
       ],
     );
   }
-
 }

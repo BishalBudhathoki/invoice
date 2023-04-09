@@ -34,6 +34,13 @@ class _DropdownMenuState extends State<DropDownMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
+        appBar: AppBar(
+          title: const Text('Client List',
+            style: TextStyle(
+              color: AppColors.colorFontSecondary,
+            ),
+          ),
+        ),
         body: SafeArea(
           child: FutureBuilder<List<Patient>>(
               future: futureClientsData,
@@ -46,10 +53,11 @@ class _DropdownMenuState extends State<DropDownMenu> {
                       return Column(
                         children: [
                           ListTile(
-                            title: Text(snapshot.data![index].clientFirstName),
+                            title: Text(snapshot.data![index].clientFirstName,
+                                style: Theme.of(context).textTheme.bodyMedium),
                             subtitle:
                                 Text(snapshot.data![index].clientLastName),
-                            trailing: Icon(Icons.arrow_forward_ios),
+                            trailing: const Icon(Icons.arrow_forward_ios),
                             onTap: () {
                               showDialog(
                                 context: context,
@@ -133,7 +141,7 @@ class _DropdownMenuState extends State<DropDownMenu> {
                   print(snapshot.error);
                   return Text("${snapshot.error}");
                 }
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }),
         ));
   }

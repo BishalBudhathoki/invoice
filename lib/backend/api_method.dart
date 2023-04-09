@@ -8,7 +8,7 @@ import 'package:invoice/app/core/view-models/client_model.dart';
 
 class ApiMethod {
 //API to authenticate user login
-  final String _baseUrl = "http://192.168.20.2:9001/";
+  final String _baseUrl = "http://192.168.20.5:9001/";
   //String _baseUrl = "https://backend-rest-apis.herokuapp.com/";
 
   Future<dynamic> authenticateUser(String email, String password) async {
@@ -90,6 +90,57 @@ class ApiMethod {
     }
   }
 
+  Future<dynamic> deleteHolidayItem(String id) async {
+    print('${_baseUrl}deleteHoliday/$id');
+    final response = await http.delete(
+        Uri.parse('${_baseUrl}deleteHoliday/$id'));
+    if (response.statusCode == 200) {
+      //print("I am a response client: \n${response.body}");
+      try {
+        var jsonResponse = json.decode(response.body);
+        return jsonResponse;
+      } catch (e) {
+        print("Error: $e");
+      }
+    }
+    else if (response.statusCode == 400) {
+      print("Holiday not found");
+    }
+    else if(response.statusCode == 404) {
+      throw Exception('Not Found!');
+    }
+    else {
+      throw Exception('Unexpected error occured!');
+    }
+  }
+
+  Future<dynamic> addHolidayItem(Map<String, String> newHoliday) async {
+    final response = await http.post(
+        Uri.parse('${_baseUrl}addHolidayItem'),
+        body: json.encode(newHoliday),
+        headers: {'Content-Type': 'application/json'}
+    );
+
+    if (response.statusCode == 200) {
+      try {
+        var jsonResponse = json.decode(response.body);
+        return jsonResponse;
+      } catch (e) {
+        print("Error: $e");
+      }
+    }
+    else if (response.statusCode == 400) {
+      print("Bad request");
+    }
+    else if(response.statusCode == 404) {
+      throw Exception('Not Found!');
+    }
+    else {
+      throw Exception('Unexpected error occured!');
+    }
+  }
+
+
   Future<dynamic> getAppointmentData(String email) async {
 
       print('${_baseUrl}loadAppointments/$email');
@@ -107,6 +158,28 @@ class ApiMethod {
       else {
         throw Exception('Unexpected error occured!');
       }
+
+    // Return a default value after the try-catch block
+
+  }
+
+  Future<dynamic> getClientAndAppointmentData(String userEmail, String clientEmail) async {
+
+    print('${_baseUrl}loadAppointmentDetails/$userEmail/$clientEmail');
+    final response = await http.get(
+        Uri.parse('${_baseUrl}loadAppointmentDetails/$userEmail/$clientEmail'));
+    if (response.statusCode == 200) {
+      print("I am a response client: \n${response.body}");
+      try {
+        var jsonResponse = json.decode(response.body);
+        return jsonResponse;
+      } catch (e) {
+        print("Error: $e");
+      }
+    }
+    else {
+      throw Exception('Unexpected error occured!');
+    }
 
     // Return a default value after the try-catch block
 
@@ -163,6 +236,50 @@ class ApiMethod {
     return data;
   }
 
+  Future<dynamic> uploadCSV() async {
+    try {
+      print('${_baseUrl}uploadCSV');
+      final response = await http.post(
+          Uri.parse('${_baseUrl}uploadCSV'));
+      switch (response.statusCode) {
+        case 200:
+          data = Map<String, dynamic>.from(json.decode(response.body));
+          print("200 ${data['message']}");
+          return data;
+        case 400:
+          data = Map<String, dynamic>.from(json.decode(response.body));
+          print("400 ${data['message']}");
+          return data;
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  late List<dynamic> holidaysList = [];
+  Future<dynamic> getHolidays() async {
+    try {
+      final response = await http.get(Uri.parse('${_baseUrl}getHolidays'));
+      switch (response.statusCode) {
+        case 200:
+          final data = json.decode(response.body);
+          if (data != null) {
+            holidaysList = List<dynamic>.from(data);
+          }
+          print("200 ");
+          return data;
+        case 400:
+          final data = json.decode(response.body);
+          if (data != null) {
+            holidaysList = List<dynamic>.from(data);
+          }
+          print("400 ");
+          return data;
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
     Future<dynamic> signupUser(String firstName,
         String lastName,
         String email,
@@ -360,6 +477,28 @@ class ApiMethod {
     }
       return data;
   }
+
+  Future<List<Map<String, dynamic>>> getLineItems() async {
+    try {
+      final response = await http.get(Uri.parse('${_baseUrl}getLineItems/'));
+      switch (response.statusCode) {
+        case 200:
+          final List<dynamic> lineItemsJson = json.decode(response.body);
+          final List<Map<String, dynamic>> lineItems =
+          lineItemsJson.map((json) => Map<String, dynamic>.from(json)).toList();
+          return lineItems;
+        case 400:
+          throw Exception('Failed to get line items: bad request');
+        default:
+          throw Exception('Failed to get line items: ${response.statusCode}');
+      }
+    } on SocketException {
+      throw Exception('Failed to get line items: network error');
+    } catch (e) {
+      throw Exception('Failed to get line items: $e');
+    }
+  }
+
 
   // Future<dynamic> submitAssignedAppointment(String userEmail, String clientEmail) async {
   //   print(userEmail);

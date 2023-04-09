@@ -5,6 +5,8 @@ import 'package:invoice/app/core/view-models/client_model.dart';
 import 'package:invoice/app/ui/widgets/dropDown_widget.dart';
 import 'package:invoice/backend/api_method.dart';
 
+import '../shared/values/colors/app_colors.dart';
+
 class AssignC2E extends StatefulWidget {
   @override
   _AssignC2EState createState() => _AssignC2EState();
@@ -25,6 +27,13 @@ class _AssignC2EState extends State<AssignC2E> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Employee List',
+          style: TextStyle(
+            color: AppColors.colorFontSecondary,
+          ),
+        ),
+      ),
       body: FutureBuilder<List<User>>(
         future: futureUserData,
         builder: (context, snapshot) {
@@ -36,9 +45,10 @@ class _AssignC2EState extends State<AssignC2E> {
                 return Column(
                   children: [
                     ListTile(
-                      title: Text(snapshot.data![index].firstName),
+                      title: Text(snapshot.data![index].firstName,
+                          style: Theme.of(context).textTheme.bodyMedium),
                       subtitle: Text(snapshot.data![index].email),
-                      trailing: Icon(Icons.arrow_forward_ios),
+                      trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         Navigator.push(
                           context,

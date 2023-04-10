@@ -49,6 +49,12 @@ class TimerModel extends ChangeNotifier {
     return _isRunning;
   }
 
+  void resetTimer(String clientEmail) {
+    currentTimerClientEmail = clientEmail;
+    _elapsedSeconds = 0;
+    _isRunning = false;
+  }
+
   String getFormattedTime(int timeInSeconds) {
     int hours = timeInSeconds ~/ 3600;
     int minutes = (timeInSeconds % 3600) ~/ 60;

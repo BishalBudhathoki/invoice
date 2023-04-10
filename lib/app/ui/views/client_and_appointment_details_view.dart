@@ -268,8 +268,12 @@ class _ClientAndAppointmentDetailsState
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: updateTimerModel,
-
+                      onPressed: () {
+                        if (timerModel.isRunning && timerModel.getTimerClientEmail() != widget.clientEmail) {
+                          return; // disable the button if the timer is already running for another client
+                        }
+                        updateTimerModel();
+                      },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(
                           timerModel.isRunning
@@ -295,12 +299,20 @@ class _ClientAndAppointmentDetailsState
 
                 const SizedBox(height: 32.0),
 
-                Text(
-                  timerModel.isRunning && (widget.clientEmail == timerModel.getTimerClientEmail())
-                      ? timerModel.getFormattedTime(timerModel.elapsedSeconds)
-                      : "00:00:00",
-                  style: Theme.of(context).textTheme.bodyLarge,
+                Center(
+                  child: Text(
+                    timerModel.isRunning && (widget.clientEmail == timerModel.getTimerClientEmail())
+                        ? timerModel.getFormattedTime(timerModel.elapsedSeconds)
+                        : "00:00:00",
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 48,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.blueGrey[800],
+                    ),
+                  ),
                 ),
+
 
               ],
             ),

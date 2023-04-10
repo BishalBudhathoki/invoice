@@ -276,9 +276,9 @@ class _ClientAndAppointmentDetailsState
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(
-                          timerModel.isRunning
-                              ? AppColors.colorPrimary
-                              : Colors.blue,
+                          (timerModel.isRunning && timerModel.getTimerClientEmail() == widget.clientEmail)
+                              ? AppColors.colorWarning
+                              : AppColors.colorPrimary,
                         ),
                         elevation: MaterialStateProperty.all(
                           timerModel.getTimerClientEmail() == widget.clientEmail || timerModel.isRunning
@@ -287,7 +287,9 @@ class _ClientAndAppointmentDetailsState
                         ),
                       ),
                       child: Text(
-                        timerModel.isRunning ? 'End shift' : 'Start shift',
+                        (timerModel.isRunning && timerModel.getTimerClientEmail() == widget.clientEmail)
+                            ? 'End shift'
+                            : 'Start shift',
                         style: const TextStyle(
                           fontSize: 18,
                           color: Colors.white,
@@ -312,8 +314,6 @@ class _ClientAndAppointmentDetailsState
                     ),
                   ),
                 ),
-
-
               ],
             ),
           ),

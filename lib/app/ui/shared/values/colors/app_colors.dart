@@ -13,7 +13,7 @@ class AppColors {
   static const colorFontPrimary = Color(0xFF000000);
   static const colorFontSecondary = Color(0xFFF5F3F3);
   static const colorFontAccent = Color(0xFF1C0D32);
-  static const colorTry = Color(0xFFEC0C0C);
+  static const colorWarning = Color(0xFFEC0C0C);
   static const error = Color(0xFFEC0C0C);
   static const colorTransparent = Color(0x00000000);
 

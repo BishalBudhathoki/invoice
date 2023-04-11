@@ -48,7 +48,8 @@ class _AddClientDetailsState extends State<AddClientDetails> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text('Add Client Details',
+        title: const Text(
+          'Add Client Details',
           style: TextStyle(
             color: AppColors.colorFontSecondary,
           ),
@@ -227,12 +228,18 @@ class _AddClientDetailsState extends State<AddClientDetails> {
                       final response = await _addClient();
                       if (response == "success") {
                         print('Add button pressed');
-                        Navigator.of(_scaffoldKey.currentContext!, rootNavigator: true).pop();
-                        popUpClientDetails(_scaffoldKey.currentContext!, "success", "Client");
+                        Navigator.of(_scaffoldKey.currentContext!,
+                                rootNavigator: true)
+                            .pop();
+                        popUpClientDetails(
+                            _scaffoldKey.currentContext!, "success", "Client");
                       } else {
                         print('Error at client adding');
-                        Navigator.of(_scaffoldKey.currentContext!, rootNavigator: true).pop();
-                        popUpClientDetails(_scaffoldKey.currentContext!, "error", "Client");
+                        Navigator.of(_scaffoldKey.currentContext!,
+                                rootNavigator: true)
+                            .pop();
+                        popUpClientDetails(
+                            _scaffoldKey.currentContext!, "error", "Client");
                       }
                     });
                   }

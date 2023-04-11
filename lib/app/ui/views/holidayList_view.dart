@@ -7,33 +7,32 @@ import '../../../backend/api_method.dart';
 class HolidayListView extends StatefulWidget {
   final List<dynamic> holidays;
 
-  const HolidayListView({
-    Key? key, required this.holidays}) : super(key: key);
+  const HolidayListView({Key? key, required this.holidays}) : super(key: key);
 
   @override
   _HolidayListViewState createState() => _HolidayListViewState();
 }
 
 class _HolidayListViewState extends State<HolidayListView> {
-
   @override
   void initState() {
     super.initState();
     // Sort the list of holidays by date
-    widget.holidays.sort((a, b) => DateFormat("dd-MMM-yyyy").parse("${a['Date']}")
-        .compareTo(DateFormat("dd-MMM-yyyy").parse("${b['Date']}"))
-    );
+    widget.holidays.sort((a, b) => DateFormat("dd-MMM-yyyy")
+        .parse("${a['Date']}")
+        .compareTo(DateFormat("dd-MMM-yyyy").parse("${b['Date']}")));
   }
 
   void _addHoliday(Map<String, dynamic> holiday) {
     setState(() {
       // Add the new holiday to the list
       widget.holidays.add(holiday);
-      widget.holidays.sort((a, b) => DateFormat("dd-MMM-yyyy").parse("${a['Date']}")
-          .compareTo(DateFormat("dd-MMM-yyyy").parse("${b['Date']}"))
-      );
+      widget.holidays.sort((a, b) => DateFormat("dd-MMM-yyyy")
+          .parse("${a['Date']}")
+          .compareTo(DateFormat("dd-MMM-yyyy").parse("${b['Date']}")));
     });
   }
+
   var holiday = {};
   void _deleteHoliday(int index) {
     setState(() {
@@ -51,7 +50,7 @@ class _HolidayListViewState extends State<HolidayListView> {
     // print("Username:  ${_userEmailController.text.trim()}");
     // print("Password:  ${_passwordController.text.trim()}");
     var ins = await apiMethod.deleteHolidayItem(
-        id,
+      id,
     );
     //print("Response: "+ ins['email'].toString() + ins['password'].toString());
     return ins;
@@ -115,7 +114,8 @@ class _HolidayListViewState extends State<HolidayListView> {
             MaterialPageRoute(
               builder: (context) => AddHolidayScreen(
                 addHoliday: _addHoliday,
-                holidays: widget.holidays, // Pass the holidays list to AddHolidayScreen
+                holidays: widget
+                    .holidays, // Pass the holidays list to AddHolidayScreen
               ),
             ),
           );
@@ -124,7 +124,6 @@ class _HolidayListViewState extends State<HolidayListView> {
     );
   }
 }
-
 
 class AddHolidayScreen extends StatefulWidget {
   final Function(Map<String, dynamic>) addHoliday;
@@ -140,9 +139,7 @@ class AddHolidayScreen extends StatefulWidget {
   _AddHolidayScreenState createState() => _AddHolidayScreenState();
 }
 
-
 class _AddHolidayScreenState extends State<AddHolidayScreen> {
-
   // Declare variables to store new holiday data
   final TextEditingController _holidayController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
@@ -180,8 +177,7 @@ class _AddHolidayScreenState extends State<AddHolidayScreen> {
             const Text('Holiday Date'),
             TextField(
               controller: _dateController,
-              decoration: const InputDecoration(
-                  hintText: 'Enter holiday date'),
+              decoration: const InputDecoration(hintText: 'Enter holiday date'),
               style: const TextStyle(
                 color: Colors.grey,
               ),
@@ -190,8 +186,7 @@ class _AddHolidayScreenState extends State<AddHolidayScreen> {
             const Text('Holiday Day'),
             TextField(
               controller: _dayController,
-              decoration: const InputDecoration(
-                  hintText: 'Enter holiday day'),
+              decoration: const InputDecoration(hintText: 'Enter holiday day'),
               style: const TextStyle(
                 color: Colors.grey,
               ),
@@ -225,16 +220,16 @@ class _AddHolidayScreenState extends State<AddHolidayScreen> {
       ),
     );
   }
+
   Future<dynamic> _addHolidayItem(Map<String, String> holiday) async {
     // print("Username:  ${_userEmailController.text.trim()}");
     // print("Password:  ${_passwordController.text.trim()}");
     var ins = await apiMethod.addHolidayItem(
       holiday,
     );
-    if(ins['status'] == 'success'){
+    if (ins['status'] == 'success') {
       print("Holiday Added");
-    }
-    else{
+    } else {
       print("Holiday Not Added ${ins['message']}");
     }
     //print("Response: "+ ins['email'].toString() + ins['password'].toString());
@@ -242,4 +237,4 @@ class _AddHolidayScreenState extends State<AddHolidayScreen> {
   }
 }
 
-
+// /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/arc/libarclite_iphonesimulator.a

@@ -10,9 +10,10 @@ class AppPages {
 
   static final routes = [
     const LoginView(),
-    HomeView(email: '',),
+    HomeView(
+      email: '',
+    ),
     const SignUpView(),
     //SignupPage(),
-
   ];
 }

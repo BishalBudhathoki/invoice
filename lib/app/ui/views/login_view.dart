@@ -29,13 +29,11 @@ class LoginView extends StatefulWidget {
   }
 }
 
-
 class _LoginUserNameControllerState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _userEmailController = TextEditingController();
   final _passwordController = TextEditingController();
-
 
   @override
   void dispose() {
@@ -82,14 +80,14 @@ class _LoginUserNameControllerState extends State<LoginView> {
           child: WaveAnimation(
             size: size,
             yOffset: size.height / 3.0,
-            color: AppColors.colorWhite,),
+            color: AppColors.colorWhite,
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(15.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-
               SizedBox(
                 height: size.height * 0.03,
               ),
@@ -105,13 +103,12 @@ class _LoginUserNameControllerState extends State<LoginView> {
                 onSaved: (value) {
                   login_controller.email = value!;
                 },
-                validator: (value ) {
+                validator: (value) {
                   if (value!.isEmpty) {
                     return 'Please enter email';
                   }
                   return null;
                 },
-
               ),
               SizedBox(
                 height: size.height * 0.01,
@@ -122,14 +119,16 @@ class _LoginUserNameControllerState extends State<LoginView> {
                 obscureText: model.isVisible ? false : true,
                 prefixIconData: Icons.lock,
                 suffixIconData:
-                model.isVisible ? Icons.visibility : Icons.visibility_off,
+                    model.isVisible ? Icons.visibility : Icons.visibility_off,
                 controller: _passwordController,
                 onChanged: (value) {
                   model.isValidEmail(value);
                 },
                 onSaved: (value) {
                   login_controller.password = value!;
-                }, validator: (value ) { // this is the new line
+                },
+                validator: (value) {
+                  // this is the new line
                   if (value!.isEmpty) {
                     return 'Password is Required';
                   }
@@ -164,27 +163,27 @@ class _LoginUserNameControllerState extends State<LoginView> {
                     if (response['message'] == 'user found') {
                       Navigator.push(
                         _scaffoldKey.currentContext!,
-                        MaterialPageRoute(builder: (currentContext) =>
-                            HomeView(
-                              email:_userEmailController.text.trim(),
-                            ),
-                         //      AdminDashboardView(
-                         //    email:_userEmailController.text.trim(),
-                         // ),
+                        MaterialPageRoute(
+                          builder: (currentContext) => HomeView(
+                            email: _userEmailController.text.trim(),
+                          ),
+                          //      AdminDashboardView(
+                          //    email:_userEmailController.text.trim(),
+                          // ),
                         ),
                       );
                     } else {
                       print('Error at login');
-                      Navigator.of(_scaffoldKey.currentContext!, rootNavigator: true).pop();
+                      Navigator.of(_scaffoldKey.currentContext!,
+                              rootNavigator: true)
+                          .pop();
                     }
                     //_login();
                   });
 
                   //clearText();
 
-
                   //login_controller.login(_userNameController.text, _passwordController.text);
-
                 },
               ),
               SizedBox(
@@ -197,7 +196,6 @@ class _LoginUserNameControllerState extends State<LoginView> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const SignUpView()),
-
                   );
                 },
               ),
@@ -210,6 +208,7 @@ class _LoginUserNameControllerState extends State<LoginView> {
       ]),
     );
   }
+
   void clearText() {
     _userEmailController.clear();
     _passwordController.clear();
@@ -220,20 +219,9 @@ class _LoginUserNameControllerState extends State<LoginView> {
   Future<dynamic> _handleSubmitted() async {
     print("Username:  ${_userEmailController.text.trim()}");
     print("Password:  ${_passwordController.text.trim()}");
-    var ins = await apiMethod.login(_userEmailController.text.trim(),
-        _passwordController.text.trim());
+    var ins = await apiMethod.login(
+        _userEmailController.text.trim(), _passwordController.text.trim());
     //print("Response: "+ ins['email'].toString() + ins['password'].toString());
     return ins;
   }
 }
-
-
-
-
-
-
-
-
-
-
-

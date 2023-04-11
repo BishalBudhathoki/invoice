@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:invoice/app/core/view-models/client_model.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
@@ -18,7 +17,7 @@ class DropDownMenu extends StatefulWidget {
   @override
   _DropdownMenuState createState() => _DropdownMenuState();
 }
- 
+
 class _DropdownMenuState extends State<DropDownMenu> {
   late Future<List<Patient>> futureClientsData;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -29,13 +28,15 @@ class _DropdownMenuState extends State<DropDownMenu> {
     ApiMethod apiMethod = ApiMethod();
     futureClientsData = apiMethod.fetchPatientData();
   }
+
 //_cardList.forEach((widget) {data.add(_focusedDay.toString());});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: const Text('Client List',
+          title: const Text(
+            'Client List',
             style: TextStyle(
               color: AppColors.colorFontSecondary,
             ),
@@ -118,10 +119,12 @@ class _DropdownMenuState extends State<DropDownMenu> {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                          builder: (context) => TimeAndDatePicker(
-                                          userEmail: widget.userEmail,
-                                          clientEmail: snapshot.data![index].clientEmail,
-                                          ),
+                                            builder: (context) =>
+                                                TimeAndDatePicker(
+                                              userEmail: widget.userEmail,
+                                              clientEmail: snapshot
+                                                  .data![index].clientEmail,
+                                            ),
                                           ));
                                     },
                                   );
@@ -145,8 +148,6 @@ class _DropdownMenuState extends State<DropDownMenu> {
               }),
         ));
   }
-
-
 
   // ApiMethod apiMethod = new ApiMethod();
   // Future<dynamic> _AssignClientToUser(

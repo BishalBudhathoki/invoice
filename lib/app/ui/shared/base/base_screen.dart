@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-abstract class BaseScreen<BaseController> extends GetResponsiveView<BaseController> {
+abstract class BaseScreen<BaseController>
+    extends GetResponsiveView<BaseController> {
   Widget phoneView();
 
   Widget tabletView();

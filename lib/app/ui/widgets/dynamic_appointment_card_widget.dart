@@ -8,12 +8,11 @@ import 'package:invoice/app/ui/widgets/appointment_card_widget.dart';
 import 'package:invoice/backend/api_method.dart';
 
 class DynamicAppointmentCardWidget extends StatefulWidget {
-
   List clientEmailList;
   int listLength;
   String currentUserEmail;
 
-  DynamicAppointmentCardWidget( {
+  DynamicAppointmentCardWidget({
     Key? key,
     required this.clientEmailList,
     required this.listLength,
@@ -22,12 +21,12 @@ class DynamicAppointmentCardWidget extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-   return _DynamicAppointmentCardWidgetState();
+    return _DynamicAppointmentCardWidgetState();
   }
-
 }
 
-class _DynamicAppointmentCardWidgetState extends State<DynamicAppointmentCardWidget> {
+class _DynamicAppointmentCardWidgetState
+    extends State<DynamicAppointmentCardWidget> {
   late Future<List<Patient>> futureClientsData;
   late Future<List> futureData;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -39,37 +38,36 @@ class _DynamicAppointmentCardWidgetState extends State<DynamicAppointmentCardWid
   @override
   void initState() {
     super.initState();
-     print("getFutureClientsData: ${widget.clientEmailList.toString()}");
-     for (var i = 0; i < widget.listLength; i++) {
-       print("getFutureClientsData: ${widget.clientEmailList[i]}");
-     }
-      print("Dynamic: ${widget.currentUserEmail} ${widget.listLength.toString()}");
-      getFutureClientsData();
-      getAppointmentData();
+    print("getFutureClientsData: ${widget.clientEmailList.toString()}");
+    for (var i = 0; i < widget.listLength; i++) {
+      print("getFutureClientsData: ${widget.clientEmailList[i]}");
+    }
+    print(
+        "Dynamic: ${widget.currentUserEmail} ${widget.listLength.toString()}");
+    getFutureClientsData();
+    getAppointmentData();
   }
 
   Future<dynamic> getFutureClientsData() async {
     //print("getFutureClientsData: ${widget.clientEmailList[0]}");
     String emails = widget.clientEmailList.join(',');
-    futureClientsData = ( apiMethod.fetchMultiplePatientData(
-      emails
-         // "${widget.clientEmailList[0].toString()},${widget.clientEmailList[1].toString()}"
+    futureClientsData = (apiMethod.fetchMultiplePatientData(emails
+        // "${widget.clientEmailList[0].toString()},${widget.clientEmailList[1].toString()}"
         //"alkc331@gmail.com,bishalkc331@gmail.com"
 
-    ));
+        ));
     if (futureClientsData != null) {
       setState(() {
         setFutureClientsData = futureClientsData;
       });
       //return futureClientsData;
     }
-      return [setFutureClientsData];
-    }
-
+    return [setFutureClientsData];
+  }
 
   Future<dynamic> getAppointmentData() async {
-    appointmentData = (await apiMethod
-        .getAppointmentData(widget.currentUserEmail)) as Map;
+    appointmentData =
+        (await apiMethod.getAppointmentData(widget.currentUserEmail)) as Map;
     if (appointmentData != null) {
       setState(() {
         setAppointmentData = appointmentData;
@@ -98,33 +96,32 @@ class _DynamicAppointmentCardWidgetState extends State<DynamicAppointmentCardWid
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         print("Current User Email: ${widget.currentUserEmail}");
-                        print("Current Client Email: ${widget.clientEmailList[index]}");
+                        print(
+                            "Current Client Email: ${widget.clientEmailList[index]}");
                         return Row(
                           children: [
                             AppointmentCard(
                               currentClientEmail: widget.clientEmailList[index],
                               currentUserEmail: widget.currentUserEmail,
                               title: 'Appointments',
-
                               iconData: Iconsax.user_square,
                               label: 'Client\'s Name:',
                               text: "${snapshot.data![index].clientFirstName} "
                                   "${snapshot.data![index].clientLastName}",
-
                               iconData1: Iconsax.location,
                               label1: 'Address:',
                               text1: "${snapshot.data![index].clientAddress} "
                                   "${snapshot.data![index].clientCity} "
                                   "${snapshot.data![index].clientState} "
                                   "${snapshot.data![index].clientZip}",
-
                               iconData2: Iconsax.timer_start,
                               label2: 'Start Time:',
-                              text2: "${appointmentData['data'][index]['startTimeList'][index]}",
-
+                              text2:
+                                  "${appointmentData['data'][index]['startTimeList'][index]}",
                               iconData3: Iconsax.timer_pause,
                               label3: 'End Time:',
-                              text3: "${appointmentData ['data'][index]['endTimeList'][index]}",
+                              text3:
+                                  "${appointmentData['data'][index]['endTimeList'][index]}",
                             ),
                             const SizedBox(
                               width: 12,
@@ -142,5 +139,4 @@ class _DynamicAppointmentCardWidgetState extends State<DynamicAppointmentCardWid
           ),
         ));
   }
-
 }

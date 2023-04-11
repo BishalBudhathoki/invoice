@@ -16,9 +16,10 @@ class ConfirmationAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  AlertDialog(
+    return AlertDialog(
       title: Text(title),
-      content: Text(content,
+      content: Text(
+        content,
         style: Theme.of(context).textTheme.bodyMedium,
       ),
       actions: <Widget>[

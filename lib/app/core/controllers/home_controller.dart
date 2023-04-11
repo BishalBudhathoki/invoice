@@ -1,13 +1,12 @@
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
-  late dynamic _email='';
+  late dynamic _email = '';
   String get email => _email;
   set email(String email) => _email = email;
 
   HomeController() {
-    _email =  email;
-
+    _email = email;
   }
 
   // create the user object from json input

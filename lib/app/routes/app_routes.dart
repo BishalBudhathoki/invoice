@@ -12,5 +12,4 @@ abstract class Routes {
   static const profileView = "/profile/view";
   static const profileEdit = "/profile/edit";
   static const changePassword = "/profile/change_password";
-
 }

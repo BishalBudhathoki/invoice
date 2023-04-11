@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 
-
 class ButtonWithVariableWH extends StatelessWidget {
   final String title;
   final bool hasBorder;
@@ -21,7 +20,6 @@ class ButtonWithVariableWH extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-
       child: Ink(
         height: height,
         width: width,
@@ -30,9 +28,9 @@ class ButtonWithVariableWH extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           border: hasBorder
               ? Border.all(
-            color: AppColors.colorPrimary,
-            width: 1.0,
-          )
+                  color: AppColors.colorPrimary,
+                  width: 1.0,
+                )
               : Border.fromBorderSide(BorderSide.none),
         ),
         child: InkWell(
@@ -44,7 +42,8 @@ class ButtonWithVariableWH extends StatelessWidget {
               child: Text(
                 title,
                 style: TextStyle(
-                  color: hasBorder ? AppColors.colorPrimary : AppColors.colorWhite,
+                  color:
+                      hasBorder ? AppColors.colorPrimary : AppColors.colorWhite,
                   fontWeight: FontWeight.w600,
                   fontSize: 16.0,
                 ),

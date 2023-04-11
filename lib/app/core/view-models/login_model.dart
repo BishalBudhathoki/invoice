@@ -10,12 +10,14 @@ class LoginModel extends ChangeNotifier {
     _isVisible = value;
     notifyListeners();
   }
+
   get isVisible1 => _isVisible1;
   bool _isVisible1 = false;
   set isVisible1(value) {
     _isVisible1 = value;
     notifyListeners();
   }
+
   bool _isValid = false;
   get isValid => _isValid;
 
@@ -27,5 +29,4 @@ class LoginModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-
 }

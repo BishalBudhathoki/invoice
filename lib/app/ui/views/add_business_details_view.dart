@@ -47,7 +47,8 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text('Add Business Details',
+        title: const Text(
+          'Add Business Details',
           style: TextStyle(
             color: AppColors.colorFontSecondary,
           ),
@@ -206,12 +207,18 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
                     final response = await _addBusiness();
                     if (response == "success") {
                       print('Add button pressed');
-                      Navigator.of(_scaffoldKey.currentContext!, rootNavigator: true).pop();
-                      popUpClientDetails(_scaffoldKey.currentContext!, "success", "Business");
+                      Navigator.of(_scaffoldKey.currentContext!,
+                              rootNavigator: true)
+                          .pop();
+                      popUpClientDetails(
+                          _scaffoldKey.currentContext!, "success", "Business");
                     } else {
                       print('Error at business adding');
-                      Navigator.of(_scaffoldKey.currentContext!, rootNavigator: true).pop();
-                      popUpClientDetails(_scaffoldKey.currentContext!, "error", "Business");
+                      Navigator.of(_scaffoldKey.currentContext!,
+                              rootNavigator: true)
+                          .pop();
+                      popUpClientDetails(
+                          _scaffoldKey.currentContext!, "error", "Business");
                     }
                   });
                 }

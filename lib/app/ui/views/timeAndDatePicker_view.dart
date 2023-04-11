@@ -42,6 +42,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
   void initState() {
     super.initState();
   }
+
   ApiMethod apiMethod = ApiMethod();
   List dateList = [];
   List startTimeList = [];
@@ -50,7 +51,9 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
   List<Widget> _cardList = [];
   List<String> data = [];
   void _addCardWidget() {
-    _cardList.forEach((widget) {data.add(_focusedDay.toString());});
+    _cardList.forEach((widget) {
+      data.add(_focusedDay.toString());
+    });
     setState(() {
       _cardList.add(_card());
     });
@@ -65,134 +68,133 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child:
-      // card to display selected date
-      Container(
-          height: 110,
-          width: 380,
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(25)),
-            color: Colors.blueGrey,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    height: 100,
-                    width: 100,
-                    child: Image.asset(
-                      'assets/icons/fav-folder-dynamic-color.png',
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 110,
-                    width: 211,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Row(
-                          children: [
-                            const Text(
-                              "Date: ",
-                              style: TextStyle(
-                                color: AppColors.colorFontSecondary,
-                                fontSize: AppDimens.fontSizeMedium,
-                                fontWeight: FontWeight.w900,
-                                fontFamily: 'Lato',
-                              ),
-                            ),
-                            Text(
-                              "${_focusedDay.year}-${_focusedDay.month}-${_focusedDay.day}",
-                              style: const TextStyle(
-                                color: AppColors.colorFontSecondary,
-                                fontSize: AppDimens.fontSizeMedium,
-                                fontWeight: FontWeight.w900,
-                                fontFamily: 'Lato',
-                              ),
-                            ),
-                          ],
+          // card to display selected date
+          Container(
+              height: 110,
+              width: 380,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(25)),
+                color: Colors.blueGrey,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: Image.asset(
+                          'assets/icons/fav-folder-dynamic-color.png',
+                          fit: BoxFit.fill,
                         ),
-                        const SizedBox(height: 8.0),
-                        Row(
+                      ),
+                      SizedBox(
+                        height: 110,
+                        width: 211,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            const Text(
-                              "Start Time: ",
-                              style: TextStyle(
-                                color: AppColors.colorFontSecondary,
-                                fontSize: AppDimens.fontSizeMedium,
-                                fontWeight: FontWeight.w900,
-                                fontFamily: 'Lato',
-                              ),
+                            Row(
+                              children: [
+                                const Text(
+                                  "Date: ",
+                                  style: TextStyle(
+                                    color: AppColors.colorFontSecondary,
+                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontWeight: FontWeight.w900,
+                                    fontFamily: 'Lato',
+                                  ),
+                                ),
+                                Text(
+                                  "${_focusedDay.year}-${_focusedDay.month}-${_focusedDay.day}",
+                                  style: const TextStyle(
+                                    color: AppColors.colorFontSecondary,
+                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontWeight: FontWeight.w900,
+                                    fontFamily: 'Lato',
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 8.0),
-                            Text(
-                              _focusedTime.format(context),
-                              style: const TextStyle(
-                                color: AppColors.colorFontSecondary,
-                                fontSize: AppDimens.fontSizeMedium,
-                                fontWeight: FontWeight.w900,
-                                fontFamily: 'Lato',
-                              ),
+                            Row(
+                              children: [
+                                const Text(
+                                  "Start Time: ",
+                                  style: TextStyle(
+                                    color: AppColors.colorFontSecondary,
+                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontWeight: FontWeight.w900,
+                                    fontFamily: 'Lato',
+                                  ),
+                                ),
+                                const SizedBox(height: 8.0),
+                                Text(
+                                  _focusedTime.format(context),
+                                  style: const TextStyle(
+                                    color: AppColors.colorFontSecondary,
+                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontWeight: FontWeight.w900,
+                                    fontFamily: 'Lato',
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8.0),
+                            Row(
+                              children: [
+                                const Text(
+                                  "End Time: ",
+                                  style: TextStyle(
+                                    color: AppColors.colorFontSecondary,
+                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontWeight: FontWeight.w900,
+                                    fontFamily: 'Lato',
+                                  ),
+                                ),
+                                Text(
+                                  _focusedTime1.format(context),
+                                  style: const TextStyle(
+                                    color: AppColors.colorFontSecondary,
+                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontWeight: FontWeight.w900,
+                                    fontFamily: 'Lato',
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8.0),
+                            Row(
+                              children: [
+                                const Text(
+                                  "Break: ",
+                                  style: TextStyle(
+                                    color: AppColors.colorFontSecondary,
+                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontWeight: FontWeight.w900,
+                                    fontFamily: 'Lato',
+                                  ),
+                                ),
+                                Text(
+                                  _selectedBreak,
+                                  style: const TextStyle(
+                                    color: AppColors.colorFontSecondary,
+                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontWeight: FontWeight.w900,
+                                    fontFamily: 'Lato',
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8.0),
-                        Row(
-                          children: [
-                            const Text(
-                              "End Time: ",
-                              style: TextStyle(
-                                color: AppColors.colorFontSecondary,
-                                fontSize: AppDimens.fontSizeMedium,
-                                fontWeight: FontWeight.w900,
-                                fontFamily: 'Lato',
-                              ),
-                            ),
-                            Text(
-                              _focusedTime1.format(context),
-                              style: const TextStyle(
-                                color: AppColors.colorFontSecondary,
-                                fontSize: AppDimens.fontSizeMedium,
-                                fontWeight: FontWeight.w900,
-                                fontFamily: 'Lato',
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8.0),
-                        Row(
-                          children: [
-                            const Text(
-                              "Break: ",
-                              style: TextStyle(
-                                color: AppColors.colorFontSecondary,
-                                fontSize: AppDimens.fontSizeMedium,
-                                fontWeight: FontWeight.w900,
-                                fontFamily: 'Lato',
-                              ),
-                            ),
-                            Text(
-                              _selectedBreak,
-                              style: const TextStyle(
-                                color: AppColors.colorFontSecondary,
-                                fontSize: AppDimens.fontSizeMedium,
-                                fontWeight: FontWeight.w900,
-                                fontFamily: 'Lato',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
-                ]
-            ),
-          )
-      ),
+                      )
+                    ]),
+              )),
     );
   }
+
   void _showDatePicker() {
     showDatePicker(
       context: context,
@@ -206,7 +208,6 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
             colorScheme: const ColorScheme.light(
               primary: AppColors.colorPrimary, // <-- SEE HERE
               onPrimary: Colors.white, // <-- SEE HERE
-
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
@@ -220,7 +221,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
     ).then((value) {
       setState(() {
         _isVisibleDate = false;
-        _focusedDay = value??DateTime.now();
+        _focusedDay = value ?? DateTime.now();
       });
       print("Hello: $value $_focusedDay");
     });
@@ -236,7 +237,6 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
             colorScheme: const ColorScheme.light(
               primary: AppColors.colorPrimary, // <-- SEE HERE
               onPrimary: Colors.white, // <-- SEE HERE
-
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
@@ -250,13 +250,13 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
     ).then((value) {
       setState(() {
         _isVisibleTime = false;
-        _focusedTime = value??TimeOfDay.now();
+        _focusedTime = value ?? TimeOfDay.now();
         print(_focusedTime.format(context));
       });
       print("Time: $value $_focusedTime");
     });
-
   }
+
   void _showTimePicker1() {
     showTimePicker(
       context: context,
@@ -267,7 +267,6 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
             colorScheme: const ColorScheme.light(
               primary: AppColors.colorPrimary, // <-- SEE HERE
               onPrimary: Colors.white, // <-- SEE HERE
-
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
@@ -281,11 +280,10 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
     ).then((value) {
       setState(() {
         _isVisibleTime1 = false;
-        _focusedTime1 = value??TimeOfDay.now();
+        _focusedTime1 = value ?? TimeOfDay.now();
       });
       print("Time: $value $_focusedTime1");
     });
-
   }
 
   @override
@@ -300,8 +298,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child:
-        Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Row(
@@ -314,14 +311,13 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                       replacement: const Text("Please Select a Date",
                           style: TextStyle(
                               color: AppColors.colorPrimary,
-                              fontWeight: FontWeight.bold)
-                      ),
-                      child: Text("Selected Date: "
+                              fontWeight: FontWeight.bold)),
+                      child: Text(
+                          "Selected Date: "
                           "${_focusedDay.day}/${_focusedDay.month}/${_focusedDay.year}",
                           style: const TextStyle(
                               color: AppColors.colorPrimary,
-                              fontWeight: FontWeight.bold)
-                      ),
+                              fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(height: 8.0),
                     ButtonWithVariableWH(
@@ -341,13 +337,12 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                       replacement: const Text("Please Select Start Time",
                           style: TextStyle(
                               color: AppColors.colorPrimary,
-                              fontWeight: FontWeight.bold)
-                      ),
-                      child: Text("Selected Time: ${_focusedTime.format(context)}",
+                              fontWeight: FontWeight.bold)),
+                      child: Text(
+                          "Selected Time: ${_focusedTime.format(context)}",
                           style: const TextStyle(
                               color: AppColors.colorPrimary,
-                              fontWeight: FontWeight.bold)
-                      ),
+                              fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(height: 8.0),
                     ButtonWithVariableWH(
@@ -376,14 +371,12 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                           hintText: "Break Allowed?",
                           labelText: 'Break Allowed?',
                           labelStyle: TextStyle(
-                            color: AppColors.colorFontPrimary,
-                              fontWeight: FontWeight.bold
-                          ),
+                              color: AppColors.colorFontPrimary,
+                              fontWeight: FontWeight.bold),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
                         ),
-
                         borderRadius: BorderRadius.circular(10),
                         onChanged: (String? value) {
                           setState(() {
@@ -393,12 +386,13 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                         items: breakOptionItems.map((String? item) {
                           return DropdownMenuItem<String>(
                             value: item,
-                            child: Text(item!,
+                            child: Text(
+                              item!,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           );
                         }).toList(),
-                        value:  _selectedBreak,
+                        value: _selectedBreak,
                       ),
                     ),
                   ],
@@ -410,13 +404,12 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                       replacement: const Text("Please Select End Time",
                           style: TextStyle(
                               color: AppColors.colorPrimary,
-                              fontWeight: FontWeight.bold)
-                      ),
-                      child: Text("Selected Time: ${_focusedTime1.format(context)}",
+                              fontWeight: FontWeight.bold)),
+                      child: Text(
+                          "Selected Time: ${_focusedTime1.format(context)}",
                           style: const TextStyle(
                               color: AppColors.colorPrimary,
-                              fontWeight: FontWeight.bold)
-                      ),
+                              fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(height: 8.0),
                     ButtonWithVariableWH(
@@ -431,15 +424,13 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                 ),
               ],
             ),
-
             Expanded(
               child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: _cardList.length,
                   itemBuilder: (context, index) {
                     return _cardList[index];
-                  }
-              ),
+                  }),
             ),
             ButtonWidget(
               title: 'Add more?',
@@ -457,36 +448,36 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                   if (response['message'].toString() == "Success") {
                     print("Success");
                     Navigator.pop(_scaffoldKey.currentContext!);
-                        FlushBarWidget fbw = FlushBarWidget();
-                        fbw.flushBar(
-                          context: _scaffoldKey.currentContext!,
-                           title: "Success",
-                           message: "Client assigned successfully",
-                           backgroundColor: AppColors.colorSecondary,
-                             );
-                        Future.delayed(const Duration(seconds: 3), () {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        });
+                    FlushBarWidget fbw = FlushBarWidget();
+                    fbw.flushBar(
+                      context: _scaffoldKey.currentContext!,
+                      title: "Success",
+                      message: "Client assigned successfully",
+                      backgroundColor: AppColors.colorSecondary,
+                    );
+                    Future.delayed(const Duration(seconds: 3), () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    });
                   } else {
                     print("Failed");
                     Navigator.pop(_scaffoldKey.currentContext!);
-                        FlushBarWidget fbw = new FlushBarWidget();
-                        fbw.flushBar(
-                          context: _scaffoldKey.currentContext!,
-                          title: "Error",
-                          message: "Client not assigned",
-                          backgroundColor: AppColors.error,
-                        );
-                        Future.delayed(const Duration(seconds: 3), () {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        });
+                    FlushBarWidget fbw = new FlushBarWidget();
+                    fbw.flushBar(
+                      context: _scaffoldKey.currentContext!,
+                      title: "Error",
+                      message: "Client not assigned",
+                      backgroundColor: AppColors.error,
+                    );
+                    Future.delayed(const Duration(seconds: 3), () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    });
                   }
                 });
               },
@@ -509,7 +500,6 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
       startTimeList,
       endTimeList,
       breakList,
-
     );
     //print("Response: "+ ins['email'].toString() + ins['password'].toString());
     return ins;
@@ -518,9 +508,8 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
   Stream<Text> getDate(Duration refreshTime) async* {
     while (true) {
       await Future.delayed(refreshTime);
-      yield Text("Selected Date: ${_focusedDay.year}-${_focusedDay.month}-${_focusedDay.day}");
+      yield Text(
+          "Selected Date: ${_focusedDay.year}-${_focusedDay.month}-${_focusedDay.day}");
     }
   }
-
 }
-

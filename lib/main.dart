@@ -36,9 +36,13 @@ void main() {
         debugShowCheckedModeBanner: false,
         initialRoute: '/login',
         routes: {
-          '/admin': (context) => AdminDashboardView(email: '',),
+          '/admin': (context) => AdminDashboardView(
+                email: '',
+              ),
           '/login': (context) => LoginView(),
-          '/home': (context) => HomeView(email: '',),
+          '/home': (context) => HomeView(
+                email: '',
+              ),
           '/signup': (context) => SignUpView(),
           '/home/addClientDetails': (context) => AddClientDetails(),
           '/home/addBusinessDetails': (context) => AddBusinessDetails(),
@@ -59,7 +63,8 @@ void main() {
       debugPrint('');
       rootBundle.loadString('lib/main.dart').then((code) {
         final uri = Uri.dataFromString(code,
-            mimeType: 'application/dart', encoding: Encoding.getByName('utf-8'));
+            mimeType: 'application/dart',
+            encoding: Encoding.getByName('utf-8'));
         Isolate.spawnUri(uri, [], null);
       });
     });

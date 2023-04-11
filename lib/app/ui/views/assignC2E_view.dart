@@ -15,20 +15,21 @@ class AssignC2E extends StatefulWidget {
 class _AssignC2EState extends State<AssignC2E> {
   ApiMethod apiMethod = new ApiMethod();
   late Future<List<User>> futureUserData;
- // late Future<List<Patient>> futureClientsData;
+  // late Future<List<Patient>> futureClientsData;
 
   @override
   void initState() {
     super.initState();
     futureUserData = apiMethod.fetchUserData();
-   // futureClientsData = apiMethod.fetchPatientData();
+    // futureClientsData = apiMethod.fetchPatientData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Employee List',
+        title: const Text(
+          'Employee List',
           style: TextStyle(
             color: AppColors.colorFontSecondary,
           ),

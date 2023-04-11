@@ -31,7 +31,6 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewControllerState extends State<HomeView> {
-
   var eml;
   var ins = {};
 
@@ -59,6 +58,7 @@ class _HomeViewControllerState extends State<HomeView> {
       return ins;
     }
   }
+
   Future<dynamic> getAppointmentData() async {
     appointmentData = (await apiMethod.getAppointmentData(widget.email)) as Map;
     if (appointmentData != null) {
@@ -81,12 +81,11 @@ class _HomeViewControllerState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: AppColors.colorWhite,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(context.height * 0.1),
-        child:  AppBar(
+        child: AppBar(
           toolbarHeight: context.height * 0.1,
           backgroundColor: AppColors.colorWhite,
           automaticallyImplyLeading: false,
@@ -125,16 +124,15 @@ class _HomeViewControllerState extends State<HomeView> {
                       //         clientEmailList: clientEmailList,)),
                       // );
                     },
-
-                    child: Image.asset('assets/images/pari-profile.png',)
-                ),
+                    child: Image.asset(
+                      'assets/images/pari-profile.png',
+                    )),
               ),
             ),
           ],
         ),
       ),
       body: Padding(
-
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
         child: SingleChildScrollView(
           child: Column(
@@ -160,16 +158,18 @@ class _HomeViewControllerState extends State<HomeView> {
                     itemCount: getLength(),
                     itemBuilder: (BuildContext context, int index) {
                       // filter the data in the setAppointmentData map based on the client email
-                      var dataForClientEmail = setAppointmentData['data'].map((item) =>
-                      item['clientEmail']).toList();
-                      print("data for client email: $dataForClientEmail ${getLength()} ${index}");
+                      var dataForClientEmail = setAppointmentData['data']
+                          .map((item) => item['clientEmail'])
+                          .toList();
+                      print(
+                          "data for client email: $dataForClientEmail ${getLength()} ${index}");
                       // display the data for the client email
-                      return  Container(
+                      return Container(
                         // change the height calculation to context.height * 0.35 * index,
                         // so that it takes into account the current index of the item being built
                         // and not the total item count.
                         height: context.height * 0.38 * index,
-                        width: context.width  * index,
+                        width: context.width * index,
 
                         child: DynamicAppointmentCardWidget(
                           currentUserEmail: widget.email,
@@ -178,9 +178,7 @@ class _HomeViewControllerState extends State<HomeView> {
                         ),
                       );
                     },
-                  )
-
-              ),
+                  )),
               SizedBox(height: context.height * 0.01),
               SizedBox(
                   height: 348,

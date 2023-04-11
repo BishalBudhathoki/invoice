@@ -6,7 +6,6 @@ class AssignedClientAppointment {
   late final List endTimeList;
   late final List breakList;
 
-
   AssignedClientAppointment({
     required this.userEmail,
     required this.clientEmail,

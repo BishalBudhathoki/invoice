@@ -7,7 +7,7 @@ class OptionMenuWidget extends StatelessWidget {
   final String iconName;
   final IconData iconSax;
   final VoidCallback onPressed;
-  
+
   const OptionMenuWidget({
     Key? key,
     required this.iconName,
@@ -40,7 +40,6 @@ class OptionMenuWidget extends StatelessWidget {
                     fontWeight: FontWeight.w900,
                     fontFamily: 'Loto',
                   )),
-
             ],
           ),
         ),

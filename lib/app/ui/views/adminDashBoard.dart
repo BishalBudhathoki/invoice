@@ -36,8 +36,6 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
   var ins = {};
   ApiMethod apiMethod = new ApiMethod();
 
-
-
   @override
   void initState() {
     print('init');
@@ -49,8 +47,6 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
     super.initState();
   }
 
-
-
   Future<dynamic> getData() async {
     ins = await apiMethod.getInitData(widget.email);
     setState(() {
@@ -59,12 +55,10 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
     return ins;
   }
 
-
-@override
+  @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
-
 
     return Scaffold(
       key: _scaffoldKey,
@@ -111,7 +105,9 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
           ],
         ),
       ),
-      endDrawer: NavBarWidget(context: context,),
+      endDrawer: NavBarWidget(
+        context: context,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(15.0),
@@ -162,7 +158,8 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const AddBusinessDetails()),
+                                builder: (context) =>
+                                    const AddBusinessDetails()),
                           );
                         },
                       ),
@@ -200,18 +197,14 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
                         _scaffoldKey.currentContext!,
                         MaterialPageRoute(
                             builder: (context) =>
-                                HolidayListView(holidays: holidays)
-                        ),
+                                HolidayListView(holidays: holidays)),
                       );
                     }
-                  }
-              ),
-
+                  }),
             ],
           ),
         ),
       ),
     );
   }
-
 }

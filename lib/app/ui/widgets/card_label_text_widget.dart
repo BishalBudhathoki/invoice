@@ -7,10 +7,8 @@ class CardLabelTextWidget extends StatelessWidget {
   final String label;
   final String text;
 
-  const CardLabelTextWidget(this.iconData, this.label, this.text,
-      {Key? key})
+  const CardLabelTextWidget(this.iconData, this.label, this.text, {Key? key})
       : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +25,7 @@ class CardLabelTextWidget extends StatelessWidget {
         Flexible(
           child: Row(
             children: [
-              Text(
-                  label,
+              Text(label,
                   style: const TextStyle(
                     color: AppColors.colorFontPrimary,
                     fontSize: AppDimens.fontSizeMedium,
@@ -39,8 +36,7 @@ class CardLabelTextWidget extends StatelessWidget {
                 width: 05,
               ),
               Flexible(
-                child: Text(
-                    text,
+                child: Text(text,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: AppColors.colorFontPrimary,

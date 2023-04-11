@@ -45,7 +45,8 @@ class _LineItemsControllerState extends State<LineItemsView> {
   }
 
   getLineItems() async {
-    final List<Map<String, dynamic>> lineItems = (await apiMethod.getLineItems());
+    final List<Map<String, dynamic>> lineItems =
+        (await apiMethod.getLineItems());
     //print(lineItems);
     setState(() {
       print("Line Items here: $lineItems");
@@ -53,6 +54,7 @@ class _LineItemsControllerState extends State<LineItemsView> {
       print("Line Items here: $_lineItems");
     });
   }
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -75,7 +77,8 @@ class _LineItemsControllerState extends State<LineItemsView> {
               final itemNumber = item.values.first;
               final itemDescription = item.values.last;
               print(item['itemNumber']);
-              return _buildTile("$itemNumber"
+              return _buildTile(
+                  "$itemNumber"
                   "\n$itemDescription",
                   AppColors.colorPrimary);
             }).toList()),
@@ -83,4 +86,3 @@ class _LineItemsControllerState extends State<LineItemsView> {
     );
   }
 }
-

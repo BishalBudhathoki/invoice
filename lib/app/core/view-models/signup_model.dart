@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:invoice/app/ui/shared/values/strings/asset_strings.dart';
 
-class SignupModel extends ChangeNotifier{
+class SignupModel extends ChangeNotifier {
   // late String email;
   // late String password;
   // late String confirmPassword;
@@ -29,7 +29,6 @@ class SignupModel extends ChangeNotifier{
     _isVisible = value;
     notifyListeners();
   }
-
 
   bool _isValid = false;
   get isValid => _isValid;
@@ -63,5 +62,4 @@ class SignupModel extends ChangeNotifier{
   //   companyCountry = json['companyCountry'];
   //   companyPhoneNumber = json['companyPhoneNumber'];
   // }
-
 }

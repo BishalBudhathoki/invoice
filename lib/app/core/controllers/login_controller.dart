@@ -6,14 +6,13 @@ class LoginController extends GetxController {
   //final LoginModel _loginModel = Get.put(LoginModel());
   late final LoginView _loginView = Get.put(LoginView());
   final _user = ''.obs;
-  late dynamic _email='';
-  late dynamic _password='';
+  late dynamic _email = '';
+  late dynamic _password = '';
   String get email => _email;
   String get password => _password;
   set email(String email) => _email = email;
   set password(String password) => _password = password;
   String get user => _user.value;
-
 
   // set model(LoginModel model) {
   //   this.model = _loginModel;
@@ -25,16 +24,14 @@ class LoginController extends GetxController {
 
   set user(String value) => _user.value = value;
 
-
   // LoginController( ) {
   //   _user.value = '';
   //   _password.value = '';
   // }
 
-
   LoginController() {
-    _email =  email;
-    _password =  password;
+    _email = email;
+    _password = password;
   }
 
   LoginControllers(String email, String password) async {
@@ -42,7 +39,6 @@ class LoginController extends GetxController {
     _password = await password;
   }
   //get set methods for email and password
-
 
   // create the user object from json input
   LoginController.fromJson(Map<String, dynamic> json) {

@@ -43,9 +43,9 @@ class HomeDetailCard extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(left: 10, top: 40, right: 16),
                 child: Text(
-                    cardLabel,
-                    textAlign: TextAlign.right,
-                    style: Theme.of(context).textTheme.labelLarge,
+                  cardLabel,
+                  textAlign: TextAlign.right,
+                  style: Theme.of(context).textTheme.labelLarge,
                 ),
               ),
             ),
@@ -58,7 +58,6 @@ class HomeDetailCard extends StatelessWidget {
               child: image,
             ),
           ),
-
           InkWell(
             onTap: onPressed,
             child: Column(

@@ -160,7 +160,7 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                   title: 'Sign Up',
                   hasBorder: false,
                   onPressed: () async {
-                    if(models.isValid) {
+                    if (models.isValid) {
                       showAlertDialog(context);
                       Future.delayed(const Duration(seconds: 3), () async {
                         final response = await _signupUser();
@@ -168,20 +168,21 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                           print('Signup button pressed');
                           Navigator.push(
                             _scaffoldKey.currentContext!,
-                            MaterialPageRoute(builder: (context) =>
-                                HomeView(
-                                  email: _signUpEmailController.text,
-                                  // lastName: _signUpUserLastNameController.text,
-                                )),
+                            MaterialPageRoute(
+                                builder: (context) => HomeView(
+                                      email: _signUpEmailController.text,
+                                      // lastName: _signUpUserLastNameController.text,
+                                    )),
                           );
                         } else {
                           print('Error at signup');
-                          Navigator.of(_scaffoldKey.currentContext!, rootNavigator: true).pop();
+                          Navigator.of(_scaffoldKey.currentContext!,
+                                  rootNavigator: true)
+                              .pop();
                         }
 
                         //_login();
                       });
-
                     }
 
                     //login_controller.login(_userNameController.text, _passwordController.text);
@@ -198,14 +199,15 @@ class _SignupUserNameControllerState extends State<SignUpView> {
   ApiMethod apiMethod = new ApiMethod();
   Future<bool> _signupUser() async {
     var ins = await apiMethod.signupUser(
-        _signUpUserFirstNameController.text,
-        _signUpUserLastNameController.text,
-        _signUpEmailController.text,
-        _signUpPasswordController.text,
+      _signUpUserFirstNameController.text,
+      _signUpUserLastNameController.text,
+      _signUpEmailController.text,
+      _signUpPasswordController.text,
     );
     //print("Response: "+ ins['email'].toString() );
 
-    if (_signUpPasswordController.text == _signUpConfirmPasswordController.text) {
+    if (_signUpPasswordController.text ==
+        _signUpConfirmPasswordController.text) {
       // if(ins['email'] != null) {
       //
       // }

@@ -44,7 +44,9 @@ class TextFieldWidget extends StatelessWidget {
         fontSize: AppDimens.fontSizeNormal,
       ),
       decoration: InputDecoration(
-        labelStyle: TextStyle(color: AppColors.colorPrimary,),
+        labelStyle: TextStyle(
+          color: AppColors.colorPrimary,
+        ),
         focusColor: AppColors.colorPrimary,
         filled: true,
         enabledBorder: UnderlineInputBorder(
@@ -53,7 +55,9 @@ class TextFieldWidget extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: AppColors.colorPrimary,),
+          borderSide: BorderSide(
+            color: AppColors.colorPrimary,
+          ),
         ),
         labelText: hintText,
         prefixIcon: Icon(

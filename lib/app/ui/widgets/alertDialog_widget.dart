@@ -10,23 +10,20 @@ showAlertDialog(BuildContext context) {
       width: context.width * 0.9,
       child: Row(
         children: [
-          Row(
-            children: const [
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppColors.colorFontPrimary),
-              ),
-
-              Text("  Checking details...",
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: AppColors.colorFontPrimary,
-                    fontSize: AppDimens.fontSizeLarge,
-                    fontWeight: FontWeight.w800,
-                    fontFamily: 'Lato',
-                  )
-              ),
-            ]
-          ),
+          Row(children: const [
+            CircularProgressIndicator(
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(AppColors.colorFontPrimary),
+            ),
+            Text("  Checking details...",
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: AppColors.colorFontPrimary,
+                  fontSize: AppDimens.fontSizeLarge,
+                  fontWeight: FontWeight.w800,
+                  fontFamily: 'Lato',
+                )),
+          ]),
         ],
       ),
     ),

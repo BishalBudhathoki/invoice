@@ -41,15 +41,20 @@ class _ClientAndAppointmentDetailsState
   }
 
   void updateTimerModel() {
-    if (timerModel.isRunning && timerModel.getTimerClientEmail().contains(widget.clientEmail.toString())) {
+    if (timerModel.isRunning &&
+        timerModel
+            .getTimerClientEmail()
+            .contains(widget.clientEmail.toString())) {
       print("1 : ${widget.clientEmail} : ${timerModel.getTimerClientEmail()}");
       timerModel.stop();
       timerModel.setTimerClientEmail(widget.clientEmail);
-    } else if (timerModel.isRunning && (widget.clientEmail != timerModel.getTimerClientEmail() )) {
+    } else if (timerModel.isRunning &&
+        (widget.clientEmail != timerModel.getTimerClientEmail())) {
       print("2");
       return;
     } else {
-      print("3: ${widget.clientEmail} : ${clientAndAppointmentData['data']?['clientDetails'][0]?['clientEmail']}");
+      print(
+          "3: ${widget.clientEmail} : ${clientAndAppointmentData['data']?['clientDetails'][0]?['clientEmail']}");
       timerModel.start();
       timerModel.setTimerClientEmail(widget.clientEmail);
     }
@@ -106,74 +111,74 @@ class _ClientAndAppointmentDetailsState
                 const SizedBox(height: 10),
                 ListTile(
                   dense: true,
-                  visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                  visualDensity:
+                      const VisualDensity(horizontal: 0, vertical: -4),
                   leading: Text("Full Name:",
                       style: Theme.of(context).textTheme.bodyLarge),
                   title: const SizedBox(width: 20),
                   trailing: Text(
-                      '${clientAndAppointmentData['data']?['clientDetails'][0]?
-                      ['clientFirstName'] ?? "No"} ${clientAndAppointmentData['data']?
-                      ['clientDetails'][0]?['clientLastName'] ?? "Name"}',
+                      '${clientAndAppointmentData['data']?['clientDetails'][0]?['clientFirstName'] ?? "No"} ${clientAndAppointmentData['data']?['clientDetails'][0]?['clientLastName'] ?? "Name"}',
                       style: Theme.of(context).textTheme.bodyMedium),
                 ),
                 ListTile(
                   dense: true,
-                  visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                  visualDensity:
+                      const VisualDensity(horizontal: 0, vertical: -4),
                   leading: Text("Email:",
                       style: Theme.of(context).textTheme.bodyLarge),
                   title: const SizedBox(width: 20),
                   trailing: Text(
-                      '${clientAndAppointmentData['data']?['clientDetails'][0]?
-                      ['clientEmail'] ?? "No data found"}',
+                      '${clientAndAppointmentData['data']?['clientDetails'][0]?['clientEmail'] ?? "No data found"}',
                       style: Theme.of(context).textTheme.bodyMedium),
                 ),
                 ListTile(
                   dense: true,
-                  visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                  visualDensity:
+                      const VisualDensity(horizontal: 0, vertical: -4),
                   leading: Text("Phone:",
                       style: Theme.of(context).textTheme.bodyLarge),
                   title: const SizedBox(width: 20),
                   trailing: Text(
-                      '${clientAndAppointmentData['data']?['clientDetails'][0]?
-                      ['clientPhone'] ?? "No data found"}',
+                      '${clientAndAppointmentData['data']?['clientDetails'][0]?['clientPhone'] ?? "No data found"}',
                       style: Theme.of(context).textTheme.bodyMedium),
                 ),
                 ListTile(
                   dense: true,
-                  visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                  visualDensity:
+                      const VisualDensity(horizontal: 0, vertical: -4),
                   leading: Text("Address:",
                       style: Theme.of(context).textTheme.bodyLarge),
                   title: const SizedBox(width: 20),
                   trailing: Text(
-                      '${clientAndAppointmentData['data']?['clientDetails'][0]?
-                      ['clientAddress'] ?? "No data found"}',
+                      '${clientAndAppointmentData['data']?['clientDetails'][0]?['clientAddress'] ?? "No data found"}',
                       style: Theme.of(context).textTheme.bodyMedium),
                 ),
                 ListTile(
                   dense: true,
-                  visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                  visualDensity:
+                      const VisualDensity(horizontal: 0, vertical: -4),
                   leading: Text("City:",
                       style: Theme.of(context).textTheme.bodyLarge),
                   title: const SizedBox(width: 20),
                   trailing: Text(
-                      '${clientAndAppointmentData['data']?['clientDetails'][0]?
-                      ['clientCity'] ?? "No data found"}',
+                      '${clientAndAppointmentData['data']?['clientDetails'][0]?['clientCity'] ?? "No data found"}',
                       style: Theme.of(context).textTheme.bodyMedium),
                 ),
                 ListTile(
                   dense: true,
-                  visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                  visualDensity:
+                      const VisualDensity(horizontal: 0, vertical: -4),
                   leading: Text("State:",
                       style: Theme.of(context).textTheme.bodyLarge),
                   title: const SizedBox(width: 20),
                   trailing: Text(
-                      '${clientAndAppointmentData['data']?['clientDetails'][0]?
-                      ['clientState'] ?? "No data found"}',
+                      '${clientAndAppointmentData['data']?['clientDetails'][0]?['clientState'] ?? "No data found"}',
                       style: Theme.of(context).textTheme.bodyMedium),
                 ),
                 ListTile(
                   dense: true,
-                  visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                  visualDensity:
+                      const VisualDensity(horizontal: 0, vertical: -4),
                   leading: Text("Zip:",
                       style: Theme.of(context).textTheme.bodyLarge),
                   title: const SizedBox(width: 20),
@@ -186,7 +191,8 @@ class _ClientAndAppointmentDetailsState
                   child: Table(
                     textDirection: TextDirection.ltr,
                     border: TableBorder.all(
-                        color: AppColors.colorFontPrimary,),
+                      color: AppColors.colorFontPrimary,
+                    ),
                     columnWidths: const {
                       0: FlexColumnWidth(3.6),
                       1: FlexColumnWidth(3.5),
@@ -225,8 +231,11 @@ class _ClientAndAppointmentDetailsState
                           padding: const EdgeInsets.all(8),
                           child: Text(
                             textAlign: TextAlign.center,
-                            (clientAndAppointmentData['data']?['assignedClient'][0]?
-                            ['dateList'] ?? ["No data found"]).join("\n").toString(),
+                            (clientAndAppointmentData['data']?['assignedClient']
+                                        [0]?['dateList'] ??
+                                    ["No data found"])
+                                .join("\n")
+                                .toString(),
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ),
@@ -234,8 +243,11 @@ class _ClientAndAppointmentDetailsState
                           padding: const EdgeInsets.all(8),
                           child: Text(
                             textAlign: TextAlign.center,
-                            (clientAndAppointmentData['data']?['assignedClient'][0]?
-                            ['startTimeList'] ?? ["No data found"]).join("\n").toString(),
+                            (clientAndAppointmentData['data']?['assignedClient']
+                                        [0]?['startTimeList'] ??
+                                    ["No data found"])
+                                .join("\n")
+                                .toString(),
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ),
@@ -243,8 +255,11 @@ class _ClientAndAppointmentDetailsState
                           padding: const EdgeInsets.all(8),
                           child: Text(
                             textAlign: TextAlign.center,
-                            (clientAndAppointmentData['data']?['assignedClient'][0]?
-                            ['endTimeList'] ?? ["No data found"]).join("\n").toString(),
+                            (clientAndAppointmentData['data']?['assignedClient']
+                                        [0]?['endTimeList'] ??
+                                    ["No data found"])
+                                .join("\n")
+                                .toString(),
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ),
@@ -252,42 +267,59 @@ class _ClientAndAppointmentDetailsState
                           padding: const EdgeInsets.all(8),
                           child: Text(
                             textAlign: TextAlign.center,
-                            (clientAndAppointmentData['data']?['assignedClient'][0]?
-                            ['breakList'] ?? ["No data found"]).join("\n").toString(),
+                            (clientAndAppointmentData['data']?['assignedClient']
+                                        [0]?['breakList'] ??
+                                    ["No data found"])
+                                .join("\n")
+                                .toString(),
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ),
-
                       ]),
                     ],
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (timerModel.isRunning && timerModel.getTimerClientEmail() != widget.clientEmail) {
+                        if (timerModel.isRunning &&
+                            timerModel.getTimerClientEmail() !=
+                                widget.clientEmail) {
                           return; // disable the button if the timer is already running for another client
                         }
-                        updateTimerModel();
+                        if (timerModel.isRunning &&
+                            timerModel.getTimerClientEmail() ==
+                                widget.clientEmail) {
+                          timerModel.stop();
+                          // add your function call here when the timer is stopped
+                        } else {
+                          updateTimerModel();
+                          // add your function call here when the timer is started
+                        }
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(
-                          (timerModel.isRunning && timerModel.getTimerClientEmail() == widget.clientEmail)
+                          (timerModel.isRunning &&
+                                  timerModel.getTimerClientEmail() ==
+                                      widget.clientEmail)
                               ? AppColors.colorWarning
                               : AppColors.colorPrimary,
                         ),
                         elevation: MaterialStateProperty.all(
-                          timerModel.getTimerClientEmail() == widget.clientEmail || timerModel.isRunning
+                          timerModel.getTimerClientEmail() ==
+                                      widget.clientEmail ||
+                                  timerModel.isRunning
                               ? 0
                               : 2,
                         ),
                       ),
                       child: Text(
-                        (timerModel.isRunning && timerModel.getTimerClientEmail() == widget.clientEmail)
+                        (timerModel.isRunning &&
+                                timerModel.getTimerClientEmail() ==
+                                    widget.clientEmail)
                             ? 'End shift'
                             : 'Start shift',
                         style: const TextStyle(
@@ -298,12 +330,12 @@ class _ClientAndAppointmentDetailsState
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 32.0),
-
                 Center(
                   child: Text(
-                    timerModel.isRunning && (widget.clientEmail == timerModel.getTimerClientEmail())
+                    timerModel.isRunning &&
+                            (widget.clientEmail ==
+                                timerModel.getTimerClientEmail())
                         ? timerModel.getFormattedTime(timerModel.elapsedSeconds)
                         : "00:00:00",
                     style: TextStyle(

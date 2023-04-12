@@ -138,13 +138,16 @@ class _LoginUserNameControllerState extends State<LoginView> {
               SizedBox(
                 height: size.height * 0.02,
               ),
-              const Padding(
-                padding: EdgeInsets.only(left: 265.0),
+              FittedBox(
+                fit: BoxFit.contain,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 265.0),
                 child: Text(
                   'Forgot password?',
                   style: TextStyle(
                     color: AppColors.colorFontPrimary,
                   ),
+                ),
                 ),
               ),
               SizedBox(

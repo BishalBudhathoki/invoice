@@ -8,7 +8,7 @@ import 'package:invoice/app/core/view-models/client_model.dart';
 
 class ApiMethod {
 //API to authenticate user login
-  final String _baseUrl = "http://192.168.20.5:9001/";
+  final String _baseUrl = "http://192.168.20.5:9002/";
   //String _baseUrl = "https://backend-rest-apis.herokuapp.com/";
 
   Future<dynamic> authenticateUser(String email, String password) async {
@@ -150,6 +150,42 @@ class ApiMethod {
     }
 
     // Return a default value after the try-catch block
+  }
+
+  Future<dynamic> setWorkedTimer(
+      String userEmail, String clientEmail, String time) async {
+    print('${_baseUrl}setWorkedTime/');
+    final url = '${_baseUrl}setWorkedTime/';
+    final headers = {
+      'Content-Type': 'application/json',
+    };
+    final body = {
+      'User-Email': userEmail,
+      'Client-Email': clientEmail,
+      'TimeList': time,
+    };
+    final response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: json.encode(body),
+    );
+    if (response.statusCode == 200) {
+      try {
+        var jsonResponse = json.decode(response.body);
+        print("I am a response client: \n${response.body}");
+        return jsonResponse;
+      } catch (e) {
+        print("Error: $e");
+      }
+    } else if (response.statusCode == 400) {
+      throw Exception('Bad request, please check your input data');
+    } else if (response.statusCode == 401) {
+      throw Exception('Unauthorized, please check your API key');
+    } else if (response.statusCode == 404) {
+      throw Exception('Endpoint not found');
+    } else {
+      throw Exception('Unexpected error occurred!');
+    }
   }
 
   Future<dynamic> getClientAndAppointmentData(

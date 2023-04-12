@@ -84,6 +84,18 @@ class _ClientAndAppointmentDetailsState
     }
   }
 
+  Future<dynamic> _setWorkedTime() async {
+    var workedTime = await apiMethod.setWorkedTimer(
+        widget.userEmail,
+        widget.clientEmail,
+        timerModel.getFormattedTime(timerModel.elapsedSeconds),
+    );
+    if (workedTime != null) {
+      print("worked time: $workedTime");
+      return workedTime;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final TimerModel timerModel = Provider.of<TimerModel>(context);
@@ -194,33 +206,33 @@ class _ClientAndAppointmentDetailsState
                       color: AppColors.colorFontPrimary,
                     ),
                     columnWidths: const {
-                      0: FlexColumnWidth(3.6),
-                      1: FlexColumnWidth(3.5),
-                      2: FlexColumnWidth(3.5),
-                      3: FlexColumnWidth(3.5),
+                      0: FlexColumnWidth(3.0),
+                      1: IntrinsicColumnWidth(),
+                      2: IntrinsicColumnWidth(),
+                      3: IntrinsicColumnWidth(),
                     },
                     children: [
                       TableRow(children: [
                         Padding(
-                          padding: const EdgeInsets.all(3.0),
+                          padding: const EdgeInsets.all(5.0),
                           child: Text("Appointment Date",
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.bodyLarge),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(3.0),
+                          padding: const EdgeInsets.all(5.0),
                           child: Text("Start Time",
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.bodyLarge),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(3.0),
+                          padding: const EdgeInsets.all(5.0),
                           child: Text("End Time",
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.bodyLarge),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(3.0),
+                          padding: const EdgeInsets.all(5.0),
                           child: Text("Breaks",
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.bodyLarge),
@@ -232,8 +244,8 @@ class _ClientAndAppointmentDetailsState
                           child: Text(
                             textAlign: TextAlign.center,
                             (clientAndAppointmentData['data']?['assignedClient']
-                                        [0]?['dateList'] ??
-                                    ["No data found"])
+                            [0]?['dateList'] ??
+                                ["No data found"])
                                 .join("\n")
                                 .toString(),
                             style: Theme.of(context).textTheme.bodyMedium,
@@ -244,8 +256,8 @@ class _ClientAndAppointmentDetailsState
                           child: Text(
                             textAlign: TextAlign.center,
                             (clientAndAppointmentData['data']?['assignedClient']
-                                        [0]?['startTimeList'] ??
-                                    ["No data found"])
+                            [0]?['startTimeList'] ??
+                                ["No data found"])
                                 .join("\n")
                                 .toString(),
                             style: Theme.of(context).textTheme.bodyMedium,
@@ -256,8 +268,8 @@ class _ClientAndAppointmentDetailsState
                           child: Text(
                             textAlign: TextAlign.center,
                             (clientAndAppointmentData['data']?['assignedClient']
-                                        [0]?['endTimeList'] ??
-                                    ["No data found"])
+                            [0]?['endTimeList'] ??
+                                ["No data found"])
                                 .join("\n")
                                 .toString(),
                             style: Theme.of(context).textTheme.bodyMedium,
@@ -268,8 +280,8 @@ class _ClientAndAppointmentDetailsState
                           child: Text(
                             textAlign: TextAlign.center,
                             (clientAndAppointmentData['data']?['assignedClient']
-                                        [0]?['breakList'] ??
-                                    ["No data found"])
+                            [0]?['breakList'] ??
+                                ["No data found"])
                                 .join("\n")
                                 .toString(),
                             style: Theme.of(context).textTheme.bodyMedium,
@@ -279,6 +291,7 @@ class _ClientAndAppointmentDetailsState
                     ],
                   ),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
@@ -294,6 +307,8 @@ class _ClientAndAppointmentDetailsState
                             timerModel.getTimerClientEmail() ==
                                 widget.clientEmail) {
                           timerModel.stop();
+                          _setWorkedTime();
+                          print(timerModel.getFormattedTime(timerModel.elapsedSeconds));
                           // add your function call here when the timer is stopped
                         } else {
                           updateTimerModel();

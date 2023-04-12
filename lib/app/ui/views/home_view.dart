@@ -142,11 +142,11 @@ class _HomeViewControllerState extends State<HomeView> {
               const Text('Your Appointments',
                   style: TextStyle(
                     color: AppColors.colorFontPrimary,
-                    fontSize: AppDimens.fontSizeXLarge,
+                    fontSize: AppDimens.fontSizeLarge,
                     fontWeight: FontWeight.w800,
                     fontFamily: 'Lato',
                   )),
-              SizedBox(height: context.height * 0.023),
+              //SizedBox(height: context.height * 0.023),
               Container(
                   height: context.height * 0.38,
                   width: context.width,

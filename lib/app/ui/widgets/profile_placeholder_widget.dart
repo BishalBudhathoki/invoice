@@ -45,7 +45,7 @@ class ProfilePlaceholder extends StatelessWidget {
                     style: const TextStyle(
                       color: AppColors.colorFontPrimary,
                       fontSize: AppDimens.fontSizeLarge,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                     )),
               ],
             ),

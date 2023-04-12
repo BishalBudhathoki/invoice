@@ -7,24 +7,27 @@ import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
 showAlertDialog(BuildContext context) {
   AlertDialog alert = AlertDialog(
     content: Container(
-      width: context.width * 0.9,
       child: Row(
-        children: [
-          Row(children: const [
-            CircularProgressIndicator(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const CircularProgressIndicator(
               valueColor:
-                  AlwaysStoppedAnimation<Color>(AppColors.colorFontPrimary),
+              AlwaysStoppedAnimation<Color>(AppColors.colorFontPrimary),
             ),
-            Text("  Checking details...",
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                "Checking details...",
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: AppColors.colorFontPrimary,
-                  fontSize: AppDimens.fontSizeLarge,
+                  fontSize: AppDimens.fontSizeXXMedium,
                   fontWeight: FontWeight.w800,
                   fontFamily: 'Lato',
-                )),
-          ]),
-        ],
+                ),
+              ),
+            ),
+          ],
       ),
     ),
   );

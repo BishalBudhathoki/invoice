@@ -1,15 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:invoice/app/core/view-models/assignedAppointment_model.dart';
 import 'package:invoice/app/core/view-models/login_model.dart';
 import 'package:invoice/app/core/view-models/user_model.dart';
 import 'package:invoice/app/core/view-models/client_model.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
 class ApiMethod {
 //API to authenticate user login
-  final String _baseUrl = "http://192.168.20.5:9002/";
-  //String _baseUrl = "https://backend-rest-apis.herokuapp.com/";
+  final String _baseUrl = dotenv.env['BASE_URL'].toString();
+
 
   Future<dynamic> authenticateUser(String email, String password) async {
     // ApiResponse _apiResponse = new ApiResponse();
@@ -274,6 +276,35 @@ class ApiMethod {
     }
   }
 
+  late List<dynamic> businessNameList = [];
+  Future<dynamic> getBusinessNameList() async {
+    try {
+      print('${_baseUrl}business-names');
+      final response = await http.get(Uri.parse('${_baseUrl}business-names'));
+      switch (response.statusCode) {
+        case 200:
+          final data = json.decode(response.body);
+          if (data != null) {
+            businessNameList = List<dynamic>.from(data);
+            print(data);
+          }
+          print("200 ");
+          return businessNameList;
+        case 400:
+          final data = json.decode(response.body);
+          if (data != null) {
+            businessNameList = List<dynamic>.from(data);
+            print(data);
+          }
+          print("400 ");
+          return businessNameList;
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+
   late List<dynamic> holidaysList = [];
   Future<dynamic> getHolidays() async {
     try {
@@ -299,11 +330,46 @@ class ApiMethod {
     }
   }
 
+  late List<dynamic> list = [];
+
+  Future<dynamic> getUserDocs() async {
+    try {
+      final response = await http.get(Uri.parse('${_baseUrl}user-docs'));
+      switch (response.statusCode) {
+        case 200:
+          final data = json.decode(response.body);
+          print(data);
+          if (data != null && data['userDocs'] is List<dynamic>) {
+            list = data['userDocs'];
+          }
+          print("200 ");
+          return data;
+        case 400:
+          final data = json.decode(response.body);
+          if (data != null && data['userDocs'] is List<dynamic>) {
+            list = data['userDocs'];
+          }
+          print("400 ");
+          return data;
+      }
+    } on SocketException catch (e) {
+      if (e.message.contains("Connection refused")) {
+        print("Connection refused");
+      } else {
+        print("Other error: $e");
+      }
+    } catch (e) {
+      print("Error get user docs: $e");
+    }
+  }
+
+
   Future<dynamic> signupUser(
     String firstName,
     String lastName,
     String email,
     String password,
+    String abn,
   ) async {
     // ApiResponse _apiResponse = new ApiResponse();
 
@@ -342,7 +408,8 @@ class ApiMethod {
             "firstName": firstName,
             "lastName": lastName,
             "email": email,
-            "password": password
+            "password": password,
+            "abn": abn
           }),
         );
         print(response1.body);
@@ -371,6 +438,7 @@ class ApiMethod {
     String City,
     String State,
     String Zip,
+    String businessName,
   ) async {
     try {
       print('${_baseUrl}addClient/ $Email');
@@ -389,16 +457,17 @@ class ApiMethod {
           "clientCity": City,
           "clientState": State,
           "clientZip": Zip,
+          "businessName": businessName
         }),
       );
       print("Hello: $response $Zip");
       switch (response.statusCode) {
         case 200:
-          data = new Map<String, dynamic>.from(json.decode(response.body));
+          data = Map<String, dynamic>.from(json.decode(response.body));
           print("200 " + data['message']!);
           break;
         case 400:
-          data = new Map<String, dynamic>.from(json.decode(response.body));
+          data = Map<String, dynamic>.from(json.decode(response.body));
           break;
       }
     } catch (e) {
@@ -477,12 +546,12 @@ class ApiMethod {
       );
       switch (response.statusCode) {
         case 200:
-          data = new Map<String, dynamic>.from(json.decode(response.body));
+          data = Map<String, dynamic>.from(json.decode(response.body));
           print("200" + data['message']);
 
           break;
         case 400:
-          data = new Map<String, dynamic>.from(json.decode(response.body));
+          data = Map<String, dynamic>.from(json.decode(response.body));
           print("400" + data['message']);
 
           break;
@@ -515,7 +584,36 @@ class ApiMethod {
     }
   }
 
-  // Future<dynamic> submitAssignedAppointment(String userEmail, String clientEmail) async {
+  Future<List<String>> checkHolidays(List<String> workedDateList) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${_baseUrl}check-holidays'),
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: jsonEncode({
+          "dateList": workedDateList.join(','),
+        }),
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> holidayStatusListJson = json.decode(response.body);
+        final List<String> holidayStatusList = holidayStatusListJson.cast<String>();
+        return holidayStatusList;
+      } else {
+        throw Exception('Failed to get holidays: ${response.statusCode}');
+      }
+    } on SocketException {
+      throw Exception('Failed to get holidays: network error');
+    } catch (e) {
+      throw Exception('Failed to get holidays: $e');
+    }
+  }
+
+
+
+
+// Future<dynamic> submitAssignedAppointment(String userEmail, String clientEmail) async {
   //   print(userEmail);
   //   print(clientEmail);
   //

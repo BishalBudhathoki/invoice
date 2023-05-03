@@ -12,6 +12,7 @@ import 'package:invoice/app/ui/widgets/navBar_widget.dart';
 import 'package:invoice/backend/api_method.dart';
 
 import '../widgets/button_widget.dart';
+import 'generateInvoice.dart';
 
 class AdminDashboardView extends StatefulWidget {
   final String email;
@@ -57,11 +58,10 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<ScaffoldState> _scaffoldKey =
-        new GlobalKey<ScaffoldState>();
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
-      key: _scaffoldKey,
+      key: scaffoldKey,
       backgroundColor: AppColors.colorWhite,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(context.height * 0.1),
@@ -91,7 +91,7 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
               padding: const EdgeInsets.all(10.0),
               child: InkWell(
                 onTap: () {
-                  _scaffoldKey.currentState?.openEndDrawer();
+                  scaffoldKey.currentState?.openEndDrawer();
                 },
                 child: SizedBox(
                   height: 55,
@@ -194,12 +194,29 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
                     if (holidays != null) {
                       print(holidays);
                       Navigator.push(
-                        _scaffoldKey.currentContext!,
+                        scaffoldKey.currentContext!,
                         MaterialPageRoute(
                             builder: (context) =>
                                 HolidayListView(holidays: holidays)),
                       );
                     }
+                  }),
+              const SizedBox(height: 20),
+              ButtonWidget(
+                  title: 'Generate Invoice',
+                  hasBorder: false,
+                  onPressed: () async {
+                    //List<dynamic>? holidays = await apiMethod.getHolidays();
+                   // if (holidays != null) {
+                  //    print(holidays);
+                      Navigator.push(
+                        scaffoldKey.currentContext!,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const GenerateInvoice()
+                        ),
+                      );
+                   // }
                   }),
             ],
           ),

@@ -122,7 +122,7 @@ class _LoginUserNameControllerState extends State<LoginView> {
                     model.isVisible ? Icons.visibility : Icons.visibility_off,
                 controller: _passwordController,
                 onChanged: (value) {
-                  model.isValidEmail(value);
+                  //model.isValidEmail(value);
                 },
                 onSaved: (value) {
                   login_controller.password = value!;
@@ -167,12 +167,13 @@ class _LoginUserNameControllerState extends State<LoginView> {
                       Navigator.push(
                         _scaffoldKey.currentContext!,
                         MaterialPageRoute(
-                          builder: (currentContext) => HomeView(
-                            email: _userEmailController.text.trim(),
-                          ),
-                          //      AdminDashboardView(
-                          //    email:_userEmailController.text.trim(),
-                          // ),
+                          builder: (currentContext) =>
+                              // HomeView(
+                              //   email: _userEmailController.text.trim(),
+                              // ),
+                               AdminDashboardView(
+                                 email:_userEmailController.text.trim(),
+                              ),
                         ),
                       );
                     } else {

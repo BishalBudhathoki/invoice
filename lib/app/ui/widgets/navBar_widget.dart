@@ -60,7 +60,7 @@ class NavBarWidget extends StatelessWidget {
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const LineItemsView(),
+                  builder: (context) => LineItemsView(),
                 ),
               )
               // await Navigator.push(

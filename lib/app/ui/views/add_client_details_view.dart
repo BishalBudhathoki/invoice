@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:invoice/app/ui/views/popupClientDetails.dart';
 import 'package:invoice/app/ui/widgets/alertDialog_widget.dart';
+import 'package:invoice/app/ui/widgets/businessNameDropDown_widget.dart';
 import 'package:invoice/app/ui/widgets/button_widget.dart';
 import 'package:invoice/app/ui/widgets/textField_widget.dart';
 import 'package:invoice/backend/api_method.dart';
@@ -27,6 +29,16 @@ class _AddClientDetailsState extends State<AddClientDetails> {
   final _clientCityController = TextEditingController();
   final _clientStateController = TextEditingController();
   final _clientZipController = TextEditingController();
+  final _clientBusinessNameController = TextEditingController();
+  late String selectedBusinessName;
+  List businessNameList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // apiMethod.getBusinessNameList();
+
+  }
 
   @override
   void dispose() {
@@ -38,13 +50,16 @@ class _AddClientDetailsState extends State<AddClientDetails> {
     _clientCityController.dispose();
     _clientStateController.dispose();
     _clientZipController.dispose();
+    _clientBusinessNameController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
 
+    final size = MediaQuery.of(context).size;
+    //late String selectedBusinessName;
+    //print(apiMethod.getBusinessNameList());
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -218,6 +233,18 @@ class _AddClientDetailsState extends State<AddClientDetails> {
               },
             ),
             const SizedBox(height: 16),
+            Center(
+              child: BusinessNameDropdown(
+                onChanged: (selectedValue) {
+                  // Do something with the selected value
+                  _clientBusinessNameController.text = selectedValue;
+                  print('Selected Business Name: $selectedValue');
+                },
+              ),
+            ),
+
+
+            const SizedBox(height: 16),
             ButtonWidget(
                 title: 'Add Client',
                 hasBorder: false,
@@ -250,7 +277,7 @@ class _AddClientDetailsState extends State<AddClientDetails> {
     );
   }
 
-  ApiMethod apiMethod = new ApiMethod();
+  ApiMethod apiMethod = ApiMethod();
   Future<dynamic> _addClient() async {
     var ins = await apiMethod.addClient(
       _clientFirstNameController.text,
@@ -261,6 +288,7 @@ class _AddClientDetailsState extends State<AddClientDetails> {
       _clientCityController.text,
       _clientStateController.text,
       _clientZipController.text,
+      _clientBusinessNameController.text,
     );
     print("Response: " + ins.toString());
 
@@ -277,4 +305,6 @@ class _AddClientDetailsState extends State<AddClientDetails> {
       return ins['message'];
     }
   }
+
+
 }

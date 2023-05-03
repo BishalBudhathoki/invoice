@@ -1,21 +1,43 @@
 import 'package:animation_list/animation_list.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:invoice/app/core/controllers/lineItem_controller.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 
 import '../../../backend/api_method.dart';
 
 class LineItemsView extends StatefulWidget {
-  const LineItemsView({super.key});
+  const LineItemsView({Key? key}) : super(key: key);
+
   @override
   _LineItemsControllerState createState() {
     return _LineItemsControllerState();
   }
 }
 
-List<Map<String, dynamic>> _lineItems = [];
+class _LineItemsControllerState extends State<LineItemsView> {
+  final ApiMethod apiMethod = ApiMethod();
+  final LineItemController lineItemController = Get.put(LineItemController());
 
-Widget _buildTile(String? title, Color? backgroundColor) {
-  return Container(
+  List<Map<String, dynamic>> _lineItems = [];
+
+  @override
+  void initState() {
+    getLineItems();
+    super.initState();
+  }
+
+  Future<void> getLineItems() async {
+    final List<Map<String, dynamic>> lineItems = lineItemController.lineItems;
+    setState(() {
+      _lineItems = lineItems;
+    });
+    //return lineItems;
+  }
+
+  Widget _buildTile(String? title, Color? backgroundColor) {
+    return Container(
       height: 75,
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
@@ -33,26 +55,8 @@ Widget _buildTile(String? title, Color? backgroundColor) {
             ),
           ),
         ),
-      ));
-}
-
-class _LineItemsControllerState extends State<LineItemsView> {
-  ApiMethod apiMethod = new ApiMethod();
-  @override
-  void initState() {
-    getLineItems();
-    super.initState();
-  }
-
-  getLineItems() async {
-    final List<Map<String, dynamic>> lineItems =
-        (await apiMethod.getLineItems());
-    //print(lineItems);
-    setState(() {
-      print("Line Items here: $lineItems");
-      _lineItems = lineItems;
-      print("Line Items here: $_lineItems");
-    });
+      ),
+    );
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -70,18 +74,26 @@ class _LineItemsControllerState extends State<LineItemsView> {
         ),
       ),
       body: Center(
-        child: AnimationList(
-            duration: 1000,
-            reBounceDepth: 10.0,
-            children: _lineItems.map((item) {
-              final itemNumber = item.values.first;
-              final itemDescription = item.values.last;
-              print(item['itemNumber']);
-              return _buildTile(
-                  "$itemNumber"
-                  "\n$itemDescription",
-                  AppColors.colorPrimary);
-            }).toList()),
+        child: Builder(
+          builder: (context) {
+            if (_lineItems.isEmpty) {
+              return const Text("No line item retrieved");
+            } else {
+              return AnimationList(
+                duration: 1000,
+                reBounceDepth: 10.0,
+                children: _lineItems.map((item) {
+                  final itemNumber = item.values.first;
+                  final itemDescription = item.values.last;
+                  return _buildTile(
+                    "$itemNumber\n$itemDescription",
+                    AppColors.colorPrimary,
+                  );
+                }).toList(),
+              );
+            }
+          },
+        ),
       ),
     );
   }

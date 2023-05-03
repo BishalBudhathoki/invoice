@@ -47,5 +47,31 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+         <key>NSDocumentsFolderUsageDescription</key>
+            <string>Your app needs access to the documents folder to save and download files.</string>
+         <key>NSFileProtectionKey</key>
+            <string>NSFileProtectionComplete</string>
+         <key>NSPhotoLibraryUsageDescription</key>
+            <string>App needs access to save and read PDF files.</string>
+         <key>NSDocumentDirectory</key>
+         <true/>
+         <key>LSSupportsOpeningDocumentsInPlace</key>
+         <true/>
+         <key>UIFileSharingEnabled</key>
+         <true/>
+         <key>UISupportsDocumentBrowser</key>
+         <true/>
+         <key>LSSupportsOpeningDocumentsInPlace</key>
+         <true/>
+         <key>UIFileSharingEnabled</key>
+         <true/>
+         <key>allowProvisioningUpdates</key>
+         <true/>
+    </dict>
+
 </dict>
 </plist>

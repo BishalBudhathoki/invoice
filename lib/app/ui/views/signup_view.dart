@@ -29,6 +29,7 @@ class _SignupUserNameControllerState extends State<SignUpView> {
   final _signUpEmailController = TextEditingController();
   final _signUpPasswordController = TextEditingController();
   final _signUpConfirmPasswordController = TextEditingController();
+  final _signupABNController = TextEditingController();
 
   @override
   void dispose() {
@@ -44,6 +45,8 @@ class _SignupUserNameControllerState extends State<SignUpView> {
   Widget build(BuildContext context) {
     final models = Provider.of<SignupModel>(context);
     bool loading = false;
+    final SignupController signup_controller = new SignupController();
+
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: AppColors.colorWhite,
@@ -67,7 +70,7 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                   'Create an account, It\'s free',
                   style: TextStyle(
                     fontSize: AppDimens.fontSizeNormal,
-                    color: AppColors.colorFontSecondary,
+                    color: AppColors.colorFontPrimary,
                   ),
                 ),
                 SizedBox(height: context.height * 0.023),
@@ -84,7 +87,9 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                   suffixIconData: null,
                   controller: _signUpUserFirstNameController,
                   onChanged: (value) {},
-                  onSaved: (value) {},
+                  onSaved: (value) {
+                    //signup_controller.signup_user_first_name = value;
+                  },
                 ),
                 SizedBox(height: context.height * 0.023),
                 TextFieldWidget(
@@ -104,6 +109,22 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                 ),
                 SizedBox(height: context.height * 0.023),
                 TextFieldWidget(
+                  hintText: 'ABN',
+                  validator: (value) {
+                    if (value!.isEmpty || value.length < 11) {
+                      return 'Please enter correct ABN or check length of ABN';
+                    }
+                    return null;
+                  },
+                  obscureText: false,
+                  prefixIconData: Icons.account_balance,
+                  suffixIconData: null,
+                  controller: _signupABNController,
+                  onChanged: (value) {},
+                  onSaved: (value) {},
+                ),
+                SizedBox(height: context.height * 0.023),
+                TextFieldWidget(
                   hintText: 'Email',
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -115,7 +136,9 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                   prefixIconData: Icons.email,
                   suffixIconData: null,
                   controller: _signUpEmailController,
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    models.isValidEmail(value);
+                  },
                   onSaved: (value) {},
                 ),
                 SizedBox(height: context.height * 0.023),
@@ -196,13 +219,14 @@ class _SignupUserNameControllerState extends State<SignUpView> {
     );
   }
 
-  ApiMethod apiMethod = new ApiMethod();
+  ApiMethod apiMethod = ApiMethod();
   Future<bool> _signupUser() async {
     var ins = await apiMethod.signupUser(
       _signUpUserFirstNameController.text,
       _signUpUserLastNameController.text,
       _signUpEmailController.text,
       _signUpPasswordController.text,
+      _signupABNController.text,
     );
     //print("Response: "+ ins['email'].toString() );
 

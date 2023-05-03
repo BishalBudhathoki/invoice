@@ -33,6 +33,15 @@ class SignupModel extends ChangeNotifier {
   bool _isValid = false;
   get isValid => _isValid;
 
+  void isValidEmail(String input) {
+    if (input == AssetsStrings.validEmail.first) {
+      _isValid = true;
+    } else {
+      _isValid = false;
+    }
+    notifyListeners();
+  }
+
   void isValidPassword(String input, String text) {
     if (input == text) {
       _isValid = true;

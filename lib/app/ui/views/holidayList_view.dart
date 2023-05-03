@@ -18,18 +18,18 @@ class _HolidayListViewState extends State<HolidayListView> {
   void initState() {
     super.initState();
     // Sort the list of holidays by date
-    widget.holidays.sort((a, b) => DateFormat("dd-MMM-yyyy")
+    widget.holidays.sort((a, b) => DateFormat("dd-MM-yyyy")
         .parse("${a['Date']}")
-        .compareTo(DateFormat("dd-MMM-yyyy").parse("${b['Date']}")));
+        .compareTo(DateFormat("dd-MM-yyyy").parse("${b['Date']}")));
   }
 
   void _addHoliday(Map<String, dynamic> holiday) {
     setState(() {
       // Add the new holiday to the list
       widget.holidays.add(holiday);
-      widget.holidays.sort((a, b) => DateFormat("dd-MMM-yyyy")
+      widget.holidays.sort((a, b) => DateFormat("dd-MM-yyyy")
           .parse("${a['Date']}")
-          .compareTo(DateFormat("dd-MMM-yyyy").parse("${b['Date']}")));
+          .compareTo(DateFormat("dd-MM-yyyy").parse("${b['Date']}")));
     });
   }
 

@@ -32,11 +32,11 @@ dependencies:
   permission_handler: ^10.2.0
   mailer: ^6.0.1
   flutter_dotenv: ^5.0.2
+  flutter_email_sender: ^5.2.0
 
   flutter:
     sdk: flutter
 
-  flutter_share_file: ^1.2.1+6
   download: ^1.0.0
   path_provider: ^2.0.14
   flutter_secure_storage: ^8.0.0
@@ -44,6 +44,7 @@ dependencies:
   file_manager: ^1.0.2
   share_plus: ^5.0.0
   image_picker: ^0.8.7+3
+  pdf_viewer_plugin: ^2.0.1
 
 
 dev_dependencies:

@@ -1,15 +1,13 @@
-import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:invoice/app/core/controllers/generateInvoice_controller.dart';
 import 'package:invoice/app/core/controllers/lineItem_controller.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:invoice/app/ui/views/pdfViewPage_view.dart';
 import 'package:invoice/app/ui/widgets/flushbar_widget.dart';
 import 'package:invoice/backend/api_method.dart';
 import 'package:path_provider/path_provider.dart';
@@ -17,11 +15,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:file_manager/file_manager.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:image_picker/image_picker.dart' hide XFile;
 
 class GenerateInvoice extends StatefulWidget {
   const GenerateInvoice({Key? key}) : super(key: key);
@@ -33,6 +28,24 @@ class GenerateInvoice extends StatefulWidget {
 class _GenerateInvoiceState extends State<GenerateInvoice> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  ApiMethod apiMethod = ApiMethod();
+
+  final List<String> invoiceName = [];
+  final List<String> invoiceABN = [];
+  final List<String> invoicePeriodStart = [];
+  final List<String> invoicePeriodEnd = [];
+  final List<String> invoiceTotalAmount = [];
+  final List<String> clientName = [];
+  final List<String> clientStreetSubAddress = [];
+  final List<String> clientStateZipAddress = [];
+  final List<String> clientBusinessName = [];
+  final List<String> workedDateList = [];
+  final List<String> workedStartTimeList = [];
+  final List<String> workedEndTimeList = [];
+  final List<String> workedTimePeriodList = [];
+
+
   List<String> findDayOfWeek(List<String> dateList) {
   final daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   final dayOfWeekList = dateList.map((date) {
@@ -109,35 +122,83 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
     return hours;
   }
 
+  List<String> computeInvoiceComp(final dayOfWeek, final timePeriods, final holidays) {
+    List<String> results = []; // create empty list for results
+    try {
+      for (int i = 0; i < workedDateList.length; i++) {
+        String currentDayOfWeek = dayOfWeek[i];
+        String currentTimePeriod = (timePeriods as List<String>)[i];
+        String currentHoliday = holidays[i];
+        String holidayTag = (currentHoliday == 'Holiday') ? 'true' : 'false';
+        print("Holiday Tag: $holidayTag - $currentHoliday - $currentDayOfWeek - $currentTimePeriod");
+        switch (currentDayOfWeek) {
+          case 'Saturday':
+            switch (currentTimePeriod) {
+              case 'Evening':
+                results.add(itemMap['Saturday']!);
+                break;
+              case 'Daytime':
+                results.add(itemMap['Saturday']!);
+                break;
+              case 'Morning':
+                results.add(itemMap['Saturday']!);
+                break;
+              case 'Night':
+                results.add(itemMap['Saturday']!);
+                break;
+            }
+            break;
+          case 'Sunday':
+            switch (currentTimePeriod) {
+              case 'Evening':
+                results.add(itemMap['Sunday']!);
+                break;
+              case 'Daytime':
+                results.add(itemMap['Sunday']!);
+                break;
+              case 'Morning':
+                results.add(itemMap['Sunday']!);
+                break;
+              case 'Night':
+                results.add(itemMap['Sunday']!);
+                break;
+            }
+            break;
+          default:
+            switch (currentTimePeriod) {
+              case 'Evening':
+                results.add(itemMap['Weekday Evening']!);
+                break;
+              case 'Daytime':
+                results.add(itemMap['Weekday Daytime']!);
+                break;
+              case 'Morning':
+                results.add(itemMap['Weekday Daytime']!);
+                break;
+              case 'Night':
+                results.add(itemMap['Night-Time Sleepover']!);
+                break;
+            }
+            break;
+        }
+      }
+    } on RangeError catch (e) {
+      print("Compute Invoice Comp Range error: $e");
+    }
+    catch (e) {
+      print("Compute Invoice Comp Error: $e");
+    }
+    return results; // return list of results
+  }
 
-  Future<void> generateInvoice() async {
-    ApiMethod apiMethod = ApiMethod();
 
-    final List<String> invoiceName = [];
-    final List<String> invoiceABN = [];
-    final List<String> invoicePeriodStart = [];
-    final List<String> invoicePeriodEnd = [];
-    final List<String> invoiceTotalAmount = [];
-    final List<String> clientName = [];
-    final List<String> clientStreetSubAddress = [];
-    final List<String> clientStateZipAddress = [];
-    final List<String> clientBusinessName = [];
-    final List<String> workedDateList = [];
-    final List<String> workedStartTimeList = [];
-    final List<String> workedEndTimeList = [];
-    final List<String> workedTimePeriodList = [];
+  Future<String> generateInvoice() async {
     final LineItemController lineItemController = Get.put(LineItemController());
     final List<Map<String, dynamic>> lineItems = lineItemController.lineItems;
 
-    const holidayConfirmation = '';
-
-
-
     try{
-      ApiMethod apiMethod = ApiMethod();
       final userDoc = await apiMethod.getUserDocs();
       print("Hello: $userDoc ${(userDoc['userDocs'][0]['docs'][0]['Time'])} ${userDoc.length}");
-
       for (var item in lineItems) {
         if (item['itemNumber'] == '01_012_0107_1_1') {
           itemMap['Public holiday'] = item['itemNumber'] + '\n ' + item['itemDescription'];
@@ -163,7 +224,6 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
           itemMap['Weekday Evening - TTP'] = item['itemNumber'] + '\n ' + item['itemDescription'];
         }
       }
-
 
       if(userDoc != null ) {
 
@@ -216,190 +276,10 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
     final holidays = await apiMethod.checkHolidays(workedDateList);
     print("Holidays: $holidays");
 
-    // for (int i = 0; i < workedDateList.length; i++) {
-    //   if(dayOfWeek[i] == 'Saturday') {
-    //     if(timePeriods[i] == 'Evening') {
-    //       if(holidays[i].contains('Holiday')) {
-    //         data[0][1] = checkInvoiceComponents('Saturday')!;
-    //       } else {
-    //         data[0][1] = 'Saturday - Evening';
-    //       }
-    //     } else if(timePeriods[i] == 'Daytime') {
-    //         if(holidays[i].contains('Holiday')) {
-    //           data[0][1] = 'Saturday - Evening - Holiday';
-    //         } else {
-    //           data[0][1] = 'Saturday - Evening';
-    //         }
-    //     } else if(timePeriods[i] == 'Morning') {
-    //         if(holidays[i].contains('Holiday')) {
-    //           data[0][1] = 'Saturday - Evening - Holiday';
-    //         } else {
-    //           data[0][1] = 'Saturday - Evening';
-    //         }
-    //     } else if(timePeriods[i] == 'Night') {
-    //         if(holidays[i].contains('Holiday')) {
-    //           data[0][1] = 'Saturday - Evening - Holiday';
-    //         } else {
-    //           data[0][1] = 'Saturday - Evening';
-    //         }
-    //     }
-    //
-    //   } else if(dayOfWeek[i] == 'Sunday') {
-    //       if(timePeriods[i] == 'Evening') {
-    //         if(holidays[i].contains('Holiday')) {
-    //           data[0][1] = 'Saturday - Evening - Holiday';
-    //         } else {
-    //           data[0][1] = 'Saturday - Evening';
-    //         }
-    //       } else if(timePeriods[i] == 'Daytime') {
-    //         if(holidays[i].contains('Holiday')) {
-    //           data[0][1] = 'Saturday - Evening - Holiday';
-    //         } else {
-    //           data[0][1] = 'Saturday - Evening';
-    //         }
-    //       } else if(timePeriods[i] == 'Morning') {
-    //         if(holidays[i].contains('Holiday')) {
-    //           data[0][1] = 'Saturday - Evening - Holiday';
-    //         } else {
-    //           data[0][1] = 'Saturday - Evening';
-    //         }
-    //       } else if(timePeriods[i] == 'Night') {
-    //           if(holidays[i].contains('Holiday')) {
-    //             data[0][1] = 'Saturday - Evening - Holiday';
-    //           } else {
-    //             data[0][1] = 'Saturday - Evening';
-    //           }
-    //       }
-    //   } else {
-    //       if(timePeriods[i] == 'Evening') {
-    //         if(holidays[i].contains('Holiday')) {
-    //           data[0][1] = 'Saturday - Evening - Holiday';
-    //         } else {
-    //           data[0][1] = checkInvoiceComponents('Weekday Daytime')!;
-    //         }
-    //       } else if(timePeriods[i] == 'Daytime') {
-    //           if(holidays[i].contains('Holiday')) {
-    //             data[0][1] = 'Saturday - Evening - Holiday';
-    //           } else {
-    //             data[0][1] = 'Saturday - Evening';
-    //           }
-    //       } else if(timePeriods[i] == 'Morning') {
-    //           if(holidays[i].contains('Holiday')) {
-    //             data[0][1] = 'Saturday - Evening - Holiday';
-    //           } else {
-    //             data[0][1] = 'Saturday - Evening';
-    //           }
-    //       } else if(timePeriods[i] == 'Night') {
-    //           if(holidays[i].contains('Holiday')) {
-    //             data[0][1] = 'Saturday - Evening - Holiday';
-    //           } else {
-    //             data[0][1] = 'Saturday - Evening';
-    //           }
-    //       }
-    //   }
-    // }
-    //data[0][1] = ''; // Set the header for the Invoice component column
-
-    List<String> computeInvoiceComp() {
-      List<String> results = []; // create empty list for results
-      try {
-        for (int i = 0; i < workedDateList.length; i++) {
-          String currentDayOfWeek = dayOfWeek[i];
-          String currentTimePeriod = (timePeriods as List<String>)[i];
-          String currentHoliday = holidays[i];
-          String holidayTag = (currentHoliday == 'Holiday') ? 'true' : 'false';
-          print("Holiday Tag: $holidayTag - $currentHoliday - $currentDayOfWeek - $currentTimePeriod");
-          switch (currentDayOfWeek) {
-            case 'Saturday':
-              switch (currentTimePeriod) {
-                case 'Evening':
-                  results.add(itemMap['Saturday']!);
-                  break;
-                case 'Daytime':
-                  results.add(itemMap['Saturday']!);
-                  break;
-                case 'Morning':
-                  results.add(itemMap['Saturday']!);
-                  break;
-                case 'Night':
-                  results.add(itemMap['Saturday']!);
-                  break;
-              }
-              break;
-            case 'Sunday':
-              switch (currentTimePeriod) {
-                case 'Evening':
-                  results.add(itemMap['Sunday']!);
-                  break;
-                case 'Daytime':
-                  results.add(itemMap['Sunday']!);
-                  break;
-                case 'Morning':
-                  results.add(itemMap['Sunday']!);
-                  break;
-                case 'Night':
-                  results.add(itemMap['Sunday']!);
-                  break;
-              }
-              break;
-            default:
-              switch (currentTimePeriod) {
-                case 'Evening':
-                  results.add(itemMap['Weekday Evening']!);
-                  break;
-                case 'Daytime':
-                  results.add(itemMap['Weekday Daytime']!);
-                  break;
-                case 'Morning':
-                  results.add(itemMap['Weekday Daytime']!);
-                  break;
-                case 'Night':
-                  results.add(itemMap['Night-Time Sleepover']!);
-                  break;
-              }
-              break;
-          }
-        }
-      } on RangeError catch (e) {
-        print("Compute Invoice Comp Range error: $e");
-      }
-      catch (e) {
-        print("Compute Invoice Comp Error: $e");
-      }
-      return results; // return list of results
-    }
-
-    // List<List<String>> data = [
-    //   [
-    //     'Invoice Components',
-    //     'Time Worked',
-    //     'Hours/Units',
-    //     'Rate',
-    //     'Total Amount',
-    //   ],
-    //   [
-    //     computeInvoiceComp()[0],
-    //     '${workedDateList[0]} - ${workedStartTimeList[0]} to ${workedEndTimeList[0]} - ( hours)', // empty string for Time Worked column
-    //     '24',
-    //     '\$40.00',
-    //     '\$960.00',
-    //   ],
-    // ];
-    // print(computeInvoiceComp());
-    // //data[0][1] = computeInvoiceComp()[0]; // Set the header for the Invoice component column
-    // //data[1][1] = '${workedDateList[0]} - ${workedStartTimeList[0]} to ${workedEndTimeList[0]} - ( hours)'; // Set the header for the Time Worked column
-    // print(getTimePeriods(workedStartTimeList[0]));
-    // for (int i = 1; i < workedDateList.length; i++) {
-    //   data.add([
-    //     (computeInvoiceComp()[i]),
-    //     '${workedDateList[i]} - ${workedStartTimeList[i]} to ${workedEndTimeList[i]} - ( hours)',
-    //     '',
-    //     '',
-    //     '',
-    //   ]);
-    // }
-
-    // Add a page to the PDF document
+    List<String> computeInvoiceComponent = await Future.delayed(const Duration(seconds: 3), () {
+      return computeInvoiceComp( dayOfWeek, timePeriods, holidays);
+    });
+    print("Compute Invoice Component: $computeInvoiceComponent");
 
     double getRate(int index, List<String> dayOfWeek, List<String> holidays) {
       String currentDayOfWeek = dayOfWeek[index];
@@ -414,6 +294,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
           return isHoliday ? 80.0 : 40.0;
       }
     }
+
     String timeString = '';
     String computeInvoiceCompString = '';
     double totalHours = 0.00;
@@ -424,7 +305,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
     double totalAmount = (hoursFromTimeString(timeString) * getRate(0, dayOfWeek, holidays));
     grandTotalAmount += totalAmount; // add first row total to grandTotalAmount
     grandTotalHours += double.parse(hoursFromTimeString(timeString).toString()); // add first row hours to grandTotalHours
-    computeInvoiceCompString = computeInvoiceComp()[0];
+    computeInvoiceCompString = computeInvoiceComponent[0];
     List<List<String>> data = [
       [
         'Invoice Components',
@@ -446,7 +327,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
 
     try {
       for (int i = 0; i < workedDateList.length; i++) {
-        String component = computeInvoiceComp()[i+1];
+        String component = computeInvoiceComponent[i+1];
         String timeWorked = '${workedDateList[i+1]} - ${workedStartTimeList[i+1]} '
             'to ${workedEndTimeList[0]} - ($workedHours hrs)';
         timeString = (workedTimePeriodList[0].split(', ')[i+1]).split(' ')[0];
@@ -761,6 +642,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
       directory = await getExternalStorageDirectory();
       //print("DP: ${directory?.path}");
       if (!await directory!.exists()) {
+        print("Directory does not exist");
         await directory.create(recursive: true);
       }
     } else if (Platform.isIOS) {
@@ -779,6 +661,8 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
 
     const storage = FlutterSecureStorage();
     await storage.write(key: "pdfPath", value: file.path);
+    print("PDF path: ${file.path}");
+    return file.path;
   }
 
   Future<void> downloadFile() async {
@@ -793,7 +677,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
         final downloadsDirectory = await getDownloadPathForPlatform();
         final downloadPath = '$downloadsDirectory/$fileName';
         print("downloadPath: $downloadPath");
-        await file.copy(downloadPath);
+        //await file.copy(downloadPath);
 
         try {
           // final box = context.findRenderObject() as RenderBox?;
@@ -810,6 +694,23 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
             ],
             subject: fileName,
           );
+
+        // try {
+        //   // Read file contents as bytes
+        //   final data = await file.readAsBytes();
+        //
+        //   // Write file contents to a new file in the download path
+        //   final savedFile = File(downloadPath);
+        //   await savedFile.writeAsBytes(data);
+        //
+        //   // Share only the PDF file and not the text file
+        //   await Share.shareXFiles(
+        //     [
+        //       XFile(savedFile.path, mimeType: 'application/pdf'),
+        //     ],
+        //     subject: fileName,
+        //   );
+
         } on PlatformException catch (e) {
           print("Error while saving file: $e");
         } catch (e) {
@@ -848,8 +749,9 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
         await directory.exists() ? "Exists" : "Doesn't Exist";
         // Put file in global download folder, if for an unknown reason it didn't exist, we fallback
         // ignore: avoid_slow_async_io
-        if (!await directory.exists())
+        if (!await directory.exists()) {
           directory = await getExternalStorageDirectory();
+        }
       } else if (kIsWeb) {
         print("Web2");
         directory = await getDownloadsDirectory();
@@ -861,75 +763,103 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
     return directory!.path;
   }
 
+  late String _pdfPath = '';
+  String get pdfPath => _pdfPath;
+
+  set pdfPaths(String newPath) {
+    _pdfPath = newPath;
+  }
+
   @override
   void initState() {
     super.initState();
-    generateInvoice();
+    //final pdfPath = generateInvoice();
+    Future.delayed(const Duration(seconds: 5), () {
+      return generateInvoice().then((value) {
+        //String result = value;
+        pdfPaths = value;
+      });
+    });
+    print("PDF pathsssss: $pdfPath");
+    // call set pdfPath
+    //pdfPaths = pdfPath.toString();
   }
 
   @override
   Widget build(BuildContext context) {
     checkInvoiceComponents('Public holiday');
-    return Container(
-      key: _scaffoldKey,
-      color: Colors.white,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Hello World!\n This is a PDF file',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: downloadFile,
-            child: Text('Download PDF',
-                style: Theme.of(context).textTheme.titleMedium),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed:() async {
-              var response = await sendEmailWithAttachment();
-              print(response.toString());
-              if (response == "OK") {
-                print("Success");
-                FlushBarWidget fbw = FlushBarWidget();
-                fbw.flushBar(
-                  context: _scaffoldKey.currentContext!,
-                  title: "Success",
-                  message: "Email send successfully",
-                  backgroundColor: AppColors.colorSecondary,
-                );
-                Future.delayed(const Duration(seconds: 3), () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                });
-
-              }
-            },
-            child: Text('Send Email',
-                style: Theme.of(context).textTheme.titleMedium),
-          ),
-
-          const SizedBox(height: 20),
-          // ElevatedButton(
-          //   child: Text('View PDF'),
-          //   onPressed: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) => PDFViewerScaffold(
-          //           appBar: AppBar(
-          //             title: Text('Invoice PDF'),
-          //           ),
-          //           path: pdfPath,
-          //         ),
-          //       ),
-          //     );
-          //   },
-          // ),
-        ],
+    return SafeArea(
+      child: Container(
+        key: _scaffoldKey,
+        color: Colors.white,
+        child: FutureBuilder<String>(
+          future: generateInvoice(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            final pdfPath = snapshot.data!;
+            print("Build PDF path: $pdfPath");
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height / 1.5,
+                  child: PdfViewPage(pdfPath: pdfPath),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: downloadFile,
+                  child: Text(
+                    'Download PDF',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () async {
+                    var response = await sendEmailWithAttachment(pdfPath);
+                    print(response.toString());
+                    if (response == "Success") {
+                      print("Success");
+                      FlushBarWidget fbw = FlushBarWidget();
+                      fbw.flushBar(
+                        context: _scaffoldKey.currentContext!,
+                        title: "Success",
+                        message: "Email send successfully",
+                        backgroundColor: AppColors.colorSecondary,
+                      );
+                      Future.delayed(const Duration(seconds: 3), () {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      });
+                    }
+                    else {
+                      print("Error");
+                      FlushBarWidget fbw = FlushBarWidget();
+                      fbw.flushBar(
+                        context: _scaffoldKey.currentContext!,
+                        title: "Error",
+                        message: "Email not send",
+                        backgroundColor: AppColors.colorWarning,
+                      );
+                    }
+                  },
+                  child: Text(
+                    'Send Email',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
+
 }

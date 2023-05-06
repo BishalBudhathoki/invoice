@@ -1,41 +1,36 @@
-import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 
 // Function to send email with attached PDF
-Future<dynamic> sendEmailWithAttachment() async {
+Future<dynamic> sendEmailWithAttachment(String pdfPath) async {
 
   String emailAddress = dotenv.env['EMAIL_ADDRESS']!;
-  String emailPassword = dotenv.env['EMAIL_PASSWORD']!;
   String recipientEmail = dotenv.env['RECIPIENT_EMAIL_ADDRESS']!;
-  final serviceId = dotenv.env['SERVICE_ID']!;
-  final templateId = dotenv.env['TEMPLATE_ID']!;
-  final userId = dotenv.env['USER_ID']!;
-  final privateKey = dotenv.env['PRIVATE_KEY']!;
-  print('$emailAddress $recipientEmail');
+  final accessToken = dotenv.env['ACCESS_TOKEN']!;
 
-  final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
-  final response = await http.post(
-    url,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: jsonEncode({
-      'accessToken': privateKey,
-      'service_id': serviceId,
-      'template_id': templateId,
-      'user_id': userId,
-      'template_params': {
-        'user_name': 'James',
-        'user_subject': 'Invoice',
-        'recipient_email': recipientEmail,
-        'user_email': emailAddress,
-        'message': 'Hello World!'
-      },
-    }),
-  );
-  print(response.body);
+  final smtpServer = SmtpServer('smtp.gmail.com',
+      username: emailAddress,
+      password: accessToken,
+      );
 
+  final message = Message()
+    ..from = Address(emailAddress)
+    ..recipients.add(recipientEmail)
+    ..subject = 'Invoice'
+    ..text = "Hello this is body"
+    ..attachments.add(FileAttachment(File(pdfPath)));
 
-return response.body;
+  try {
+    final sendReport = await send(message, smtpServer);
+    print('Message sent: $sendReport');
+    return 'Success';
+  } on MailerException catch (e) {
+    print('Message not sent.');
+    for (var p in e.problems) {
+      print('Problem: ${p.code}: ${p.msg}');
+    }
+    return 'Error';
+  }
 }

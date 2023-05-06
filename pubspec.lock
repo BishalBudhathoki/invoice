@@ -422,6 +422,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.2"
+  flutter_email_sender:
+    dependency: "direct main"
+    description:
+      name: flutter_email_sender
+      sha256: "9e253c69617f43d4cb5de672e93a7a19c12a21fb6a75e66c6ce7626336c4c1bc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.2.0"
   flutter_flushbar:
     dependency: "direct main"
     description:
@@ -494,14 +502,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
-  flutter_share_file:
-    dependency: "direct main"
-    description:
-      name: flutter_share_file
-      sha256: "1ec8560490b9bc53a115a9ef8f356bede8bc49ed7657fbe11039ef820ea5660f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.1+6"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -864,6 +864,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.10.1"
+  pdf_viewer_plugin:
+    dependency: "direct main"
+    description:
+      name: pdf_viewer_plugin
+      sha256: "1202453cc01b7d15049916ba58b777c561519b682d4b28d8cce2759090a0e3c4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   pedantic:
     dependency: transitive
     description:

@@ -2,11 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:invoice/app/core/view-models/assignedAppointment_model.dart';
-import 'package:invoice/app/core/view-models/login_model.dart';
 import 'package:invoice/app/core/view-models/user_model.dart';
 import 'package:invoice/app/core/view-models/client_model.dart';
-import 'package:mongo_dart/mongo_dart.dart';
 
 class ApiMethod {
 //API to authenticate user login

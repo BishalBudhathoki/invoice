@@ -5,15 +5,17 @@ PODS:
   - document_file_save_plus (0.0.1):
     - Flutter
   - Flutter (1.0.0)
-  - flutter_secure_storage (6.0.0):
+  - flutter_email_sender (0.0.1):
     - Flutter
-  - flutter_share_file (0.0.1):
+  - flutter_secure_storage (6.0.0):
     - Flutter
   - image_picker_ios (0.0.1):
     - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - pdf_viewer_plugin (0.0.1):
+    - Flutter
   - permission_handler_apple (9.0.4):
     - Flutter
   - ReachabilitySwift (5.0.0)
@@ -29,10 +31,11 @@ DEPENDENCIES:
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - document_file_save_plus (from `.symlinks/plugins/document_file_save_plus/ios`)
   - Flutter (from `Flutter`)
+  - flutter_email_sender (from `.symlinks/plugins/flutter_email_sender/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
-  - flutter_share_file (from `.symlinks/plugins/flutter_share_file/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
+  - pdf_viewer_plugin (from `.symlinks/plugins/pdf_viewer_plugin/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/ios`)
@@ -49,14 +52,16 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/document_file_save_plus/ios"
   Flutter:
     :path: Flutter
+  flutter_email_sender:
+    :path: ".symlinks/plugins/flutter_email_sender/ios"
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
-  flutter_share_file:
-    :path: ".symlinks/plugins/flutter_share_file/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/ios"
+  pdf_viewer_plugin:
+    :path: ".symlinks/plugins/pdf_viewer_plugin/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   share_plus:
@@ -70,10 +75,11 @@ SPEC CHECKSUMS:
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   document_file_save_plus: 913d440d8b611ae19add4522ed578e3ed1483a2f
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  flutter_email_sender: 02d7443217d8c41483223627972bfdc09f74276b
   flutter_secure_storage: 23fc622d89d073675f2eaa109381aefbcf5a49be
-  flutter_share_file: 52924ead227a84da296c7667cae94eea86962eb5
   image_picker_ios: 4a8aadfbb6dc30ad5141a2ce3832af9214a705b5
   path_provider_foundation: c68054786f1b4f3343858c1e1d0caaded73f0be9
+  pdf_viewer_plugin: 45fc2233c590780ca0ca623a1f575e4bd0a72b3a
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   share_plus: 056a1e8ac890df3e33cb503afffaf1e9b4fbae68
@@ -82,4 +88,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: a5a7430a2489aa28a4f641af9927894a4abeb951
 
-COCOAPODS: 1.12.0
+COCOAPODS: 1.12.1

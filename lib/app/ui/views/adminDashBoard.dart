@@ -148,7 +148,7 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
                             fontWeight: FontWeight.w800,
                             fontFamily: 'Lato',
                           )),
-                      SizedBox(height: context.height * 0.023),
+                      // SizedBox(height: context.height * 0.023),
                       HomeDetailCard(
                         buttonLabel: 'Add Details',
                         cardLabel: 'Know Your Business!',

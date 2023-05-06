@@ -27,7 +27,6 @@ Future<dynamic> sendEmailWithAttachment(String pdfPath) async {
     print('Message sent: $sendReport');
     return 'Success';
   } on MailerException catch (e) {
-    print('Message not sent.');
     for (var p in e.problems) {
       print('Problem: ${p.code}: ${p.msg}');
     }

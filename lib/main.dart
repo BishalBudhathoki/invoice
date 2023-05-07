@@ -19,6 +19,7 @@ import 'package:invoice/app/ui/views/signup_view.dart';
 import 'package:invoice/app/ui/views/timeAndDatePicker_view.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'app/core/view-models/sendEmail_model.dart';
 import 'app/ui/views/client_and_appointment_details_view.dart';
 import 'package:invoice/app/core/timerModel.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -44,6 +45,7 @@ void main() async{
         ChangeNotifierProvider(create: (_) => LoginModel()),
         ChangeNotifierProvider(create: (_) => SignupModel()),
         ChangeNotifierProvider(create: (_) => TimerModel()),
+        ChangeNotifierProvider(create: (_) => SendEmailModel()),
       ],
       child: MaterialApp(
         title: AppStrings.appName,

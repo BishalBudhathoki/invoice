@@ -17,6 +17,7 @@ class LineItemController extends GetxController {
     try {
       final List<Map<String, dynamic>> lineItems =
       await ApiMethod().getLineItems();
+      print("Line items from controller:::::: \n $lineItems");
       _lineItems = lineItems;
       update();
     } catch (e) {

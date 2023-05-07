@@ -4,7 +4,7 @@ import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 
 // Function to send email with attached PDF
-Future<dynamic> sendEmailWithAttachment(String pdfPath) async {
+Future<dynamic> sendEmailWithAttachment(String pdfPath, List<String> invoiceName, String endDate, String invoiceNumber) async {
 
   String emailAddress = dotenv.env['EMAIL_ADDRESS']!;
   String recipientEmail = dotenv.env['RECIPIENT_EMAIL_ADDRESS']!;
@@ -18,8 +18,8 @@ Future<dynamic> sendEmailWithAttachment(String pdfPath) async {
   final message = Message()
     ..from = Address(emailAddress)
     ..recipients.add(recipientEmail)
-    ..subject = 'Invoice'
-    ..text = "Hello this is body"
+    ..subject = 'Invoice Number: $invoiceNumber'
+    ..text = "Hello,\n\nI have attached the invoice for the pay period ending $endDate.\n\nThank you,\n\nRegards,\n${invoiceName[0]}"
     ..attachments.add(FileAttachment(File(pdfPath)));
 
   try {

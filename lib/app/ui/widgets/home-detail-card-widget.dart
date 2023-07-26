@@ -23,8 +23,8 @@ class HomeDetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container(
-      height: 280,
-      width: 350,
+      height: MediaQuery.of(context).size.height * 0.3,
+      width: MediaQuery.of(context).size.width * 0.9,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(20)),
         color: Colors.transparent,
@@ -34,8 +34,8 @@ class HomeDetailCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 100),
             child: Container(
-              height: context.height * 0.2,
-              width: context.width,
+              height: MediaQuery.of(context).size.height * 0.3,
+              width: MediaQuery.of(context).size.width,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(25)),
                 color: AppColors.colorFontSecondary,
@@ -51,7 +51,7 @@ class HomeDetailCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 20),
+            padding: const EdgeInsets.only(left: 20, bottom: 25),
             child: SizedBox(
               height: 200,
               width: 200,
@@ -60,26 +60,25 @@ class HomeDetailCard extends StatelessWidget {
           ),
           InkWell(
             onTap: onPressed,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 200, left: 16, right: 16),
-                  child: Container(
-                    height: context.height * 0.06,
-                    width: context.width,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(25)),
-                      color: AppColors.colorPrimary,
-                    ),
-                    child: Center(
-                      child: Text(
-                        buttonLabel,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 200, left: 16, right: 16),
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.07,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                  color: AppColors.colorPrimary,
+                ),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      buttonLabel,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ],

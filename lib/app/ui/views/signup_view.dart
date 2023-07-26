@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:invoice/app/core/controllers/signup_controller.dart';
 import 'package:invoice/app/ui/widgets/alertDialog_widget.dart';
+import 'package:invoice/app/ui/widgets/bottom_navBar_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:invoice/app/core/view-models/signup_model.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
@@ -12,6 +15,8 @@ import 'package:invoice/app/ui/widgets/button_widget.dart';
 import 'package:invoice/app/ui/widgets/textField_widget.dart';
 import 'package:invoice/backend/api_method.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUpView extends StatefulWidget {
   const SignUpView({super.key});
@@ -30,6 +35,8 @@ class _SignupUserNameControllerState extends State<SignUpView> {
   final _signUpPasswordController = TextEditingController();
   final _signUpConfirmPasswordController = TextEditingController();
   final _signupABNController = TextEditingController();
+
+  var ins;
 
   @override
   void dispose() {
@@ -192,10 +199,12 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                           Navigator.push(
                             _scaffoldKey.currentContext!,
                             MaterialPageRoute(
-                                builder: (context) => HomeView(
-                                      email: _signUpEmailController.text,
-                                      // lastName: _signUpUserLastNameController.text,
-                                    )),
+                              builder: (context) => BottomNavBarWidget(
+                                  email: _signUpEmailController.text
+                                      .toLowerCase()
+                                      .trim(),
+                                  role: 'normal'),
+                            ),
                           );
                         } else {
                           print('Error at signup');
@@ -221,29 +230,47 @@ class _SignupUserNameControllerState extends State<SignUpView> {
 
   ApiMethod apiMethod = ApiMethod();
   Future<bool> _signupUser() async {
-    var ins = await apiMethod.signupUser(
-      _signUpUserFirstNameController.text,
-      _signUpUserLastNameController.text,
-      _signUpEmailController.text,
-      _signUpPasswordController.text,
-      _signupABNController.text,
-    );
-    //print("Response: "+ ins['email'].toString() );
+    SignupController signupController = SignupController();
 
     if (_signUpPasswordController.text ==
         _signUpConfirmPasswordController.text) {
-      // if(ins['email'] != null) {
-      //
-      // }
-      if (kDebugMode) {
-        // _apiResponse.Data = LoginModel.fromJson(json.decode(response.body));
-        print("Login Successful ");
+      bool success = await signupController.signupUser(
+        _signUpUserFirstNameController.text,
+        _signUpUserLastNameController.text,
+        _signUpEmailController.text,
+        _signUpPasswordController.text,
+        _signupABNController.text,
+        "normal",
+      );
+
+      if (success) {
+        ins = await apiMethod.signupUser(
+          _signUpUserFirstNameController.text,
+          _signUpUserLastNameController.text,
+          _signUpEmailController.text,
+          _signUpPasswordController.text,
+          _signupABNController.text,
+          "normal",
+        );
       }
 
-      return true;
+      print("Response: $ins");
+      print("Response: $success");
+
+      if (ins != null && success) {
+        if (kDebugMode) {
+          print("Signup Successful");
+        }
+        return true;
+      } else {
+        if (kDebugMode) {
+          print("Signup Failed");
+        }
+        return false;
+      }
     } else {
       if (kDebugMode) {
-        print("Login Failed");
+        print("Passwords do not match");
       }
       return false;
     }

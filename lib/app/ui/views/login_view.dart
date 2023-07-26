@@ -1,7 +1,11 @@
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:invoice/app/ui/shared/themes/app_themes.dart';
 import 'package:invoice/app/ui/views/adminDashBoard.dart';
 import 'package:invoice/app/ui/widgets/alertDialog_widget.dart';
+import 'package:invoice/app/ui/widgets/bottom_navBar_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -138,16 +142,16 @@ class _LoginUserNameControllerState extends State<LoginView> {
               SizedBox(
                 height: size.height * 0.02,
               ),
-              FittedBox(
+              const FittedBox(
                 fit: BoxFit.contain,
                 child: Padding(
                   padding: EdgeInsets.only(left: 265.0),
-                child: Text(
-                  'Forgot password?',
-                  style: TextStyle(
-                    color: AppColors.colorFontPrimary,
+                  child: Text(
+                    'Forgot password?',
+                    style: TextStyle(
+                      color: AppColors.colorFontPrimary,
+                    ),
                   ),
-                ),
                 ),
               ),
               SizedBox(
@@ -158,36 +162,62 @@ class _LoginUserNameControllerState extends State<LoginView> {
                 hasBorder: false,
                 onPressed: () async {
                   showAlertDialog(context);
-                  print('Login button pressed');
-                  var currentContext = context; // capture the current context
-                  Future.delayed(const Duration(seconds: 3), () async {
-                    var response = await _handleSubmitted();
 
+                  if (kDebugMode) {
+                    print('Login button pressed');
+                  }
+                  var currentContext = context; // Capture the current context
+                  Timer timer = Timer(const Duration(seconds: 8), () {
+                    // Display warning after 3 seconds (adjust the duration as needed)
+                    Navigator.of(context).pop(); // Close the dialog
+
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Warning',
+                              style: Theme.of(context).textTheme.bodyLarge),
+                          content: Text(
+                              'Login process is taking longer than expected.',
+                              style: Theme.of(context).textTheme.bodyMedium),
+                          actions: [
+                            TextButton(
+                              child: Text('OK',
+                                  style: Theme.of(context).textTheme.bodyLarge),
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pop(); // Close the warning dialog
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  });
+
+                  var response = await _handleSubmitted();
+                  timer.cancel(); // Cancel the timer
+
+                  if (response != null && response.containsKey('message')) {
                     if (response['message'] == 'user found') {
                       Navigator.push(
                         _scaffoldKey.currentContext!,
                         MaterialPageRoute(
-                          builder: (currentContext) =>
-                              // HomeView(
-                              //   email: _userEmailController.text.trim(),
-                              // ),
-                               AdminDashboardView(
-                                 email:_userEmailController.text.trim(),
-                              ),
+                          builder: (context) => BottomNavBarWidget(
+                            email:
+                                _userEmailController.text.toLowerCase().trim(),
+                            role: response['role'],
+                          ),
                         ),
                       );
                     } else {
                       print('Error at login');
-                      Navigator.of(_scaffoldKey.currentContext!,
-                              rootNavigator: true)
-                          .pop();
+                      Navigator.of(context, rootNavigator: true).pop();
                     }
-                    //_login();
-                  });
-
-                  //clearText();
-
-                  //login_controller.login(_userNameController.text, _passwordController.text);
+                  } else {
+                    print('Error at login');
+                    Navigator.of(context, rootNavigator: true).pop();
+                  }
                 },
               ),
               SizedBox(
@@ -197,6 +227,7 @@ class _LoginUserNameControllerState extends State<LoginView> {
                 title: 'Sign Up',
                 hasBorder: true,
                 onPressed: () {
+                  print('Sign Up button pressed');
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const SignUpView()),
@@ -218,14 +249,36 @@ class _LoginUserNameControllerState extends State<LoginView> {
     _passwordController.clear();
   }
 
-  ApiMethod apiMethod = new ApiMethod();
+  ApiMethod apiMethod = ApiMethod();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   //LoginModel model = LoginModel();
   Future<dynamic> _handleSubmitted() async {
-    print("Username:  ${_userEmailController.text.trim()}");
-    print("Password:  ${_passwordController.text.trim()}");
-    var ins = await apiMethod.login(
-        _userEmailController.text.trim(), _passwordController.text.trim());
-    //print("Response: "+ ins['email'].toString() + ins['password'].toString());
-    return ins;
+    print("Username: ${_userEmailController.text.toLowerCase().trim()}");
+    print("Password: ${_passwordController.text.trim()}");
+
+    try {
+      final UserCredential userCredential =
+          await _auth.signInWithEmailAndPassword(
+        email: _userEmailController.text.toLowerCase().trim(),
+        password: _passwordController.text.trim(),
+      );
+      print(userCredential.user);
+      if (userCredential.user != null) {
+        if (kDebugMode) {
+          print("User: ${userCredential.user!.email}");
+        }
+
+        return await apiMethod.login(
+          _userEmailController.text.toLowerCase().trim(),
+          _passwordController.text.trim(),
+        );
+      }
+    } catch (e) {
+      // Handle login errors here
+      print('Error at login: $e');
+    }
+
+    return null;
   }
 }

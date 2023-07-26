@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "406509736623",
+    "project_id": "invoice-660f3",
+    "storage_bucket": "invoice-660f3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406509736623:android:73088e652df1e5346a3a5a",
+        "android_client_info": {
+          "package_name": "com.bishal.invoice"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAa1yMtafkB4jqE210h5ucbTe_LczG5MwM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

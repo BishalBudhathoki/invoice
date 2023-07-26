@@ -6,63 +6,44 @@ import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
 class ProfilePlaceholder extends StatelessWidget {
   final String firstName;
   final String lastName;
-  //final Image image;
-  //final VoidCallback onPressed;
 
   const ProfilePlaceholder({
     Key? key,
     required this.firstName,
     required this.lastName,
-    //required this.image,
-    //required this.onPressed,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 83,
-      width: context.width - 40,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Container(
+      color: Colors.white,
+      height: context.height * 0.1,
+      width: context.width * 0.6,
+      child: Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.start, // Align children to the left
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                const Text('Welcome back',
-                    style: TextStyle(
-                      color: AppColors.colorFontPrimary,
-                      fontSize: AppDimens.fontSizeMedium,
-                      //fontWeight: AppDimens.fontSizeSmall,
-                    )),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text('$firstName $lastName',
-                    style: const TextStyle(
-                      color: AppColors.colorFontPrimary,
-                      fontSize: AppDimens.fontSizeLarge,
-                      fontWeight: FontWeight.w600,
-                    )),
-              ],
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.025,
+          ),
+          const Text(
+            'Welcome back',
+            style: TextStyle(
+              color: AppColors.colorFontPrimary,
+              fontSize: AppDimens.fontSizeMedium,
             ),
           ),
-          // InkWell(
-          //   onTap: onPressed,
-          //   child: Container(
-          //       width: 55.0,
-          //       height: 55.0,
-          //       decoration: const BoxDecoration(
-          //           shape: BoxShape.circle,
-          //           image: DecorationImage(
-          //             fit: BoxFit.fill,
-          //             image: AssetImage('assets/images/pari-profile.png'),
-          //           )
-          //       )),
-          // ),
+          const SizedBox(
+            height: 5,
+          ),
+          Text(
+            '$firstName $lastName',
+            style: const TextStyle(
+              color: AppColors.colorFontPrimary,
+              fontSize: AppDimens.fontSizeLarge,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );

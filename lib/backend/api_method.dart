@@ -1,14 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:invoice/app/core/view-models/photoData_viewModel.dart';
 import 'package:invoice/app/core/view-models/user_model.dart';
 import 'package:invoice/app/core/view-models/client_model.dart';
+import 'package:provider/provider.dart';
 
 class ApiMethod {
 //API to authenticate user login
   final String _baseUrl = dotenv.env['BASE_URL'].toString();
-
 
   Future<dynamic> authenticateUser(String email, String password) async {
     // ApiResponse _apiResponse = new ApiResponse();
@@ -235,23 +239,50 @@ class ApiMethod {
 
   Future<dynamic> login(String email, String password) async {
     print('${_baseUrl}login/$email/$password');
-    //post method with body
-    final response =
-        await http.get(Uri.parse('${_baseUrl}login/$email/$password'));
-    print("Resp: ${response.statusCode}");
-    switch (response.statusCode) {
-      case 200:
-        data = new Map<String, dynamic>.from(json.decode(response.body));
-        print("200" + data['message']);
 
-        break;
-      case 400:
-        data = new Map<String, dynamic>.from(json.decode(response.body));
-        print("400" + data['message']);
+    try {
+      final response =
+          await http.get(Uri.parse('${_baseUrl}login/$email/$password'));
+      print("Resp: ${response.statusCode}");
 
-        break;
+      Map<String, dynamic> data = {};
+
+      switch (response.statusCode) {
+        case 200:
+          data = Map<String, dynamic>.from(json.decode(response.body));
+          if (kDebugMode) {
+            print("200" + data['message']);
+          }
+          // Retrieve the user's role from the response and assign it to a variable
+          String role = data['role'];
+
+          return {
+            'message': 'user found',
+            'role': role,
+          };
+
+        case 400:
+          data = Map<String, dynamic>.from(json.decode(response.body));
+          if (kDebugMode) {
+            print("400" + data['message']);
+          }
+
+          return {
+            'message': 'user not found',
+          };
+
+        default:
+          return {
+            'message': 'Unknown error occurred',
+          };
+      }
+    } catch (e) {
+      // Handle any exception that occurs during the login process
+      print("Exception: $e");
+      return {
+        'message': 'An error occurred during login',
+      };
     }
-    return data;
   }
 
   Future<dynamic> uploadCSV() async {
@@ -300,7 +331,6 @@ class ApiMethod {
       print("Error: $e");
     }
   }
-
 
   late List<dynamic> holidaysList = [];
   Future<dynamic> getHolidays() async {
@@ -359,71 +389,129 @@ class ApiMethod {
       print("Error get user docs: $e");
     }
   }
+  //
+  // Future<dynamic> signupUser(
+  //   String firstName,
+  //   String lastName,
+  //   String email,
+  //   String password,
+  //   String abn,
+  // ) async {
+  //   // ApiResponse _apiResponse = new ApiResponse();
+  //
+  //   try {
+  //     print('${_baseUrl}checkEmail/$email');
+  //     //post method with body
+  //     final response =
+  //         await http.get(Uri.parse('${_baseUrl}checkEmail/$email'));
+  //     //print(response.body);
+  //     switch (response.statusCode) {
+  //       case 200:
+  //         data = new Map<String, dynamic>.from(json.decode(response.body));
+  //         //print("200"+ data['email']);
+  //         break;
+  //       case 400:
+  //         data = new Map<String, dynamic>.from(json.decode(response.body));
+  //         //print("400"+ data['email']);
+  //         break;
+  //       case 500: //server error
+  //         data = new Map<String, dynamic>.from(json.decode(response.body));
+  //         //print("400"+ data['email']);
+  //         break;
+  //     }
+  //     //print("checkEmail: "+response.body);
+  //   } on SocketException {
+  //     // _apiResponse.ApiError = ApiError(error: "Server error. Please retry") as String;
+  //   }
+  //
+  //   if (data['email'] == "Email not found") {
+  //     try {
+  //       print("${"Print me: " + data['email']} $email");
+  //
+  //       final response1 = await http.post(
+  //         Uri.parse('${_baseUrl}signup/$email'),
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           "Accept": "application/json"
+  //         },
+  //         body: jsonEncode({
+  //           "firstName": firstName,
+  //           "lastName": lastName,
+  //           "email": email,
+  //           "password": password,
+  //           "abn": abn
+  //         }),
+  //       );
+  //       print(response1.body);
+  //       switch (response1.statusCode) {
+  //         case 200:
+  //           data = new Map<String, dynamic>.from(json.decode(response1.body));
+  //           print("200" + data['email']!);
+  //           break;
+  //       }
+  //     } catch (e) {
+  //       print(e);
+  //     }
+  //   } else {
+  //     print("Email already exists");
+  //   }
+  //
+  //   return data;
+  // }
 
-
-  Future<dynamic> signupUser(
-    String firstName,
-    String lastName,
-    String email,
-    String password,
-    String abn,
-  ) async {
-    // ApiResponse _apiResponse = new ApiResponse();
-
+  Future<dynamic> signupUser(String firstName, String lastName, String email,
+      String password, String abn, String role) async {
     try {
-      print('${_baseUrl}checkEmail/$email');
-      //post method with body
-      final response =
+      final checkEmailResponse =
           await http.get(Uri.parse('${_baseUrl}checkEmail/$email'));
-      //print(response.body);
-      switch (response.statusCode) {
+      print('${_baseUrl}checkEmail/$email');
+      final checkEmailData = json.decode(checkEmailResponse.body);
+      switch (checkEmailResponse.statusCode) {
         case 200:
-          data = new Map<String, dynamic>.from(json.decode(response.body));
-          //print("200"+ data['email']);
-          break;
+          print("checkEmail: ${checkEmailData['email']}");
+          return null;
         case 400:
-          data = new Map<String, dynamic>.from(json.decode(response.body));
-          //print("400"+ data['email']);
-          break;
+          print("email not found");
+          final signupResponse = await http.post(
+            Uri.parse('${_baseUrl}signup/$email'),
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: jsonEncode({
+              "firstName": firstName,
+              "lastName": lastName,
+              "email": email,
+              "password": password,
+              "abn": abn,
+              "role": role
+            }),
+          );
+          print('${_baseUrl}signup/$email');
+          switch (signupResponse.statusCode) {
+            case 200:
+              final signupData = json.decode(signupResponse.body);
+              print("Signup successful: ${signupResponse.body}");
+              return signupData;
+            case 500:
+              print("${signupResponse.statusCode}: ${signupResponse.body}");
+              return null;
+            default:
+              print(
+                  "Signup failed with status code ${signupResponse.statusCode}");
+              return null;
+          }
+        case 500:
+          print("Server error occurred");
+          return null;
+        default:
+          print("Invalid response received");
+          return null;
       }
-      //print("checkEmail: "+response.body);
     } on SocketException {
-      // _apiResponse.ApiError = ApiError(error: "Server error. Please retry") as String;
+      print("Server error. Please retry");
+      return null;
     }
-
-    if (data['email'] == "Email not found") {
-      try {
-        print("${"Print me: " + data['email']} $email");
-
-        final response1 = await http.post(
-          Uri.parse('${_baseUrl}signup/$email'),
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: jsonEncode({
-            "firstName": firstName,
-            "lastName": lastName,
-            "email": email,
-            "password": password,
-            "abn": abn
-          }),
-        );
-        print(response1.body);
-        switch (response1.statusCode) {
-          case 200:
-            data = new Map<String, dynamic>.from(json.decode(response1.body));
-            print("200" + data['email']!);
-            break;
-        }
-      } catch (e) {
-        print(e);
-      }
-    } else {
-      print("Email already exists");
-    }
-
-    return data;
   }
 
   Future<dynamic> addClient(
@@ -595,7 +683,8 @@ class ApiMethod {
       );
       if (response.statusCode == 200) {
         final List<dynamic> holidayStatusListJson = json.decode(response.body);
-        final List<String> holidayStatusList = holidayStatusListJson.cast<String>();
+        final List<String> holidayStatusList =
+            holidayStatusListJson.cast<String>();
         return holidayStatusList;
       } else {
         throw Exception('Failed to get holidays: ${response.statusCode}');
@@ -607,42 +696,57 @@ class ApiMethod {
     }
   }
 
+  Future<dynamic> uploadPhoto(
+      BuildContext context, String userEmail, File imageFile) async {
+    final url = '${_baseUrl}uploadPhoto/';
+    final Uint8List photoData = await imageFile.readAsBytes();
+    final request = http.MultipartRequest('POST', Uri.parse(url));
+    request.fields['email'] = userEmail;
+    print("Email sending: ${request.fields['email']}");
+    final imageStream = http.ByteStream(Stream.castFrom(imageFile.openRead()));
+    final imageSize = await imageFile.length();
 
+    final multipartFile = http.MultipartFile('photo', imageStream, imageSize,
+        filename: imageFile.path.split('/').last);
+    request.files.add(multipartFile);
 
+    final response = await request.send();
+    if (response.statusCode == 200) {
+      try {
+        var jsonResponse = json.decode(await response.stream.bytesToString());
+        // After successful upload, set the photoData in the PhotoData instance
+        final photoDataProvider =
+            Provider.of<PhotoData>(context, listen: false);
+        photoDataProvider.updatePhotoData(photoData);
 
-// Future<dynamic> submitAssignedAppointment(String userEmail, String clientEmail) async {
-  //   print(userEmail);
-  //   print(clientEmail);
-  //
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse('${_baseUrl}assignClientToUser/'),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "Accept": "application/json"
-  //       },
-  //       body: jsonEncode({
-  //         "userEmail": userEmail,
-  //         "clientEmail": clientEmail,
-  //       }),
-  //     );
-  //     switch (response.statusCode) {
-  //       case 200:
-  //         data = new Map<String, dynamic>.from(json.decode(response.body));
-  //         print("200" + data['message']);
-  //
-  //         break;
-  //       case 400:
-  //         data = new Map<String, dynamic>.from(json.decode(response.body));
-  //         print("400" + data['message']);
-  //
-  //         break;
-  //
-  //     }
-  //   }
-  //   catch (e) {
-  //     print(e);
-  //   }
-  //   return data;
-  // }
+        print("Response: $jsonResponse");
+        return jsonResponse;
+      } catch (e) {
+        print("Error: $e");
+      }
+    } else if (response.statusCode == 400) {
+      throw Exception('Bad request, please check your input data');
+    } else if (response.statusCode == 401) {
+      throw Exception('Unauthorized, please check your API key');
+    } else if (response.statusCode == 404) {
+      throw Exception('Endpoint not found');
+    } else {
+      throw Exception('Unexpected error occurred!');
+    }
+  }
+
+  Future<Uint8List?> getUserPhoto(String userEmail) async {
+    final url = '${_baseUrl}getUserPhoto/$userEmail';
+
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final base64PhotoData = response.body;
+      final photoData = base64Decode(base64PhotoData);
+      return photoData;
+    } else if (response.statusCode == 404) {
+      throw Exception('Photo not found');
+    } else {
+      throw Exception('Unexpected error occurred!');
+    }
+  }
 }

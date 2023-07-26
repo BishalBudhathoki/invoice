@@ -51,43 +51,45 @@ class AppointmentCard extends StatelessWidget {
     return Row(
       children: [
         Container(
-          height: context.height * 0.35,
+          height: context.height * 0.29,
           width: context.width * 0.85,
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(25)),
             color: AppColors.colorTransparent,
           ),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
+            padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(
-                      color: AppColors.colorFontPrimary,
-                      fontSize: AppDimens.fontSizeXXXMedium,
-                      fontWeight: FontWeight.w900,
-                      fontFamily: 'Lato',
-                    )),
+                Center(
+                  child: Text(title,
+                      style: const TextStyle(
+                        color: AppColors.colorFontPrimary,
+                        fontSize: AppDimens.fontSizeXXXMedium,
+                        fontWeight: FontWeight.w900,
+                        fontFamily: 'Lato',
+                      )),
+                ),
                 SizedBox(height: context.height * 0.01),
                 CardLabelTextWidget(
                   iconData,
                   label,
                   text,
                 ),
-                SizedBox(height: context.height * 0.01),
+                //SizedBox(height: context.height * 0.01),
                 CardLabelTextWidget(
                   iconData1,
                   label1,
                   text1,
                 ),
-                SizedBox(height: context.height * 0.01),
+                //SizedBox(height: context.height * 0.01),
                 CardLabelTextWidget(
                   iconData2,
                   label2,
                   text2,
                 ),
-                SizedBox(height: context.height * 0.01),
+                //SizedBox(height: context.height * 0.01),
                 CardLabelTextWidget(
                   iconData3,
                   label3,

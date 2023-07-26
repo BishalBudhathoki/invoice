@@ -29,11 +29,10 @@ class _LineItemsControllerState extends State<LineItemsView> {
   }
 
   Future<void> getLineItems() async {
-    final List<Map<String, dynamic>> lineItems = lineItemController.lineItems;
+    await lineItemController.getLineItems();
     setState(() {
-      _lineItems = lineItems;
+      _lineItems = lineItemController.lineItems;
     });
-    //return lineItems;
   }
 
   Widget _buildTile(String? title, Color? backgroundColor) {

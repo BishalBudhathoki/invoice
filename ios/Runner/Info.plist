@@ -2,10 +2,23 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Invoice</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>MKDirectionsRequest</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.apple.maps.directionsrequest</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -22,7 +35,63 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>geo</string>
+		<string>googlechrome</string>
+		<string>googlechromes</string>
+		<string>http</string>
+		<string>https</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>MKDirectionsApplicationSupportedModes</key>
+	<array>
+		<string>MKDirectionsModeBike</string>
+		<string>MKDirectionsModeBus</string>
+		<string>MKDirectionsModeCar</string>
+		<string>MKDirectionsModeFerry</string>
+		<string>MKDirectionsModeOther</string>
+		<string>MKDirectionsModePedestrian</string>
+		<string>MKDirectionsModePlane</string>
+		<string>MKDirectionsModeRideShare</string>
+		<string>MKDirectionsModeStreetCar</string>
+		<string>MKDirectionsModeSubway</string>
+		<string>MKDirectionsModeTaxi</string>
+		<string>MKDirectionsModeTrain</string>
+	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>LSSupportsOpeningDocumentsInPlace</key>
+		<true/>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSCameraUsageDescription</key>
+		<string>Allow access to the camera to capture photos.</string>
+		<key>NSDocumentsFolderUsageDescription</key>
+		<string>Your app needs access to the documents folder to save and download files.</string>
+		<key>NSFileProtectionKey</key>
+		<string>NSFileProtectionComplete</string>
+		<key>UIFileSharingEnabled</key>
+		<true/>
+		<key>UISupportsDocumentBrowser</key>
+		<true/>
+		<key>allowProvisioningUpdates</key>
+		<true/>
+		<key>io.flutter.embedded_views_preview</key>
+		<true/>
+	</dict>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_dartobservatory._tcp</string>
+	</array>
+	<key>NSDocumentDirectory</key>
+	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Your app needs access to the photo library to upload a profile picture.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -43,37 +112,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-         <key>NSDocumentsFolderUsageDescription</key>
-            <string>Your app needs access to the documents folder to save and download files.</string>
-         <key>NSFileProtectionKey</key>
-            <string>NSFileProtectionComplete</string>
-         <key>NSPhotoLibraryUsageDescription</key>
-            <string>App needs access to save and read PDF files.</string>
-         <key>NSDocumentDirectory</key>
-         <true/>
-         <key>LSSupportsOpeningDocumentsInPlace</key>
-         <true/>
-         <key>UIFileSharingEnabled</key>
-         <true/>
-         <key>UISupportsDocumentBrowser</key>
-         <true/>
-         <key>LSSupportsOpeningDocumentsInPlace</key>
-         <true/>
-         <key>UIFileSharingEnabled</key>
-         <true/>
-         <key>allowProvisioningUpdates</key>
-         <true/>
-         <key>io.flutter.embedded_views_preview</key>
-         <true/>
-    </dict>
-
 </dict>
 </plist>

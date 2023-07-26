@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:invoice/backend/api_method.dart';
 
-
 class LineItemController extends GetxController {
   List<Map<String, dynamic>> _lineItems = [];
 

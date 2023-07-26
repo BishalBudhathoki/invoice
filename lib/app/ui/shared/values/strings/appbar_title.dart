@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
 
-class AppBarTitle extends StatelessWidget with PreferredSizeWidget {
+class AppBarTitle extends StatelessWidget {
   final String title;
   const AppBarTitle({Key? key, required this.title}) : super(key: key);
 

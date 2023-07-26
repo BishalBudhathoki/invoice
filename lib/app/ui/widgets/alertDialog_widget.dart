@@ -8,26 +8,26 @@ showAlertDialog(BuildContext context) {
   AlertDialog alert = AlertDialog(
     content: Container(
       child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const CircularProgressIndicator(
-              valueColor:
-              AlwaysStoppedAnimation<Color>(AppColors.colorFontPrimary),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                "Checking details...",
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: AppColors.colorFontPrimary,
-                  fontSize: AppDimens.fontSizeXXMedium,
-                  fontWeight: FontWeight.w800,
-                  fontFamily: 'Lato',
-                ),
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: const [
+          CircularProgressIndicator(
+            valueColor:
+                AlwaysStoppedAnimation<Color>(AppColors.colorFontPrimary),
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              "Checking details...",
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: AppColors.colorFontPrimary,
+                fontSize: AppDimens.fontSizeXXMedium,
+                fontWeight: FontWeight.w800,
+                fontFamily: 'Lato',
               ),
             ),
-          ],
+          ),
+        ],
       ),
     ),
   );

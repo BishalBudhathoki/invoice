@@ -1,4 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:invoice/app/ui//widgets/profile_placeholder_widget.dart';
@@ -7,21 +14,28 @@ import 'package:invoice/app/ui/shared/values/strings/asset_strings.dart';
 import 'package:invoice/app/ui/views/add_business_details_view.dart';
 import 'package:invoice/app/ui/views/add_client_details_view.dart';
 import 'package:invoice/app/ui/views/holidayList_view.dart';
+import 'package:invoice/app/ui/views/photo_display_widget.dart';
+import 'package:invoice/app/ui/widgets/add_client_business_details_widget.dart';
+import 'package:invoice/app/ui/widgets/appBar_widget.dart';
+import 'package:invoice/app/ui/widgets/bottom_navBar_widget.dart';
 import 'package:invoice/app/ui/widgets/home-detail-card-widget.dart';
 import 'package:invoice/app/ui/widgets/navBar_widget.dart';
 import 'package:invoice/backend/api_method.dart';
-
+import 'package:invoice/notificationservice/local_notification_service.dart';
+import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
+import 'package:path_provider/path_provider.dart';
 import '../widgets/button_widget.dart';
+import '../widgets/circular_profile_image_widget.dart';
 import 'generateInvoice.dart';
+import 'package:http/http.dart' as http;
+import 'package:rxdart/rxdart.dart';
 
 class AdminDashboardView extends StatefulWidget {
   final String email;
-  // final String lastName;
 
   const AdminDashboardView({
     Key? key,
     required this.email,
-    // required this.lastName,
   }) : super(key: key);
 
   @override
@@ -31,17 +45,24 @@ class AdminDashboardView extends StatefulWidget {
 }
 
 class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
-  int days = 10;
+  var getInitialData;
+  var initialData = {};
+  ApiMethod apiMethod = ApiMethod();
+  File? retrievedPhoto;
+  Future<dynamic>? _photoFuture;
 
-  var eml;
-  var ins = {};
-  ApiMethod apiMethod = new ApiMethod();
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     print('init');
     try {
       getData();
+      _photoFuture = apiMethod.getUserPhoto(widget.email);
     } catch (e) {
       print(e);
     }
@@ -49,175 +70,137 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
   }
 
   Future<dynamic> getData() async {
-    ins = await apiMethod.getInitData(widget.email);
+    initialData = await apiMethod.getInitData(widget.email);
     setState(() {
-      eml = ins;
+      getInitialData = initialData;
     });
-    return ins;
+
+    return initialData;
   }
+
+  final PageController _pageController = PageController();
+  int _currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> myWidgets = [
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Add Client\'s Details ?',
+            style: TextStyle(
+              color: AppColors.colorFontPrimary,
+              fontSize: AppDimens.fontSizeLarge,
+              fontWeight: FontWeight.w800,
+              fontFamily: 'Lato',
+            ),
+          ),
+          SizedBox(height: context.height * 0.023),
+          HomeDetailCard(
+            buttonLabel: 'Add Details',
+            cardLabel: 'Know Your Client!',
+            image: Image.asset(AssetsStrings.cardImageGirl),
+            onPressed: () {
+              print("Client Button Pressed");
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddClientDetails()),
+              );
+            },
+          ),
+        ],
+      ),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: context.height * 0.023),
+          const Text(
+            'Add Business\'s Details ?',
+            style: TextStyle(
+              color: AppColors.colorFontPrimary,
+              fontSize: AppDimens.fontSizeLarge,
+              fontWeight: FontWeight.w800,
+              fontFamily: 'Lato',
+            ),
+          ),
+          HomeDetailCard(
+            buttonLabel: 'Add Details',
+            cardLabel: 'Know Your Business!',
+            image: Image.asset(AssetsStrings.cardImageBoy),
+            onPressed: () {
+              print("Business Button Pressed");
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddBusinessDetails()),
+              );
+            },
+          ),
+        ],
+      ),
+      // add more widgets here if you want multiple pages
+    ];
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
-      key: scaffoldKey,
       backgroundColor: AppColors.colorWhite,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(context.height * 0.1),
-        child: AppBar(
-          toolbarHeight: context.height * 0.1,
-          backgroundColor: AppColors.colorWhite,
-          automaticallyImplyLeading: false,
-          elevation: 0,
-          title: Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: Column(
-              children: [
-                ProfilePlaceholder(
-                  firstName: ins['firstName'] ?? 'First Name',
-                  lastName: ins['lastName'] ?? 'Last Name',
-                  //image: Image.asset(AssetStrings.profileImage),
-                  // onPressed: () {
-                  //   // NavDrawer();
-                  //
-                  // },
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: InkWell(
-                onTap: () {
-                  scaffoldKey.currentState?.openEndDrawer();
-                },
-                child: SizedBox(
-                  height: 55,
-                  width: 55,
-                  child: Image.asset(
-                    'assets/images/pari-profile.png',
-                  ),
-                ),
-              ),
-            ),
-          ],
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: CustomAppBar(
+          email: widget.email,
+          firstName: initialData['firstName'] ?? 'First Name',
+          lastName: initialData['lastName'] ?? 'Last Name',
         ),
       ),
-      endDrawer: NavBarWidget(
-        context: context,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+        child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: 348,
-                child: ListView(
-                    shrinkWrap: false,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    children: [
-                      const SizedBox(height: 20),
-                      const Text('Add Client\'s Details ?',
-                          style: TextStyle(
-                            color: AppColors.colorFontPrimary,
-                            fontSize: AppDimens.fontSizeLarge,
-                            fontWeight: FontWeight.w800,
-                            fontFamily: 'Lato',
-                          )),
-                      HomeDetailCard(
-                        buttonLabel: 'Add Details',
-                        cardLabel: 'Know Your Client!',
-                        image: Image.asset(AssetsStrings.cardImageGirl),
-                        onPressed: () {
-                          print("Client Button Pressed");
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const AddClientDetails()),
-                          );
-                        },
-                      ),
-                      SizedBox(height: context.height * 0.023),
-                      const Text('Add Business\'s Details ?',
-                          style: TextStyle(
-                            color: AppColors.colorFontPrimary,
-                            fontSize: AppDimens.fontSizeLarge,
-                            fontWeight: FontWeight.w800,
-                            fontFamily: 'Lato',
-                          )),
-                      // SizedBox(height: context.height * 0.023),
-                      HomeDetailCard(
-                        buttonLabel: 'Add Details',
-                        cardLabel: 'Know Your Business!',
-                        image: Image.asset(AssetsStrings.cardImageBoy),
-                        onPressed: () {
-                          print("Business Button Pressed");
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const AddBusinessDetails()),
-                          );
-                        },
-                      ),
-                    ]),
+                height: context.height * 0.40,
+                child: AddClientDetailsWidget(myWidgets: myWidgets),
               ),
-              // FlutterCalendar(
-              //   focusedDate: dateTime,
-              //   isHeaderDisplayed: true,
-              //   startingDayOfWeek: DayOfWeek.mon,
-              //   selectionMode: CalendarSelectionMode.multiple,
-              //
-              //   // onMultipleDates: (List<DateTime> dates) {
-              //   //   for (var date in dates) {
-              //   //     datelist.add(date);
-              //   //     print("Date: $date DateList: $datelist" );
-              //   //   }
-              //   // },
-              //   // onDayPressed: (DateTime date) {
-              //   //   datelist.remove(date);
-              //   //   print("Pressed Date: $date DateList: $datelist");
-              //   // },
-              //   // onDayLongPressed: (DateTime date) {
-              //   //   print("Long Pressed Date: $date");
-              //   //
-              //   // },
-              // ),
-              ButtonWidget(
-                  title: 'Edit Holidays',
-                  hasBorder: false,
-                  onPressed: () async {
-                    List<dynamic>? holidays = await apiMethod.getHolidays();
-                    if (holidays != null) {
-                      print(holidays);
-                      Navigator.push(
-                        scaffoldKey.currentContext!,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                HolidayListView(holidays: holidays)),
-                      );
-                    }
-                  }),
               const SizedBox(height: 20),
-              ButtonWidget(
-                  title: 'Generate Invoice',
-                  hasBorder: false,
-                  onPressed: () async {
-                    //List<dynamic>? holidays = await apiMethod.getHolidays();
-                   // if (holidays != null) {
-                  //    print(holidays);
-                      Navigator.push(
-                        scaffoldKey.currentContext!,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const GenerateInvoice()
-                        ),
-                      );
-                   // }
-                  }),
+              SingleChildScrollView(
+                child: Column(
+                  key: scaffoldKey,
+                  children: [
+                    ButtonWidget(
+                      title: 'Edit Holidays',
+                      hasBorder: false,
+                      onPressed: () async {
+                        List<dynamic>? holidays = await apiMethod.getHolidays();
+                        if (holidays != null) {
+                          print(holidays);
+                          Navigator.push(
+                            scaffoldKey.currentContext!,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  HolidayListView(holidays: holidays),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    ButtonWidget(
+                      title: 'Generate Invoice',
+                      hasBorder: false,
+                      onPressed: () async {
+                        Navigator.push(
+                          scaffoldKey.currentContext!,
+                          MaterialPageRoute(
+                            builder: (context) => const GenerateInvoice(),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

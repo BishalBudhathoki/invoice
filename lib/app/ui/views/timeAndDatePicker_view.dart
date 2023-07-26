@@ -71,7 +71,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
       child:
           // card to display selected date
           Container(
-              height: 110,
+              height: 150,
               width: 380,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -80,19 +80,23 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       SizedBox(
-                        height: 100,
-                        width: 100,
+                        height: MediaQuery.of(context).size.height *
+                            0.13, // Adjust the height value as needed
+                        width: MediaQuery.of(context).size.width *
+                            0.13, // Adjust the width value as needed
                         child: Image.asset(
                           'assets/icons/fav-folder-dynamic-color.png',
                           fit: BoxFit.fill,
                         ),
                       ),
                       SizedBox(
-                        height: 110,
-                        width: 211,
+                        height: MediaQuery.of(context).size.height *
+                            0.13, // Adjust the height value as needed
+                        width: MediaQuery.of(context).size.width *
+                            0.4, // Adjust the width value as needed
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
@@ -443,7 +447,18 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
               title: 'Submit',
               onPressed: () async {
                 print("$dateList $startTimeList $endTimeList $breakList");
-                showAlertDialog(_scaffoldKey.currentContext!);
+                showDialog(
+                  context: _scaffoldKey.currentContext!,
+                  builder: (context) {
+                    // Store the reference to the displayed dialog
+                    AlertDialog alertDialog = const AlertDialog(
+                      title: Text("Alert Dialog"),
+                      content: Text("This is an alert dialog."),
+                    );
+                    return alertDialog;
+                  },
+                );
+
                 Future.delayed(const Duration(seconds: 3), () async {
                   var response = await _submitAssignedAppointment();
                   if (response['message'].toString() == "Success") {
@@ -457,7 +472,8 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                       backgroundColor: AppColors.colorSecondary,
                     );
                     Future.delayed(const Duration(seconds: 3), () {
-                      Navigator.pop(context);
+                      // Close the displayed dialog before navigating back
+                      Navigator.pop(context); // Close the dialog
                       Navigator.pop(context);
                       Navigator.pop(context);
                       Navigator.pop(context);
@@ -466,7 +482,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                   } else {
                     print("Failed");
                     Navigator.pop(_scaffoldKey.currentContext!);
-                    FlushBarWidget fbw = new FlushBarWidget();
+                    FlushBarWidget fbw = FlushBarWidget();
                     fbw.flushBar(
                       context: _scaffoldKey.currentContext!,
                       title: "Error",
@@ -474,7 +490,8 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                       backgroundColor: AppColors.error,
                     );
                     Future.delayed(const Duration(seconds: 3), () {
-                      Navigator.pop(context);
+                      // Close the displayed dialog before navigating back
+                      Navigator.pop(context); // Close the dialog
                       Navigator.pop(context);
                       Navigator.pop(context);
                       Navigator.pop(context);

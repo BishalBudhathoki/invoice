@@ -4,8 +4,10 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:invoice/app/core/view-models/assignedAppointment_model.dart';
 import 'package:invoice/app/core/view-models/client_model.dart';
+import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:invoice/app/ui/widgets/appointment_card_widget.dart';
 import 'package:invoice/backend/api_method.dart';
+import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 
 class DynamicAppointmentCardWidget extends StatefulWidget {
   List clientEmailList;
@@ -34,6 +36,9 @@ class _DynamicAppointmentCardWidgetState
   var setFutureClientsData;
   var appointmentData = {};
   ApiMethod apiMethod = ApiMethod();
+
+  late int selectedPage;
+  final PageController pageController = PageController(initialPage: 0);
 
   @override
   void initState() {
@@ -77,66 +82,102 @@ class _DynamicAppointmentCardWidgetState
     }
   }
 
+  int _currentPageIndex = 0;
+
   @override
   Widget build(BuildContext context) {
-    int ind = 0;
     Future.delayed(Duration(seconds: 1));
     return Scaffold(
-        key: _scaffoldKey,
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
+      key: _scaffoldKey,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+          child: Container(
+            height: context.height * 0.33,
+            color: AppColors.colorTransparent,
             child: FutureBuilder<List<Patient>>(
-                future: setFutureClientsData,
-                builder: (context, snapshot) {
-                  //var ind = appointmentData['data'].length;
-                  if (snapshot.hasData && setAppointmentData != null) {
-                    return ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        print("Current User Email: ${widget.currentUserEmail}");
-                        print(
-                            "Current Client Email: ${widget.clientEmailList[index]}");
-                        return Row(
-                          children: [
-                            AppointmentCard(
-                              currentClientEmail: widget.clientEmailList[index],
-                              currentUserEmail: widget.currentUserEmail,
-                              title: 'Appointments',
-                              iconData: Iconsax.user_square,
-                              label: 'Client\'s Name:',
-                              text: "${snapshot.data![index].clientFirstName} "
-                                  "${snapshot.data![index].clientLastName}",
-                              iconData1: Iconsax.location,
-                              label1: 'Address:',
-                              text1: "${snapshot.data![index].clientAddress} "
-                                  "${snapshot.data![index].clientCity} "
-                                  "${snapshot.data![index].clientState} "
-                                  "${snapshot.data![index].clientZip}",
-                              iconData2: Iconsax.timer_start,
-                              label2: 'Start Time:',
-                              text2:
-                                  "${appointmentData['data'][index]['startTimeList'][index]}",
-                              iconData3: Iconsax.timer_pause,
-                              label3: 'End Time:',
-                              text3:
-                                  "${appointmentData['data'][index]['endTimeList'][index]}",
-                            ),
-                            const SizedBox(
-                              width: 12,
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    print(snapshot.error);
-                    return Text("${snapshot.error}");
-                  }
-                  return const Center(child: CircularProgressIndicator());
-                }),
+              future: setFutureClientsData,
+              builder: (context, snapshot) {
+                if (snapshot.hasData && setAppointmentData != null) {
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: PageView.builder(
+                          controller: pageController,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: snapshot.data!.length,
+                          onPageChanged: (int index) {
+                            setState(() {
+                              _currentPageIndex = index;
+                            });
+                          },
+                          itemBuilder: (context, index) {
+                            print(
+                              "Current User Email: ${widget.currentUserEmail}",
+                            );
+                            print(
+                              "Current Client Email: ${widget.clientEmailList[index]}",
+                            );
+                            return Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    AppointmentCard(
+                                      currentClientEmail:
+                                          widget.clientEmailList[index],
+                                      currentUserEmail: widget.currentUserEmail,
+                                      title: 'Appointments',
+                                      iconData: Iconsax.user_square,
+                                      label: 'Client\'s Name:',
+                                      text:
+                                          "${snapshot.data![index].clientFirstName} ${snapshot.data![index].clientLastName}",
+                                      iconData1: Iconsax.location,
+                                      label1: 'Address:',
+                                      text1:
+                                          "${snapshot.data![index].clientAddress} ${snapshot.data![index].clientCity} ${snapshot.data![index].clientState} ${snapshot.data![index].clientZip}",
+                                      iconData2: Iconsax.timer_start,
+                                      label2: 'Start Time:',
+                                      text2:
+                                          "${appointmentData['data'][index]['startTimeList'][index]}",
+                                      iconData3: Iconsax.timer_pause,
+                                      label3: 'End Time:',
+                                      text3:
+                                          "${appointmentData['data'][index]['endTimeList'][index]}",
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                      // const SizedBox(
+                      //   height: 6,
+                      // ),
+                      PageViewDotIndicator(
+                        currentItem: _currentPageIndex,
+                        count: snapshot.data!.length,
+                        unselectedColor: AppColors.colorGrey,
+                        selectedColor: AppColors.colorPrimary,
+                        duration: const Duration(milliseconds: 200),
+                      ),
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  print(snapshot.error);
+                  return Text("${snapshot.error}");
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

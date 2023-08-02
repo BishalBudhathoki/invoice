@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:invoice/app/core/view-models/client_model.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
@@ -420,37 +421,21 @@ class _ClientAndAppointmentDetailsState
   }
 }
 
-// Future<void> launchMap(String address) async {
-//   String query = Uri.encodeComponent("13 Loftus Street, Ashfield, Nsw, 2131");
-//   final url = Uri.parse('geo:0,0?q=$query');
-//   if (await canLaunchUrl(url)) {
-//     await launchUrl(url);
-//   } else {
-//     throw 'Could not launch $url';
-//   }
-//  }
-
-// void launchMap(String address) {
-//   MapsLauncher.launchQuery("13 Loftus Street, Ashfield, NSW, 2131");
-// }
-
-// void launchMap(String address) {
-//   String query = Uri.encodeComponent(address);
-//   final Uri googleMapsUrl = Uri.parse('https://maps.google.com/maps?q=$query');
-//
-//   MapsLauncher.launchQuery(
-//     address,
-//   ).then((bool success) {
-//     if (!success) {
-//       // If launching with MapsLauncher failed, fall back to opening Google Maps in Safari
-//       launchUrl(googleMapsUrl);
-//     }
-//   });
-// }
-
-void launchMap(String address) {
-  String query = Uri.encodeComponent('13 Loftus Street, Ashfield, NSW, 2131');
-  final Uri googleMapsUrl = Uri.parse('https://maps.google.com/maps?q=$query');
-
-  launchUrl(googleMapsUrl);
+void launchMap(String address) async {
+  String query = Uri.encodeComponent(address);
+  String geoUrl = 'geo:0,0?q=$query';
+  String mapsUrl = 'comgooglemaps://?q=$query';
+  if (Platform.isAndroid) {
+    if (await canLaunchUrl(Uri.parse(geoUrl))) {
+      await launchUrl(Uri.parse(geoUrl));
+    } else {
+      throw 'Could not launch Google Maps';
+    }
+  } else {
+    if (await canLaunchUrl(Uri.parse(mapsUrl))) {
+      await launchUrl(Uri.parse(mapsUrl));
+    } else {
+      throw 'Could not launch Google Maps';
+    }
+  }
 }

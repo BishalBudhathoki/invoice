@@ -159,6 +159,9 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
+                height: context.height * 0.025,
+              ),
+              SizedBox(
                 height: context.height * 0.40,
                 child: AddClientDetailsWidget(myWidgets: myWidgets),
               ),

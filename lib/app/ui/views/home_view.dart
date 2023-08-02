@@ -135,7 +135,9 @@ class _HomeViewControllerState extends State<HomeView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 10),
+              SizedBox(
+                height: context.height * 0.025,
+              ),
               const Text('Your Appointments',
                   style: TextStyle(
                     color: AppColors.colorFontPrimary,

@@ -33,9 +33,9 @@ class ProfilePlaceholder extends StatelessWidget {
               fontSize: AppDimens.fontSizeMedium,
             ),
           ),
-          const SizedBox(
-            height: 5,
-          ),
+          // const SizedBox(
+          //   height: 5,
+          // ),
           Text(
             '$firstName $lastName',
             style: const TextStyle(

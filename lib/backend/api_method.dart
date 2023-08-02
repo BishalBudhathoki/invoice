@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 
 class ApiMethod {
 //API to authenticate user login
-  final String _baseUrl = dotenv.env['BASE_URL'].toString();
+  final String _baseUrl = dotenv.env['BACKEND_URL3'].toString();
 
   Future<dynamic> authenticateUser(String email, String password) async {
     // ApiResponse _apiResponse = new ApiResponse();

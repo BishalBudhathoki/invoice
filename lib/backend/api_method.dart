@@ -1,18 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:invoice/app/core/timerModel.dart';
 import 'package:invoice/app/core/view-models/photoData_viewModel.dart';
 import 'package:invoice/app/core/view-models/user_model.dart';
 import 'package:invoice/app/core/view-models/client_model.dart';
 import 'package:provider/provider.dart';
 
-class ApiMethod {
+class ApiMethod extends ChangeNotifier {
 //API to authenticate user login
-  final String _baseUrl = dotenv.env['BACKEND_URL3'].toString();
+  final String _baseUrl = dotenv.env['BASE_URL'].toString();
+  TimerModel timerModel = TimerModel();
 
   Future<dynamic> authenticateUser(String email, String password) async {
     // ApiResponse _apiResponse = new ApiResponse();
@@ -33,15 +34,95 @@ class ApiMethod {
     return data;
   }
 
+  Future<dynamic> startTimer() async {
+    final response = await http.post(Uri.parse('${_baseUrl}startTimer'));
+    print(response.body);
+
+    switch (response.statusCode) {
+      case 200:
+        print("Timer Started");
+        break;
+
+      case 400:
+        print("Timer failed");
+        break;
+    }
+  }
+
+  Future<void> stopTimer() async {
+    final response = await http.post(Uri.parse('${_baseUrl}stopTimer'));
+    print(response.body);
+    var totalTimeFromTimer;
+    switch (response.statusCode) {
+      case 200:
+        print("Timer stopped");
+        totalTimeFromTimer = json.decode(response.body);
+        timerModel.setTotalTime(totalTimeFromTimer['totalTime'].toInt());
+        print("Total time from timer: ${timerModel.totalTime}");
+        notifyListeners(); // Notify listeners after updating totalTime
+        break;
+
+      case 400:
+        print("Timer failed");
+        break;
+    }
+  }
+
   Future<List<User>> fetchUserData() async {
     print(Uri.parse('${_baseUrl}getUsers'));
     final response = await http.get(Uri.parse('${_baseUrl}getUsers'));
     if (response.statusCode == 200) {
       print("I am a response user: ${response.body}");
       List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((data) => new User.fromJson(data)).toList();
+      return jsonResponse.map((data) => User.fromJson(data)).toList();
     } else {
       throw Exception('Unexpected error occured!');
+    }
+  }
+
+  Future<Map<String, dynamic>> sendOTP(String emailRecipient) async {
+    print("Send OTP called");
+    print(Uri.parse('${_baseUrl}sendOTP'));
+
+    final Map<String, dynamic> requestBody = {
+      'email': emailRecipient,
+      // Add any other parameters you need for the email service
+    };
+
+    final response = await http.post(
+      Uri.parse('${_baseUrl}sendOTP'),
+      body: json.encode(requestBody),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    switch (response.statusCode) {
+      case 200:
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        print("200: $responseData ${responseData['statuesCode']}");
+        return {
+          'statusCode': responseData['statusCode'],
+          'message': responseData['message']
+        }; // Return the message
+      case 400:
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        print("400: $responseData ${responseData['statuesCode']}");
+        return {
+          'statusCode': responseData['statusCode'],
+          'message': responseData['message']
+        }; // Return the message
+      case 500:
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        print("500: $responseData");
+        return {
+          'statusCode': responseData['statusCode'],
+          'message': responseData['message']
+        }; // Return the message
+      default:
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        return {
+          'statusCode': responseData['statusCode'],
+          'message': responseData['message']
+        }; // Handle other status codes as needed
     }
   }
 
@@ -51,7 +132,7 @@ class ApiMethod {
     if (response.statusCode == 200) {
       print("I am a response client: \n${response.body}");
       List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((data) => new Patient.fromJson(data)).toList();
+      return jsonResponse.map((data) => Patient.fromJson(data)).toList();
     } else {
       throw Exception('Unexpected error occured!');
     }
@@ -222,11 +303,11 @@ class ApiMethod {
       //print(response.body);
       switch (response.statusCode) {
         case 200:
-          data = new Map<String, dynamic>.from(json.decode(response.body));
+          data = Map<String, dynamic>.from(json.decode(response.body));
           //print("200"+ data['email']);
           break;
         case 400:
-          data = new Map<String, dynamic>.from(json.decode(response.body));
+          data = Map<String, dynamic>.from(json.decode(response.body));
           //print("400"+ data['email']);
           break;
       }
@@ -268,7 +349,7 @@ class ApiMethod {
           }
 
           return {
-            'message': 'user not found',
+            'message': 'User not found',
           };
 
         default:
@@ -591,11 +672,11 @@ class ApiMethod {
       print("Hello: $response $businessZip");
       switch (response.statusCode) {
         case 200:
-          data = new Map<String, dynamic>.from(json.decode(response.body));
+          data = Map<String, dynamic>.from(json.decode(response.body));
           print("200 " + data['message']!);
           break;
         case 400:
-          data = new Map<String, dynamic>.from(json.decode(response.body));
+          data = Map<String, dynamic>.from(json.decode(response.body));
           break;
       }
     } catch (e) {

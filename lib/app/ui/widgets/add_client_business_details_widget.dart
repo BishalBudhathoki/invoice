@@ -7,9 +7,9 @@ class AddClientDetailsWidget extends StatefulWidget {
   final List<Widget> myWidgets;
 
   const AddClientDetailsWidget({
-    Key? key,
+    super.key,
     required this.myWidgets,
-  }) : super(key: key);
+  });
 
   @override
   _AddClientDetailsWidgetState createState() => _AddClientDetailsWidgetState();

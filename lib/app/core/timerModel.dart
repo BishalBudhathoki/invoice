@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import '../ui/views/client_and_appointment_details_view.dart';
 
 class TimerModel extends ChangeNotifier {
-  late Timer _timer;
+  Timer? _timer;
   int _elapsedSeconds = 0;
   bool _isRunning = false;
   late DateTime _startTime;
@@ -24,6 +24,20 @@ class TimerModel extends ChangeNotifier {
     return currentTimerClientEmail;
   }
 
+  int _totalTime = 0;
+
+  int get totalTime => _totalTime;
+
+  void setTotalTime(int totalTime) {
+    _totalTime = totalTime;
+    notifyListeners();
+  }
+
+  void setElapsedSeconds(int elapsedSeconds) {
+    _elapsedSeconds = elapsedSeconds;
+    notifyListeners();
+  }
+
   // String isTimerClient() {
   //   print(" is timer clinet $currentTimerClientEmail");
   //   return currentTimerClientEmail;
@@ -32,7 +46,7 @@ class TimerModel extends ChangeNotifier {
   void start() {
     _startTime = DateTime.now();
     _isRunning = true;
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       var currentTime = DateTime.now();
       _elapsedSeconds = currentTime.difference(_startTime).inSeconds;
       if (_elapsedSeconds >= kTimerDurationInSeconds) {
@@ -42,29 +56,29 @@ class TimerModel extends ChangeNotifier {
     });
   }
 
-  bool stop() {
-    _timer.cancel();
+  void stop() {
+    _timer?.cancel();
     _isRunning = false;
     notifyListeners();
-    return _isRunning;
   }
 
   void resetTimer(String clientEmail) {
     currentTimerClientEmail = clientEmail;
     _elapsedSeconds = 0;
+    _totalTime = 0;
     _isRunning = false;
   }
 
   String getFormattedTime(int timeInSeconds) {
-    int hours = timeInSeconds ~/ 3600;
-    int minutes = (timeInSeconds % 3600) ~/ 60;
-    int seconds = timeInSeconds % 60;
+    int hours = (timeInSeconds ~/ 3600).toInt();
+    int minutes = ((timeInSeconds % 3600) ~/ 60).toInt();
+    int seconds = (timeInSeconds % 60).toInt();
     return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 }

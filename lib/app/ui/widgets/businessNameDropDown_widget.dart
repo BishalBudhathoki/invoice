@@ -5,7 +5,7 @@ import 'package:invoice/backend/api_method.dart';
 class BusinessNameDropdown extends StatefulWidget {
   final Function(String) onChanged;
 
-  const BusinessNameDropdown({Key? key, required this.onChanged}) : super(key: key);
+  const BusinessNameDropdown({super.key, required this.onChanged});
 
   @override
   _BusinessNameDropdownState createState() => _BusinessNameDropdownState();

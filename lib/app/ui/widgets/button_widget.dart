@@ -7,11 +7,11 @@ class ButtonWidget extends StatelessWidget {
   final VoidCallback onPressed;
 
   const ButtonWidget({
-    Key? key,
+    super.key,
     required this.title,
     required this.hasBorder,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +25,12 @@ class ButtonWidget extends StatelessWidget {
                   color: AppColors.colorPrimary,
                   width: 1.0,
                 )
-              : Border.fromBorderSide(BorderSide.none),
+              : const Border.fromBorderSide(BorderSide.none),
         ),
         child: InkWell(
           onTap: onPressed,
           borderRadius: BorderRadius.circular(10),
-          child: Container(
+          child: SizedBox(
             height: 60.0,
             child: Center(
               child: Text(

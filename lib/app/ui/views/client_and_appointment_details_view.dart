@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:invoice/app/core/view-models/client_model.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:invoice/backend/api_method.dart';
-import 'package:maps_launcher/maps_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:invoice/app/core/timerModel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const int kTimerDurationInSeconds = 8 * 60 * 60; // 8 hours
@@ -16,8 +16,7 @@ class ClientAndAppointmentDetails extends StatefulWidget {
   final String clientEmail;
 
   const ClientAndAppointmentDetails(
-      {Key? key, required this.userEmail, required this.clientEmail})
-      : super(key: key);
+      {super.key, required this.userEmail, required this.clientEmail});
 
   @override
   _ClientAndAppointmentDetailsState createState() =>
@@ -44,6 +43,7 @@ class _ClientAndAppointmentDetailsState
   @override
   void initState() {
     super.initState();
+    //_loadStartTime();
     timerModel = Provider.of<TimerModel>(context, listen: false);
     getAppointmentData().then((_) {
       setState(() {
@@ -58,12 +58,13 @@ class _ClientAndAppointmentDetailsState
     //futureClientsData = apiMethod.fetchPatientData();
   }
 
-  void updateTimerModel() {
+  Future<void> updateTimerModel() async {
     if (timerModel.isRunning &&
         timerModel
             .getTimerClientEmail()
             .contains(widget.clientEmail.toString())) {
       print("1 : ${widget.clientEmail} : ${timerModel.getTimerClientEmail()}");
+      _stopTimer();
       timerModel.stop();
       timerModel.setTimerClientEmail(widget.clientEmail);
     } else if (timerModel.isRunning &&
@@ -74,6 +75,7 @@ class _ClientAndAppointmentDetailsState
       print(
           "3: ${widget.clientEmail} : ${clientAndAppointmentData['data']?['clientDetails'][0]?['clientEmail']}");
       timerModel.start();
+      await _startTimer();
       timerModel.setTimerClientEmail(widget.clientEmail);
     }
   }
@@ -86,18 +88,51 @@ class _ClientAndAppointmentDetailsState
   Future<dynamic> getAppointmentData() async {
     clientAndAppointmentData = (await apiMethod.getClientAndAppointmentData(
         widget.userEmail, widget.clientEmail)) as Map;
-    if (clientAndAppointmentData != null) {
-      setState(() {
-        print(
-            "Clinet Email: ${widget.clientEmail} ${clientAndAppointmentData['data']?['clientDetails'][0]}");
-        setClientAndAppointmentData = clientAndAppointmentData;
-        isCurrentClient = (clientAndAppointmentData['data']?['clientDetails'][0]
-                ?['clientEmail'] ==
-            widget.clientEmail);
-      });
-      print("client apt det: $clientAndAppointmentData");
-      return clientAndAppointmentData;
+    setState(() {
+      print(
+          "Clinet Email: ${widget.clientEmail} ${clientAndAppointmentData['data']?['clientDetails'][0]}");
+      setClientAndAppointmentData = clientAndAppointmentData;
+      isCurrentClient = (clientAndAppointmentData['data']?['clientDetails'][0]
+              ?['clientEmail'] ==
+          widget.clientEmail);
+    });
+    print("client apt det: $clientAndAppointmentData");
+    return clientAndAppointmentData;
     }
+
+  Future<dynamic> _startTimer() async {
+    var startTime = await apiMethod.startTimer();
+    // Store the start time in shared preferences
+    final startTimeForLoading = DateTime.now().millisecondsSinceEpoch;
+    _saveStartTime(startTimeForLoading);
+    // Start your timer
+    // timerModel.start();
+    print("Start time: ");
+  }
+
+  void _saveStartTime(int startTime) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('startTimeForLoading', startTime);
+  }
+
+  void _loadStartTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final startTimeForLoading = prefs.getInt('startTime') ?? 0;
+    if (startTimeForLoading > 0) {
+      // Calculate the elapsed time since the start time
+      final currentTime = DateTime.now().millisecondsSinceEpoch;
+      final elapsedSeconds =
+          (currentTime - startTimeForLoading) ~/ 1000;
+      // Set the elapsed time in your timer model
+      timerModel.setElapsedSeconds(elapsedSeconds);
+    }
+  }
+
+// Call _loadStartTime when your app starts or when the widget initializes
+
+  Future<dynamic> _stopTimer() async {
+    var stopTime = await apiMethod.stopTimer();
+    print("stopTime");
   }
 
   Future<dynamic> _setWorkedTime() async {
@@ -293,7 +328,7 @@ class _ClientAndAppointmentDetailsState
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (timerModel.isRunning &&
                           timerModel.getTimerClientEmail() !=
                               widget.clientEmail) {
@@ -302,13 +337,14 @@ class _ClientAndAppointmentDetailsState
                       if (timerModel.isRunning &&
                           timerModel.getTimerClientEmail() ==
                               widget.clientEmail) {
+                        _stopTimer();
                         timerModel.stop();
-                        _setWorkedTime();
+                        await _setWorkedTime();
                         print(timerModel
                             .getFormattedTime(timerModel.elapsedSeconds));
                         // add your function call here when the timer is stopped
                       } else {
-                        updateTimerModel();
+                        await updateTimerModel();
                         // add your function call here when the timer is started
                       }
                     },
@@ -345,11 +381,14 @@ class _ClientAndAppointmentDetailsState
               const SizedBox(height: 32.0),
               Center(
                 child: Text(
-                  timerModel.isRunning &&
+                  (timerModel.isRunning &&
                           (widget.clientEmail ==
-                              timerModel.getTimerClientEmail())
+                              timerModel.getTimerClientEmail()))
                       ? timerModel.getFormattedTime(timerModel.elapsedSeconds)
-                      : "00:00:00",
+                      : timerModel.isRunning
+                          ? "00:00:00" // Timer is running, display elapsed time
+                          : timerModel.getFormattedTime(timerModel
+                              .elapsedSeconds), // Timer is stopped, display total time as an integer
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 48,

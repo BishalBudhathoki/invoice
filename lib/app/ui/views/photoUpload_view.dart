@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
@@ -9,7 +8,7 @@ import 'package:provider/provider.dart';
 
 class PhotoUploadScreen extends StatefulWidget {
   String email;
-  PhotoUploadScreen({Key? key, required this.email}) : super(key: key);
+  PhotoUploadScreen({super.key, required this.email});
   @override
   _PhotoUploadScreenState createState() => _PhotoUploadScreenState();
 }

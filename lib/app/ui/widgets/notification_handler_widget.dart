@@ -8,7 +8,7 @@ import 'package:invoice/notificationservice/local_notification_service.dart';
 class NotificationHandler extends StatefulWidget {
   final Widget child;
 
-  const NotificationHandler({Key? key, required this.child}) : super(key: key);
+  const NotificationHandler({super.key, required this.child});
 
   @override
   _NotificationHandlerState createState() => _NotificationHandlerState();

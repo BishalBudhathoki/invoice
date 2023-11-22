@@ -1,12 +1,13 @@
 import 'dart:typed_data';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:invoice/app/ui/views/assignC2E_view.dart';
 import 'package:invoice/app/ui/views/photo_display_widget.dart';
 import '../../../backend/api_method.dart';
 import '../shared/values/colors/app_colors.dart';
 import '../views/line_items_view.dart';
-import 'package:flutter_flushbar/flutter_flushbar.dart';
+
 import 'package:flutter/services.dart' show SystemNavigator, MethodChannel;
 import 'package:flutter/foundation.dart'
     show kIsWeb, kReleaseMode, TargetPlatform;
@@ -34,7 +35,7 @@ class NavBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width:
           MediaQuery.of(context).size.width * 0.5, // Adjust the width as needed
       child: Drawer(
@@ -74,7 +75,7 @@ class NavBarWidget extends StatelessWidget {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AssignC2E(),
+                    builder: (context) => const AssignC2E(),
                   ),
                 )
               },
@@ -89,7 +90,7 @@ class NavBarWidget extends StatelessWidget {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LineItemsView(),
+                    builder: (context) => const LineItemsView(),
                   ),
                 )
               },
@@ -132,7 +133,7 @@ class NavBarWidget extends StatelessWidget {
                   style: TextStyle(
                       color: AppColors.colorBlack,
                       fontFamily: "ShadowsIntoLightTwo")),
-              onTap: () => null,
+              onTap: () {},
               trailing: ClipOval(
                 child: Container(
                   color: Colors.red,
@@ -157,7 +158,7 @@ class NavBarWidget extends StatelessWidget {
                   style: TextStyle(
                       color: AppColors.colorBlack,
                       fontFamily: "ShadowsIntoLightTwo")),
-              onTap: () => null,
+              onTap: () {},
             ),
             ListTile(
               leading: const Icon(Icons.description),
@@ -165,7 +166,7 @@ class NavBarWidget extends StatelessWidget {
                   style: TextStyle(
                       color: AppColors.colorBlack,
                       fontFamily: "ShadowsIntoLightTwo")),
-              onTap: () => null,
+              onTap: () {},
             ),
             const Divider(),
             ListTile(

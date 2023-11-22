@@ -1,42 +1,26 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
-import 'package:invoice/app/ui//widgets/profile_placeholder_widget.dart';
 import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
 import 'package:invoice/app/ui/shared/values/strings/asset_strings.dart';
 import 'package:invoice/app/ui/views/add_business_details_view.dart';
 import 'package:invoice/app/ui/views/add_client_details_view.dart';
 import 'package:invoice/app/ui/views/holidayList_view.dart';
-import 'package:invoice/app/ui/views/photo_display_widget.dart';
 import 'package:invoice/app/ui/widgets/add_client_business_details_widget.dart';
 import 'package:invoice/app/ui/widgets/appBar_widget.dart';
-import 'package:invoice/app/ui/widgets/bottom_navBar_widget.dart';
 import 'package:invoice/app/ui/widgets/home-detail-card-widget.dart';
-import 'package:invoice/app/ui/widgets/navBar_widget.dart';
 import 'package:invoice/backend/api_method.dart';
-import 'package:invoice/notificationservice/local_notification_service.dart';
-import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
-import 'package:path_provider/path_provider.dart';
 import '../widgets/button_widget.dart';
-import '../widgets/circular_profile_image_widget.dart';
 import 'generateInvoice.dart';
-import 'package:http/http.dart' as http;
-import 'package:rxdart/rxdart.dart';
 
 class AdminDashboardView extends StatefulWidget {
   final String email;
 
   const AdminDashboardView({
-    Key? key,
+    super.key,
     required this.email,
-  }) : super(key: key);
+  });
 
   @override
   _AdminDashboardViewControllerState createState() {
@@ -79,7 +63,7 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
   }
 
   final PageController _pageController = PageController();
-  int _currentPageIndex = 0;
+  final int _currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +89,8 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
               print("Client Button Pressed");
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AddClientDetails()),
+                MaterialPageRoute(
+                    builder: (context) => const AddClientDetails()),
               );
             },
           ),
@@ -132,7 +117,8 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
               print("Business Button Pressed");
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AddBusinessDetails()),
+                MaterialPageRoute(
+                    builder: (context) => const AddBusinessDetails()),
               );
             },
           ),

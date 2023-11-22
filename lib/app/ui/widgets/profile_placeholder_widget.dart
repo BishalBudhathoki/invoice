@@ -8,10 +8,10 @@ class ProfilePlaceholder extends StatelessWidget {
   final String lastName;
 
   const ProfilePlaceholder({
-    Key? key,
+    super.key,
     required this.firstName,
     required this.lastName,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

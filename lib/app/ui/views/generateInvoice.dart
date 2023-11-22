@@ -21,7 +21,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class GenerateInvoice extends StatefulWidget {
-  const GenerateInvoice({Key? key}) : super(key: key);
+  const GenerateInvoice({super.key});
 
   @override
   _GenerateInvoiceState createState() => _GenerateInvoiceState();
@@ -685,7 +685,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
 
   Future<void> downloadFile() async {
     if (await requestStoragePermission()) {
-      final storage = FlutterSecureStorage();
+      const storage = FlutterSecureStorage();
       final String? pdfPath = await storage.read(key: "pdfPath");
       print("PDF path: $pdfPath");
       if (pdfPath != null) {
@@ -774,7 +774,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
         print("Web2");
         directory = await getDownloadsDirectory();
       }
-    } catch (err, stack) {
+    } catch (err) {
       print("Cannot get download folder path");
     }
     //print(directory?.path);
@@ -842,7 +842,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
+              SizedBox(
                 height: MediaQuery.of(context).size.height / 1.5,
                 child: PdfViewPage(pdfPath: pdfPath),
               ),
@@ -893,7 +893,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
                         }
                         model.setIsLoading(false);
                       },
-                      child: model.isLoading ? CircularProgressIndicator() : Text(
+                      child: model.isLoading ? const CircularProgressIndicator() : Text(
                         'Send Email',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),

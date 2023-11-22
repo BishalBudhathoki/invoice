@@ -1,9 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
-import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
-import 'package:invoice/app/ui/shared/values/strings/appbar_title.dart';
 import 'package:invoice/app/ui/views/popupClientDetails.dart';
 import 'package:invoice/app/ui/widgets/alertDialog_widget.dart';
 import 'package:invoice/app/ui/widgets/button_widget.dart';
@@ -230,7 +227,7 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
     );
   }
 
-  ApiMethod apiMethod = new ApiMethod();
+  ApiMethod apiMethod = ApiMethod();
   Future<dynamic> _addBusiness() async {
     var ins = await apiMethod.addBusiness(
       _businessNameController.text,
@@ -241,7 +238,7 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
       _businessStateController.text,
       _businessZipController.text,
     );
-    print("Response: " + ins.toString());
+    print("Response: $ins");
 
     if (ins['message'] == 'success') {
       if (kDebugMode) {

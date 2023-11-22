@@ -7,7 +7,7 @@ import '../../../backend/api_method.dart';
 class HolidayListView extends StatefulWidget {
   final List<dynamic> holidays;
 
-  const HolidayListView({Key? key, required this.holidays}) : super(key: key);
+  const HolidayListView({super.key, required this.holidays});
 
   @override
   _HolidayListViewState createState() => _HolidayListViewState();
@@ -130,10 +130,10 @@ class AddHolidayScreen extends StatefulWidget {
   final List<dynamic> holidays; // Add a parameter for the holidays list
 
   const AddHolidayScreen({
-    Key? key,
+    super.key,
     required this.addHoliday,
     required this.holidays,
-  }) : super(key: key);
+  });
 
   @override
   _AddHolidayScreenState createState() => _AddHolidayScreenState();

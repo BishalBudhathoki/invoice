@@ -16,8 +16,8 @@ class HomeController extends GetxController {
 
   // exports to json
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['email'] = this._email as String;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['email'] = _email as String;
     return data;
   }
 }

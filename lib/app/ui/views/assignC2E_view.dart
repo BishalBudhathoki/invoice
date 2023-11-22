@@ -1,19 +1,19 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:invoice/app/core/view-models/user_model.dart';
-import 'package:invoice/app/core/view-models/client_model.dart';
 import 'package:invoice/app/ui/widgets/dropDown_widget.dart';
 import 'package:invoice/backend/api_method.dart';
 
 import '../shared/values/colors/app_colors.dart';
 
 class AssignC2E extends StatefulWidget {
+  const AssignC2E({super.key});
+
   @override
   _AssignC2EState createState() => _AssignC2EState();
 }
 
 class _AssignC2EState extends State<AssignC2E> {
-  ApiMethod apiMethod = new ApiMethod();
+  ApiMethod apiMethod = ApiMethod();
   late Future<List<User>> futureUserData;
   // late Future<List<Patient>> futureClientsData;
 

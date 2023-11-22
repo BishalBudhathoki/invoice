@@ -27,7 +27,7 @@ class AppointmentCard extends StatelessWidget {
   final String text3;
 
   const AppointmentCard({
-    Key? key,
+    super.key,
     required this.currentClientEmail,
     required this.currentUserEmail,
     required this.title,
@@ -43,7 +43,7 @@ class AppointmentCard extends StatelessWidget {
     required this.iconData3,
     required this.label3,
     required this.text3,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

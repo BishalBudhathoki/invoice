@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
 
@@ -9,11 +8,11 @@ class OptionMenuWidget extends StatelessWidget {
   final VoidCallback onPressed;
 
   const OptionMenuWidget({
-    Key? key,
+    super.key,
     required this.iconName,
     required this.iconSax,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

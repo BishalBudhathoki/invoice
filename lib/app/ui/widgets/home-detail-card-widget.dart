@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
-import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
-import 'package:invoice/app/ui/shared/values/strings/asset_strings.dart';
-import 'package:invoice/app/ui/widgets/card_label_text_widget.dart';
 
 class HomeDetailCard extends StatelessWidget {
   final String buttonLabel;
@@ -12,12 +8,12 @@ class HomeDetailCard extends StatelessWidget {
   final VoidCallback onPressed;
 
   const HomeDetailCard({
-    Key? key,
+    super.key,
     required this.buttonLabel,
     required this.cardLabel,
     required this.image,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

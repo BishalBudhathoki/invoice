@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 abstract class BaseScreen<BaseController>
     extends GetResponsiveView<BaseController> {
+  BaseScreen({super.key});
+
   Widget phoneView();
 
   Widget tabletView();

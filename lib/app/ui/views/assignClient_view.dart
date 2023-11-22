@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AssignClient extends StatefulWidget {
-  const AssignClient({Key? key}) : super(key: key);
+  const AssignClient({super.key});
 
   @override
   _AssignClientState createState() => _AssignClientState();

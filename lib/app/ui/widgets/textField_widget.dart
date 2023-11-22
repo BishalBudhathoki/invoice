@@ -10,12 +10,13 @@ class TextFieldWidget extends StatelessWidget {
   final String hintText;
   final IconData? prefixIconData;
   final IconData? suffixIconData;
-  late final bool obscureText;
+  final bool obscureText;
   final Function(String) onChanged;
   final Function(String?)? onSaved;
   final String? Function(String?)? validator;
 
-  TextFieldWidget({
+  const TextFieldWidget({
+    super.key,
     //required this.key,
     required this.hintText,
     this.prefixIconData,
@@ -44,7 +45,7 @@ class TextFieldWidget extends StatelessWidget {
         fontSize: AppDimens.fontSizeNormal,
       ),
       decoration: InputDecoration(
-        labelStyle: TextStyle(
+        labelStyle: const TextStyle(
           color: AppColors.colorPrimary,
         ),
         focusColor: AppColors.colorPrimary,
@@ -55,7 +56,7 @@ class TextFieldWidget extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.colorPrimary,
           ),
         ),

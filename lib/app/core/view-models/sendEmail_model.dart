@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
 
 class SendEmailModel extends ChangeNotifier {
   bool isResponseReceived = false;

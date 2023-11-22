@@ -10,7 +10,7 @@ class AppPages {
 
   static final routes = [
     const LoginView(),
-    HomeView(
+    const HomeView(
       email: '',
     ),
     const SignUpView(),

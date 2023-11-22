@@ -1,8 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:invoice/app/core/view-models/assignedAppointment_model.dart';
 import 'package:invoice/app/core/view-models/client_model.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:invoice/app/ui/widgets/appointment_card_widget.dart';
@@ -15,11 +13,11 @@ class DynamicAppointmentCardWidget extends StatefulWidget {
   String currentUserEmail;
 
   DynamicAppointmentCardWidget({
-    Key? key,
+    super.key,
     required this.clientEmailList,
     required this.listLength,
     required this.currentUserEmail,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -61,32 +59,28 @@ class _DynamicAppointmentCardWidgetState
         //"alkc331@gmail.com,bishalkc331@gmail.com"
 
         ));
-    if (futureClientsData != null) {
-      setState(() {
-        setFutureClientsData = futureClientsData;
-      });
-      //return futureClientsData;
-    }
+    setState(() {
+      setFutureClientsData = futureClientsData;
+    });
+    //return futureClientsData;
     return [setFutureClientsData];
   }
 
   Future<dynamic> getAppointmentData() async {
     appointmentData =
         (await apiMethod.getAppointmentData(widget.currentUserEmail)) as Map;
-    if (appointmentData != null) {
-      setState(() {
-        setAppointmentData = appointmentData;
-        print('DYCW ${appointmentData['data'][0]['startTimeList'][0]}');
-      });
-      return [appointmentData];
-    }
+    setState(() {
+      setAppointmentData = appointmentData;
+      print('DYCW ${appointmentData['data'][0]['startTimeList'][0]}');
+    });
+    return [appointmentData];
   }
 
   int _currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(seconds: 1));
+    Future.delayed(const Duration(seconds: 1));
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(

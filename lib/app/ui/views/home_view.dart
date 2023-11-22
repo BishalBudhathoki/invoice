@@ -1,23 +1,10 @@
-import 'dart:convert';
-import 'dart:typed_data';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
-import 'package:invoice/app/ui//widgets/profile_placeholder_widget.dart';
 import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:invoice/app/ui/shared/values/strings/asset_strings.dart';
-import 'package:invoice/app/ui/views/add_business_details_view.dart';
-import 'package:invoice/app/ui/views/add_client_details_view.dart';
-import 'package:invoice/app/ui/views/adminDashBoard.dart';
 import 'package:invoice/app/ui/widgets/appBar_widget.dart';
-import 'package:invoice/app/ui/widgets/appointment_card_widget.dart';
 import 'package:invoice/app/ui/widgets/dynamic_appointment_card_widget.dart';
-import 'package:invoice/app/ui/widgets/home-detail-card-widget.dart';
 import 'package:invoice/backend/api_method.dart';
-import 'package:invoice/notificationservice/local_notification_service.dart';
-import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 
 class HomeView extends StatefulWidget {
   final String email;
@@ -25,11 +12,11 @@ class HomeView extends StatefulWidget {
   // final String lastName;
 
   const HomeView({
-    Key? key,
+    super.key,
     required this.email,
     //this.photoData,
     // required this.lastName,
-  }) : super(key: key);
+  });
 
   @override
   _HomeViewControllerState createState() {
@@ -54,7 +41,7 @@ class CardDetail {
 class _HomeViewControllerState extends State<HomeView> {
   final PageController _pageController = PageController();
 
-  int _currentPageIndex = 0;
+  final int _currentPageIndex = 0;
   var eml;
   var initialData = {};
   var setAppointmentData;
@@ -80,13 +67,11 @@ class _HomeViewControllerState extends State<HomeView> {
   Future<dynamic> getInitData() async {
     try {
       initialData = await apiMethod.getInitData(widget.email);
-      if (initialData != null) {
-        // print("INS: "+ins['firstName']!);
-        setState(() {
-          eml = initialData;
-        });
-        return initialData;
-      }
+      // print("INS: "+ins['firstName']!);
+      setState(() {
+        eml = initialData;
+      });
+      return initialData;
     } catch (e) {
       print(e);
     }
@@ -96,14 +81,12 @@ class _HomeViewControllerState extends State<HomeView> {
     try {
       appointmentData =
           (await apiMethod.getAppointmentData(widget.email)) as Map;
-      if (appointmentData != null) {
-        setState(() {
-          setAppointmentData = appointmentData;
-          // clientEmailList = appointmentData['data'].map((item) => item['clientEmail']).toList();
-          // print("client email list: "+clientEmailList.toString());
-        });
-        return appointmentData;
-      }
+      setState(() {
+        setAppointmentData = appointmentData;
+        // clientEmailList = appointmentData['data'].map((item) => item['clientEmail']).toList();
+        // print("client email list: "+clientEmailList.toString());
+      });
+      return appointmentData;
     } catch (e) {
       print(e);
     }
@@ -178,7 +161,7 @@ class _HomeViewControllerState extends State<HomeView> {
                             .map((item) => item['clientEmail'])
                             .toList();
                         print(
-                            "data for client email: $dataForClientEmail ${getLength()} ${index}");
+                            "data for client email: $dataForClientEmail ${getLength()} $index");
                         // display the data for the client email
                         return SizedBox(
                           height: context.height *

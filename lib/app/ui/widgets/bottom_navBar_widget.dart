@@ -1,4 +1,3 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:invoice/app/core/view-models/photoData_viewModel.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
@@ -7,8 +6,7 @@ import 'package:invoice/app/ui/views/assignC2E_view.dart';
 import 'package:invoice/app/ui/views/home_view.dart';
 import 'package:invoice/app/ui/views/photoUpload_view.dart';
 import 'package:invoice/backend/api_method.dart';
-import 'package:invoice/notificationservice/local_notification_service.dart';
-import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
 
 import 'navBar_widget.dart';
@@ -16,8 +14,8 @@ import 'navBar_widget.dart';
 class BottomNavBarWidget extends StatefulWidget {
   final String email;
   final String role;
-  const BottomNavBarWidget({Key? key, required this.email, required this.role})
-      : super(key: key);
+  const BottomNavBarWidget(
+      {super.key, required this.email, required this.role});
 
   @override
   _BottomNavBarWidgetState createState() => _BottomNavBarWidgetState();
@@ -93,7 +91,7 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
           }
         },
       ),
-      AssignC2E(),
+      const AssignC2E(),
       PhotoUploadScreen(
         email: widget.email,
       ),

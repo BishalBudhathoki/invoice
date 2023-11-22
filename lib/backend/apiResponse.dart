@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 
 class ApiResponse {
   // _data will hold any response converted into
@@ -8,13 +7,13 @@ class ApiResponse {
   late Object _apiError = {};
 
   Object get Data {
-    print("Datas:" + _data.toString());
+    print("Datas:$_data");
     return _data;
   }
 
   set Data(Object data) {
     _data = data;
-    print("Data: ${_data}");
+    print("Data: $_data");
   }
 
   Object get ApiError => _apiError;

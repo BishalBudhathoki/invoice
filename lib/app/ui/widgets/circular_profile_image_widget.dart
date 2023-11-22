@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CircularImage extends StatelessWidget {
@@ -8,10 +7,10 @@ class CircularImage extends StatelessWidget {
   final double size;
 
   const CircularImage({
-    Key? key,
+    super.key,
     this.imageBytes,
     required this.size,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +22,7 @@ class CircularImage extends StatelessWidget {
     } else {
       return CircleAvatar(
         radius: size / 2,
-        backgroundImage: AssetImage('assets/icons/profile_placeholder.png'),
+        backgroundImage: const AssetImage('assets/icons/profile_placeholder.png'),
       );
     }
   }

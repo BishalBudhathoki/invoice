@@ -6,7 +6,7 @@ import 'package:invoice/app/ui/views/signup_view.dart';
 
 class SignupController extends GetxController {
   final LoginModel _loginModel = Get.put(LoginModel());
-  late final SignUpView _signUpView = Get.put(SignUpView());
+  late final SignUpView _signUpView = Get.put(const SignUpView());
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -79,7 +79,7 @@ class SignupController extends GetxController {
       // Ensure "users" collection exists
       CollectionReference usersCollection = _firestore.collection('users');
       if (!(await usersCollection.doc(userCredential.user!.uid).get()).exists) {
-        await usersCollection.doc(userCredential.user!.uid);
+        usersCollection.doc(userCredential.user!.uid);
       }
 
       // Store additional user data in Firestore
@@ -100,8 +100,8 @@ class SignupController extends GetxController {
   }
 
   signupControllers(String email, String password) async {
-    _email = await email;
-    _password = await password;
+    _email = email;
+    _password = password;
   }
 
   // create the user object from json input
@@ -112,9 +112,9 @@ class SignupController extends GetxController {
 
   // exports to json
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['email'] = this._email as String;
-    data['password'] = this._password as String;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['email'] = _email as String;
+    data['password'] = _password as String;
     return data;
   }
 }

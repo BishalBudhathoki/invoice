@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:invoice/app/core/view-models/photoData_viewModel.dart';
 import 'package:invoice/backend/api_method.dart';
@@ -9,9 +7,10 @@ import 'package:provider/provider.dart';
 
 class PhotoDisplayWidget extends StatefulWidget {
   final String email;
+  @override
   final Key? key;
 
-  PhotoDisplayWidget({required this.email, this.key}) : super(key: key);
+  const PhotoDisplayWidget({required this.email, this.key}) : super(key: key);
 
   @override
   _PhotoDisplayWidgetState createState() => _PhotoDisplayWidgetState();
@@ -66,7 +65,6 @@ class _PhotoDisplayWidgetState extends State<PhotoDisplayWidget> {
                   ),
                 ),
               );
-              ;
             }
           },
         );

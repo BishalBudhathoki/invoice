@@ -2,7 +2,7 @@ class ApiError {
   late String _error;
 
   ApiError({String? error}) {
-    this._error = error!;
+    _error = error!;
   }
 
   String get error => _error;
@@ -13,8 +13,8 @@ class ApiError {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['error'] = this._error;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['error'] = _error;
     return data;
   }
 }

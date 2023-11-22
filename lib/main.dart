@@ -1,12 +1,8 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:isolate';
-import 'package:invoice/app/ui/widgets/notification_handler_widget.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:invoice/app/core/view-models/forgotPassword_model.dart';
+import 'package:invoice/app/ui/views/forgot_password_view.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:invoice/app/core/view-models/login_model.dart';
 import 'package:invoice/app/core/view-models/photoData_viewModel.dart';
 import 'package:invoice/app/core/view-models/signup_model.dart';
@@ -21,16 +17,13 @@ import 'package:invoice/app/ui/views/home_view.dart';
 import 'package:invoice/app/ui/views/login_view.dart';
 import 'package:invoice/app/ui/views/photoUpload_view.dart';
 import 'package:invoice/app/ui/views/signup_view.dart';
-import 'package:invoice/app/ui/views/timeAndDatePicker_view.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'app/core/view-models/sendEmail_model.dart';
-import 'app/ui/views/client_and_appointment_details_view.dart';
 import 'package:invoice/app/core/timerModel.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'app/ui/widgets/splashScreen_widget.dart';
-import 'firebase_options.dart';
 import 'notificationservice/local_notification_service.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -49,12 +42,13 @@ void main() async {
   if (storagePermissionStatus.isDenied) {
     // Handle denied permission
     print('Storage permission is denied.');
-    return;
+    await Permission.storage.request();
+    //return;
   }
   if (notificationPermissionStatus.isDenied) {
     // Handle denied permission
     print('Notification permission is denied.');
-    return;
+    //return;
   }
   await Firebase.initializeApp();
 
@@ -65,7 +59,7 @@ void main() async {
     await messaging.requestPermission();
 
     final fcmToken = await FirebaseMessaging.instance.getToken();
-    print("FCM Token: ${fcmToken}");
+    print("FCM Token: $fcmToken");
     // Configure the notification handler
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -91,6 +85,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => SignupModel()),
         ChangeNotifierProvider(create: (_) => TimerModel()),
         ChangeNotifierProvider(create: (_) => SendEmailModel()),
+        ChangeNotifierProvider(create: (_) => ForgotPasswordModel()),
         ChangeNotifierProvider<PhotoData>(
           create: (_) => PhotoData(),
           child: PhotoUploadScreen(email: ''),
@@ -107,10 +102,11 @@ void main() async {
           '/login': (context) => const LoginView(),
           '/home': (context) => const HomeView(email: ''),
           '/signup': (context) => const SignUpView(),
+          '/forgotPassword': (context) => const ForgotPasswordView(),
           '/home/addClientDetails': (context) => const AddClientDetails(),
           '/home/addBusinessDetails': (context) => const AddBusinessDetails(),
           '/admin/assignClients': (context) => const AssignClient(),
-          '/assignC2E': (context) => AssignC2E(),
+          '/assignC2E': (context) => const AssignC2E(),
           '/photoUploadScreen': (context) => PhotoUploadScreen(email: ''),
           // '/admin/assignClients/timeAndDatePicker': (context) => TimeAndDatePicker(),
         },

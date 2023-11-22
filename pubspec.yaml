@@ -4,19 +4,19 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.17.6 <3.0.0"
+  sdk: ">=2.17.6 <4.9.9"
 
 dependencies:
   get: 4.6.5
   get_cli: ^1.6.0
   get_storage: ^2.0.3
   cupertino_icons: ^1.0.2
-  connectivity_plus: ^3.0.2
+  connectivity_plus: ^5.0.1
   json_annotation: ^4.5.0
   provider: ^6.0.1
   email_validator: ^2.0.1
   iconsax: ^0.0.8
-  http: ^0.13.1
+  http: ^1.1.0
   shared_preferences: ^2.0.6
   curved_navigation_bar: ^1.0.3
   another_flushbar: ^1.10.28
@@ -24,52 +24,45 @@ dependencies:
   table_calendar: ^3.0.8
   animation_list: ^2.2.1
   mongo_dart: ^0.9.1
-  excel: ^2.0.4
-  flutter_flushbar: ^0.0.2
+  excel: ^3.0.0
+
   intl: ^0.17.0
   pdf: ^3.10.1
-  permission_handler: ^10.2.0
+  permission_handler: ^11.0.1
   mailer: ^6.0.1
   flutter_dotenv: ^5.0.2
   page_view_dot_indicator: ^2.0.0
-  flutter_email_sender: ^5.2.0
-  persistent_bottom_nav_bar: ^4.0.2
+  flutter_email_sender: ^6.0.2
   firebase_core: ^2.13.1
   firebase_auth: ^4.6.1
   cloud_firestore: ^4.7.1
-
-
-
-
-
-  flutter:
-    sdk: flutter
-
   download: ^1.0.0
   path_provider: ^2.0.14
   flutter_secure_storage: ^8.0.0
   document_file_save_plus: ^2.0.0
   file_manager: ^1.0.2
   share_plus: ^5.0.0
-  image_picker: ^0.8.7+3
+  image_picker: ^1.0.4
   pdf_viewer_plugin: ^2.0.1
   firebase_messaging: ^14.6.2
   rxdart: ^0.27.7
-  flutter_local_notifications: ^14.1.1
+  flutter_local_notifications: ^16.1.0
   url_launcher: ^6.1.11
   maps_launcher: ^2.2.0
+  uni_links: 0.5.1
+  pinput: ^3.0.1
+  persistent_bottom_nav_bar_v2: ^4.2.8
 
-
-
+  flutter:
+    sdk: flutter
 
 dev_dependencies:
-  flutter_lints: ^2.0.0
-  lints: ^2.0.1
+  flutter_lints: ^3.0.1
+  lints: ^3.0.0
   build_runner: ^2.1.5
   json_serializable: ^6.0.1
   flutter_test:
     sdk: flutter
-
 
 flutter:
   fonts:

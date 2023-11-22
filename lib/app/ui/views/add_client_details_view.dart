@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -290,7 +289,7 @@ class _AddClientDetailsState extends State<AddClientDetails> {
       _clientZipController.text,
       _clientBusinessNameController.text,
     );
-    print("Response: " + ins.toString());
+    print("Response: $ins");
 
     if (ins['message'] == 'success') {
       if (kDebugMode) {

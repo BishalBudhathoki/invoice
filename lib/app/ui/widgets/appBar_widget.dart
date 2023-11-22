@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:invoice/app/ui/views/photo_display_widget.dart';
 import 'package:invoice/app/ui/widgets/profile_placeholder_widget.dart';
-import 'navBar_widget.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String email;
@@ -10,11 +9,11 @@ class CustomAppBar extends StatelessWidget {
   final String lastName;
 
   const CustomAppBar({
-    Key? key,
+    super.key,
     required this.email,
     required this.firstName,
     required this.lastName,
-  }) : super(key: key);
+  });
 
   // @override
   // Size get preferredSize => const Size.fromHeight(kToolbarHeight);

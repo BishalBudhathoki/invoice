@@ -24,12 +24,14 @@
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true"
        >
-        <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+        <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"></action>
             </intent-filter>
         </receiver>
-        <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
+            />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
@@ -37,8 +39,7 @@
 
         <!-- Add the FCM service -->
         <service
-            android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingService"
-            android:exported="false">
+            android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -76,6 +77,18 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <meta-data android:name="flutter-deeplink" android:value="true" />
+            <!-- Add the following intent filter for handling Firebase action links -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Define your custom URL scheme -->
+                <data android:scheme="com.bishal.invoice" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:scheme="pratikshatiwariservices.com" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

@@ -7,8 +7,7 @@ class CardLabelTextWidget extends StatelessWidget {
   final String label;
   final String text;
 
-  const CardLabelTextWidget(this.iconData, this.label, this.text, {Key? key})
-      : super(key: key);
+  const CardLabelTextWidget(this.iconData, this.label, this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {

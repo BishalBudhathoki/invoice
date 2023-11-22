@@ -8,7 +8,7 @@ class WaveAnimation extends StatefulWidget {
   final Color color;
   final double yOffset;
 
-  WaveAnimation({
+  const WaveAnimation({super.key, 
     required this.size,
     required this.color,
     required this.yOffset,

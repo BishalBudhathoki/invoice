@@ -1,14 +1,13 @@
 import 'package:animation_list/animation_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:invoice/app/core/controllers/lineItem_controller.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 
 import '../../../backend/api_method.dart';
 
 class LineItemsView extends StatefulWidget {
-  const LineItemsView({Key? key}) : super(key: key);
+  const LineItemsView({super.key});
 
   @override
   _LineItemsControllerState createState() {

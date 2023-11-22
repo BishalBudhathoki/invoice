@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
-import 'package:invoice/app/ui/widgets/alertDialog_widget.dart';
 import 'package:invoice/app/ui/widgets/button_widget.dart';
 import 'package:invoice/app/ui/widgets/button_with_variable_width_height_widget.dart';
 import 'package:invoice/app/ui/widgets/flushbar_widget.dart';
 import 'package:invoice/backend/api_method.dart';
-import 'package:table_calendar/table_calendar.dart';
 // import 'package:iconify_flutter/iconify_flutter.dart';
 // import 'package:colorful_iconify_flutter/icons/flat_color_icons.dart';
 
@@ -15,11 +13,11 @@ class TimeAndDatePicker extends StatefulWidget {
   final String userEmail;
   final String clientEmail;
 
-  TimeAndDatePicker({
-    Key? key,
+  const TimeAndDatePicker({
+    super.key,
     required this.userEmail,
     required this.clientEmail,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -48,13 +46,13 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
   List startTimeList = [];
   List endTimeList = [];
   List breakList = [];
-  List<Widget> _cardList = [];
+  final List<Widget> _cardList = [];
   List<String> data = [];
 
   void _addCardWidget() {
-    _cardList.forEach((widget) {
+    for (var widget in _cardList) {
       data.add(_focusedDay.toString());
-    });
+    }
     setState(() {
       _cardList.add(_card());
     });
@@ -216,7 +214,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Colors.red, // button text color
+                foregroundColor: Colors.red, // button text color
               ),
             ),
           ),
@@ -245,7 +243,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Colors.red, // button text color
+                foregroundColor: Colors.red, // button text color
               ),
             ),
           ),
@@ -275,7 +273,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Colors.red, // button text color
+                foregroundColor: Colors.red, // button text color
               ),
             ),
           ),

@@ -47,90 +47,93 @@ class AppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Row(
       children: [
-        Container(
-          height: context.height * 0.29,
-          width: context.width * 0.85,
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(25)),
-            color: AppColors.colorTransparent,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Text(title,
-                      style: const TextStyle(
-                        color: AppColors.colorFontPrimary,
-                        fontSize: AppDimens.fontSizeXXXMedium,
-                        fontWeight: FontWeight.w900,
-                        fontFamily: 'Lato',
-                      )),
-                ),
-                SizedBox(height: context.height * 0.01),
-                CardLabelTextWidget(
-                  iconData,
-                  label,
-                  text,
-                ),
-                //SizedBox(height: context.height * 0.01),
-                CardLabelTextWidget(
-                  iconData1,
-                  label1,
-                  text1,
-                ),
-                //SizedBox(height: context.height * 0.01),
-                CardLabelTextWidget(
-                  iconData2,
-                  label2,
-                  text2,
-                ),
-                //SizedBox(height: context.height * 0.01),
-                CardLabelTextWidget(
-                  iconData3,
-                  label3,
-                  text3,
-                ),
-                SizedBox(
-                  height: context.height * 0.01,
-                ),
-                GestureDetector(
-                  onTap: () async => {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ClientAndAppointmentDetails(
-                          userEmail: currentUserEmail,
-                          clientEmail: currentClientEmail,
-                        ),
-                      ),
-                    )
-                  },
-                  child: Container(
-                    height: context.height * 0.06,
-                    width: context.width,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(25)),
-                      color: AppColors.colorPrimary,
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'View Details',
-                        style: TextStyle(
-                          color: AppColors.colorWhite,
-                          fontSize: AppDimens.fontSizeMedium,
+        Flexible(
+          child: Container(
+            //height: context.height * 0.29,
+            //height: MediaQuery.of(context).size.height * 0.2,
+            //width: context.width * 0.85,
+            //width: MediaQuery.of(context).size.width * 0.8,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(25)),
+              color: AppColors.colorTransparent,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Text(title,
+                        style: const TextStyle(
+                          color: AppColors.colorFontPrimary,
+                          fontSize: AppDimens.fontSizeXXXMedium,
                           fontWeight: FontWeight.w900,
                           fontFamily: 'Lato',
+                        )),
+                  ),
+                  SizedBox(height: context.height * 0.01),
+                  CardLabelTextWidget(
+                    iconData,
+                    label,
+                    text,
+                  ),
+                  //SizedBox(height: context.height * 0.01),
+                  CardLabelTextWidget(
+                    iconData1,
+                    label1,
+                    text1,
+                  ),
+                  //SizedBox(height: context.height * 0.01),
+                  CardLabelTextWidget(
+                    iconData2,
+                    label2,
+                    text2,
+                  ),
+                  //SizedBox(height: context.height * 0.01),
+                  CardLabelTextWidget(
+                    iconData3,
+                    label3,
+                    text3,
+                  ),
+                  SizedBox(
+                    height: context.height * 0.01,
+                  ),
+                  GestureDetector(
+                    onTap: () async => {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ClientAndAppointmentDetails(
+                            userEmail: currentUserEmail,
+                            clientEmail: currentClientEmail,
+                          ),
+                        ),
+                      )
+                    },
+                    child: Container(
+                      height: context.height * 0.06,
+                      width: context.width,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(25)),
+                        color: AppColors.colorPrimary,
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'View Details',
+                          style: TextStyle(
+                            color: AppColors.colorWhite,
+                            fontSize: AppDimens.fontSizeMedium,
+                            fontWeight: FontWeight.w900,
+                            fontFamily: 'Lato',
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

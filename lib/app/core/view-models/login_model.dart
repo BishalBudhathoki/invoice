@@ -1,18 +1,25 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:invoice/app/ui/shared/values/strings/asset_strings.dart';
 
-class LoginModel extends ChangeNotifier {
-  get isVisible => _isVisible;
+import 'Base_model.dart';
+
+class LoginModel extends ChangeNotifier implements VisibilityToggleModel {
   bool _isVisible = false;
+  @override
+  get isVisible => _isVisible;
+
+  @override
   set isVisible(value) {
     _isVisible = value;
     notifyListeners();
   }
 
-  get isVisible1 => _isVisible1;
   bool _isVisible1 = false;
+  @override
+  get isVisible1 => _isVisible1;
+
+  @override
   set isVisible1(value) {
     _isVisible1 = value;
     notifyListeners();
@@ -22,7 +29,8 @@ class LoginModel extends ChangeNotifier {
   get isValid => _isValid;
 
   void isValidEmail(String input) {
-    if (input == AssetsStrings.validEmail.first) {
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    if (emailRegex.hasMatch(input)) {
       _isValid = true;
     } else {
       _isValid = false;

@@ -16,7 +16,6 @@ class Assets {
   static const String imagesHourglass = 'assets/images/hourglass.svg';
   static const String imagesImgPlaceholderProfile =
       'assets/images/img_placeholder_profile.png';
-  static const String imagesPariProfile = 'assets/images/pari-profile.png';
   static const String imagesPlaceholderProduct =
       'assets/images/placeholder_product.png';
   static const String imagesSheWithPhone = 'assets/images/she_with_phone.png';

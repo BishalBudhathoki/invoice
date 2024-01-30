@@ -61,6 +61,10 @@ class SignupController extends GetxController {
 
   set user(String value) => _user.value = value;
 
+  set view(SignUpView view) {
+    this.view = _signUpView;
+  }
+
   SignupController() {
     _email = email;
     _password = password;

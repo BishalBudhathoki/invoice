@@ -10,6 +10,8 @@ import 'package:invoice/app/ui/views/verifyOTP_view.dart';
 import 'package:invoice/app/ui/widgets/button_widget.dart';
 import 'package:invoice/app/ui/widgets/textField_widget.dart';
 import 'package:invoice/backend/api_method.dart';
+import 'package:invoice/backend/encryption_utils.dart';
+import 'package:invoice/backend/shared_preferences_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:uni_links/uni_links.dart';
 
@@ -53,6 +55,8 @@ class _ForgotPasswordControllerState extends State<ForgotPasswordView> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final model = Provider.of<ForgotPasswordModel>(context);
+    final textVisibleNotifier = ValueNotifier<bool>(false);
+
     return Scaffold(
         key: _scaffoldKey,
         backgroundColor: AppColors.colorWhite,
@@ -85,9 +89,10 @@ class _ForgotPasswordControllerState extends State<ForgotPasswordView> {
                         SizedBox(
                           height: size.height * 0.03,
                         ),
-                        TextFieldWidget(
+                        TextFieldWidget<ForgotPasswordModel>(
+                          suffixIconClickable: false,
+                          obscureTextNotifier: textVisibleNotifier,
                           hintText: 'Email',
-                          obscureText: false,
                           prefixIconData: Icons.mail_outline,
                           suffixIconData: model.isValid ? Icons.check : null,
                           controller: _userEmailController,
@@ -181,8 +186,8 @@ class _ForgotPasswordControllerState extends State<ForgotPasswordView> {
                               );
                             });
 
-                            var response = await _handleSubmitted();
-                            print("Response: $response");
+                            var response = await _handleSubmitted(context);
+                            print("Response: ${response['otp']}");
                             timer.cancel(); // Cancel the timer
 
                             if (response.containsKey('statusCode')) {
@@ -190,14 +195,19 @@ class _ForgotPasswordControllerState extends State<ForgotPasswordView> {
                                 Navigator.push(
                                   _scaffoldKey.currentContext!,
                                   MaterialPageRoute(
-                                    builder: (context) => const VerifyOTPView(),
+                                    builder: (context) => VerifyOTPView(
+                                      otpGenerated: "${response['otp']}",
+                                      encryptVerificationKey:
+                                          "${response['verificationKey']}",
+                                    ),
                                   ),
                                 );
                               } else if (response['statusCode'] == 500) {
                                 showWarningDialog("Error Sending OTP!");
                               } else {
                                 print('Error at Server');
-                                showWarningDialog("Error at login!");
+                                showWarningDialog(
+                                    "Error at getting your data!");
                                 Navigator.of(_scaffoldKey.currentContext!,
                                         rootNavigator: true)
                                     .pop();
@@ -250,11 +260,18 @@ class _ForgotPasswordControllerState extends State<ForgotPasswordView> {
   }
 
   ApiMethod apiMethod = ApiMethod();
-  Future<Map<String, dynamic>> _handleSubmitted() async {
+  Future<Map<String, dynamic>> _handleSubmitted(BuildContext context) async {
     try {
+      final encryptionKey = EncryptionUtils.generateEncryptionKey();
+      print('Generated Encryption Key: $encryptionKey');
+      final prefsUtils =
+          Provider.of<SharedPreferencesUtils>(context, listen: false);
+      await prefsUtils
+          .saveEmailToSharedPreferences(_userEmailController.text.trim());
+
       // Send password reset OTP email
-      Map<String, dynamic> msg =
-          await apiMethod.sendOTP(_userEmailController.text.trim());
+      Map<String, dynamic> msg = await apiMethod.sendOTP(
+          _userEmailController.text.trim(), encryptionKey);
       return msg;
     } catch (e, stackTrace) {
       print(e.toString());

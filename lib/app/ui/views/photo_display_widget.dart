@@ -1,8 +1,9 @@
+import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:invoice/app/core/view-models/photoData_viewModel.dart';
 import 'package:invoice/backend/api_method.dart';
+import 'package:invoice/backend/shared_preferences_utils.dart';
 import 'package:provider/provider.dart';
 
 class PhotoDisplayWidget extends StatefulWidget {
@@ -19,15 +20,35 @@ class PhotoDisplayWidget extends StatefulWidget {
 class _PhotoDisplayWidgetState extends State<PhotoDisplayWidget> {
   Future<Uint8List?>? _photoFuture;
   ApiMethod apiMethod = ApiMethod();
+  Uint8List? photoData;
 
+  SharedPreferencesUtils prefs = SharedPreferencesUtils();
   @override
   void initState() {
     super.initState();
-    _photoFuture = apiMethod.getUserPhoto(widget.email);
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    //photoData = await apiMethod.getUserPhoto(widget.email);
+    // _photoFuture = photoData != null ? Future.value(photoData) : null;
+    //final Uint8List? phtdata = photoData;
+    // print("photo data in init: $phtdata");
+    // if (phtdata != null) {
+    //   prefs.setString('photo', phtdata.toString());
+    // }
+    //setState(() {}); // Trigger a rebuild after data is initialized
+    apiMethod.getUserPhoto(widget.email).then((value) {
+      setState(() {
+        photoData = value;
+        _photoFuture = photoData != null ? Future.value(photoData) : null;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    // print("photo data in widget: $photoData");
     return Consumer<PhotoData>(
       builder: (context, photoDataProvider, _) {
         return FutureBuilder<Uint8List?>(

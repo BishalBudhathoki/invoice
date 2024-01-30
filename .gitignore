@@ -33,7 +33,8 @@ migrate_working_dir/
 /build/
 *.env
 .env
-
+android/key.properties
+lib/firebase_options.dart
 # Web related
 lib/generated_plugin_registrant.dart
 

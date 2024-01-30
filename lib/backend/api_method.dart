@@ -1,14 +1,21 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:invoice/app/core/classes/uploadNotes.dart';
 import 'package:invoice/app/core/timerModel.dart';
 import 'package:invoice/app/core/view-models/photoData_viewModel.dart';
-import 'package:invoice/app/core/view-models/user_model.dart';
+import 'package:invoice/app/core/view-models/user_model.dart' as app;
 import 'package:invoice/app/core/view-models/client_model.dart';
+import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:provider/provider.dart';
+
+import 'encryption_utils.dart';
 
 class ApiMethod extends ChangeNotifier {
 //API to authenticate user login
@@ -68,63 +75,187 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
-  Future<List<User>> fetchUserData() async {
+  Future<List<app.User>> fetchUserData() async {
     print(Uri.parse('${_baseUrl}getUsers'));
     final response = await http.get(Uri.parse('${_baseUrl}getUsers'));
     if (response.statusCode == 200) {
       print("I am a response user: ${response.body}");
       List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((data) => User.fromJson(data)).toList();
+      return jsonResponse.map((data) => app.User.fromJson(data)).toList();
     } else {
       throw Exception('Unexpected error occured!');
     }
   }
 
-  Future<Map<String, dynamic>> sendOTP(String emailRecipient) async {
-    print("Send OTP called");
-    print(Uri.parse('${_baseUrl}sendOTP'));
-
-    final Map<String, dynamic> requestBody = {
-      'email': emailRecipient,
-      // Add any other parameters you need for the email service
-    };
-
+  Future<Map<String, dynamic>> sendOTP(
+      String email, String encryptionKey) async {
     final response = await http.post(
       Uri.parse('${_baseUrl}sendOTP'),
-      body: json.encode(requestBody),
+      body: jsonEncode({'email': email, 'clientEncryptionKey': encryptionKey}),
       headers: {'Content-Type': 'application/json'},
     );
 
-    switch (response.statusCode) {
-      case 200:
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        print("200: $responseData ${responseData['statuesCode']}");
-        return {
-          'statusCode': responseData['statusCode'],
-          'message': responseData['message']
-        }; // Return the message
-      case 400:
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        print("400: $responseData ${responseData['statuesCode']}");
-        return {
-          'statusCode': responseData['statusCode'],
-          'message': responseData['message']
-        }; // Return the message
-      case 500:
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        print("500: $responseData");
-        return {
-          'statusCode': responseData['statusCode'],
-          'message': responseData['message']
-        }; // Return the message
-      default:
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        return {
-          'statusCode': responseData['statusCode'],
-          'message': responseData['message']
-        }; // Handle other status codes as needed
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to send OTP');
+    }
+
+    // switch (response.statusCode) {
+    //   case 200:
+    //     final Map<String, dynamic> responseData = json.decode(response.body);
+    //     print("200: $responseData ${responseData['statuesCode']}");
+    //     return {
+    //       'statusCode': responseData['statusCode'],
+    //       'message': responseData['message']
+    //     }; // Return the message
+    //   case 400:
+    //     final Map<String, dynamic> responseData = json.decode(response.body);
+    //     print("400: $responseData ${responseData['statuesCode']}");
+    //     return {
+    //       'statusCode': responseData['statusCode'],
+    //       'message': responseData['message']
+    //     }; // Return the message
+    //   case 500:
+    //     final Map<String, dynamic> responseData = json.decode(response.body);
+    //     print("500: $responseData");
+    //     return {
+    //       'statusCode': responseData['statusCode'],
+    //       'message': responseData['message']
+    //     }; // Return the message
+    //   default:
+    //     final Map<String, dynamic> responseData = json.decode(response.body);
+    //     return {
+    //       'statusCode': responseData['statusCode'],
+    //       'message': responseData['message']
+    //     }; // Handle other status codes as needed
+    // }
+  }
+
+  Future<Map<String, dynamic>> verifyOTP(
+    String userOtp,
+    String userVerificationKey,
+    String generatedOtp,
+    String encryptVerificationKey,
+  ) async {
+    final response = await http.post(
+      Uri.parse('${_baseUrl}verifyOTP'),
+      body: jsonEncode({
+        'userOTP': userOtp,
+        'userVerificationKey': userVerificationKey,
+        'generatedOTP': generatedOtp,
+        'encryptVerificationKey': encryptVerificationKey,
+      }),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final result = jsonDecode(response.body);
+      if (result['statusCode'] == 200) {
+        // OTP verification successful
+        return result;
+      } else {
+        // OTP verification failed, handle accordingly
+        throw Exception(result['message']);
+      }
+    } else {
+      throw Exception('Failed to verify OTP');
     }
   }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  Future<Map<String, dynamic>> changePassword(
+      String newPassword, String email) async {
+    Map<String, dynamic> data = {};
+
+    try {
+      final response = await http.post(
+        Uri.parse('${_baseUrl}updatePassword'),
+        body: jsonEncode({'newPassword': newPassword, 'email': email}),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      switch (response.statusCode) {
+        case 200:
+          data = Map<String, dynamic>.from(json.decode(response.body));
+          print("200: ${data}");
+          break;
+        case 400:
+          data = Map<String, dynamic>.from(json.decode(response.body));
+          print("400: ${data['message']}");
+          break;
+        default:
+          print("Unhandled status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error: $e");
+      // Handle the error if needed
+    }
+
+    return data;
+  }
+
+  Future<String> firebaseUpdatePassword(
+      String newPassword, String email) async {
+    try {
+      AuthCredential credential =
+          EmailAuthProvider.credential(email: email, password: newPassword);
+      await FirebaseAuth.instance.currentUser!
+          .reauthenticateWithCredential(credential);
+      await FirebaseAuth.instance.currentUser!.updatePassword(newPassword);
+
+      print('Password updated!');
+      return "Password updated!";
+    } catch (e) {
+      print(e);
+      return e.toString();
+    }
+  }
+  // Future<Map<String, dynamic>> sendOTP(String emailRecipient) async {
+  //   print("Send OTP called");
+  //   print(Uri.parse('${_baseUrl}sendOTP'));
+  //
+  //   final Map<String, dynamic> requestBody = {
+  //     'email': emailRecipient,
+  //     // Add any other parameters you need for the email service
+  //   };
+  //
+  //   final response = await http.post(
+  //     Uri.parse('${_baseUrl}sendOTP'),
+  //     body: json.encode(requestBody),
+  //     headers: {'Content-Type': 'application/json'},
+  //   );
+  //
+  //   switch (response.statusCode) {
+  //     case 200:
+  //       final Map<String, dynamic> responseData = json.decode(response.body);
+  //       print("200: $responseData ${responseData['statuesCode']}");
+  //       return {
+  //         'statusCode': responseData['statusCode'],
+  //         'message': responseData['message']
+  //       }; // Return the message
+  //     case 400:
+  //       final Map<String, dynamic> responseData = json.decode(response.body);
+  //       print("400: $responseData ${responseData['statuesCode']}");
+  //       return {
+  //         'statusCode': responseData['statusCode'],
+  //         'message': responseData['message']
+  //       }; // Return the message
+  //     case 500:
+  //       final Map<String, dynamic> responseData = json.decode(response.body);
+  //       print("500: $responseData");
+  //       return {
+  //         'statusCode': responseData['statusCode'],
+  //         'message': responseData['message']
+  //       }; // Return the message
+  //     default:
+  //       final Map<String, dynamic> responseData = json.decode(response.body);
+  //       return {
+  //         'statusCode': responseData['statusCode'],
+  //         'message': responseData['message']
+  //       }; // Handle other status codes as needed
+  //   }
+  // }
 
   Future<List<Patient>> fetchPatientData() async {
     print(Uri.parse('${_baseUrl}getClients'));
@@ -294,7 +425,7 @@ class ApiMethod extends ChangeNotifier {
 
   late Map<String, dynamic> data = {};
 
-  Future<dynamic> checkEmail(String email) async {
+  Future<Map<String, dynamic>?> checkEmail(String email) async {
     try {
       print('${_baseUrl}checkEmail/$email');
       //post method with body
@@ -318,12 +449,77 @@ class ApiMethod extends ChangeNotifier {
     return data;
   }
 
+  Future<Map<String, dynamic>> deleteUser(String email) async {
+    try {
+      print('${_baseUrl}deleteUser/$email');
+      //post method with body
+      final response = await http.delete(Uri.parse('${_baseUrl}deleteUser/'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'email': email}));
+      //print(response.body);
+      switch (response.statusCode) {
+        case 200:
+          data = Map<String, dynamic>.from(json.decode(response.body));
+          //print("200"+ data['email']);
+          break;
+        case 400:
+          data = Map<String, dynamic>.from(json.decode(response.body));
+          //print("400"+ data['email']);
+          break;
+      }
+      //print("checkEmail: "+response.body);
+    } on SocketException {
+      // _apiResponse.ApiError = ApiError(error: "Server error. Please retry") as String;
+    }
+    return data;
+  }
+
+  Future<Map<String, dynamic>> getSalt(String email) async {
+    try {
+      print('${_baseUrl}getSalt/$email');
+      //post method with body
+      final response = await http.post(Uri.parse('${_baseUrl}getSalt/'),
+          body: jsonEncode({'email': email}),
+          headers: {'Content-Type': 'application/json'});
+      print("Salt me: ${response.body} ${response.statusCode}");
+      switch (response.statusCode) {
+        case 200:
+          data = Map<String, dynamic>.from(json.decode(response.body));
+          //print("200" + data['email']);
+          break;
+        case 400:
+          data = Map<String, dynamic>.from(json.decode(response.body));
+          //print("400" + data['email']);
+          break;
+      }
+      //print("checkEmail: " + response.body);
+    } on SocketException {
+      //_apiResponse.ApiError = ApiError(error: "Server error. Please retry") as String;
+    }
+    debugPrint("Salt getSalt: $data");
+    return data;
+  }
+
   Future<dynamic> login(String email, String password) async {
-    print('${_baseUrl}login/$email/$password');
+    // print('${_baseUrl}login/$email/$password');
 
     try {
-      final response =
-          await http.get(Uri.parse('${_baseUrl}login/$email/$password'));
+      EncryptionUtils encryptionUtils = EncryptionUtils();
+      final getSaltResponse = await getSalt(email);
+      debugPrint("getSaltResponse: $getSaltResponse.body");
+      final salt = getSaltResponse['salt'];
+      final Uint8List originalSalt = encryptionUtils.hexStringToUint8List(salt);
+      print("Salty: $salt");
+
+      var hashedPasswordWithSalt = encryptionUtils
+          .encryptPasswordWithArgon2andSalt(password, originalSalt);
+      print("Hashed password with salt: $hashedPasswordWithSalt");
+      final response = await http.post(
+        Uri.parse('${_baseUrl}login'),
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: {'email': email, 'password': hashedPasswordWithSalt},
+      );
+
       print("Resp: ${response.statusCode}");
 
       Map<String, dynamic> data = {};
@@ -359,7 +555,7 @@ class ApiMethod extends ChangeNotifier {
       }
     } catch (e) {
       // Handle any exception that occurs during the login process
-      print("Exception: $e");
+      print("Exception api method: $e");
       return {
         'message': 'An error occurred during login',
       };
@@ -540,19 +736,74 @@ class ApiMethod extends ChangeNotifier {
   //   return data;
   // }
 
+  // Future<dynamic> signupUser(String firstName, String lastName, String email,
+  //     String password, String abn, String role) async {
+  //   try {
+  //     final checkEmailResponse =
+  //         await http.get(Uri.parse('${_baseUrl}checkEmail/$email'));
+  //     print('${_baseUrl}checkEmail/$email');
+  //     final checkEmailData = json.decode(checkEmailResponse.body);
+  //     switch (checkEmailResponse.statusCode) {
+  //       case 200:
+  //         print("checkEmail: ${checkEmailData['email']}");
+  //         return null;
+  //       case 400:
+  //         print("email not found");
+  //         final signupResponse = await http.post(
+  //           Uri.parse('${_baseUrl}signup/$email'),
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             "Accept": "application/json"
+  //           },
+  //           body: jsonEncode({
+  //             "firstName": firstName,
+  //             "lastName": lastName,
+  //             "email": email,
+  //             "password": password,
+  //             "abn": abn,
+  //             "role": role
+  //           }),
+  //         );
+  //         print('${_baseUrl}signup/$email');
+  //         switch (signupResponse.statusCode) {
+  //           case 200:
+  //             final signupData = json.decode(signupResponse.body);
+  //             print("Signup successful: ${signupResponse.body}");
+  //             return signupData;
+  //           case 500:
+  //             print("${signupResponse.statusCode}: ${signupResponse.body}");
+  //             return null;
+  //           default:
+  //             print(
+  //                 "Signup failed with status code ${signupResponse.statusCode}");
+  //             return null;
+  //         }
+  //       case 500:
+  //         print("Server error occurred");
+  //         return null;
+  //       default:
+  //         print("Invalid response received");
+  //         return null;
+  //     }
+  //   } on SocketException {
+  //     print("Server error. Please retry");
+  //     return null;
+  //   }
+  // }
+
   Future<dynamic> signupUser(String firstName, String lastName, String email,
       String password, String abn, String role) async {
     try {
       final checkEmailResponse =
           await http.get(Uri.parse('${_baseUrl}checkEmail/$email'));
       print('${_baseUrl}checkEmail/$email');
-      final checkEmailData = json.decode(checkEmailResponse.body);
+
       switch (checkEmailResponse.statusCode) {
         case 200:
-          print("checkEmail: ${checkEmailData['email']}");
-          return null;
-        case 400:
-          print("email not found");
+          print(
+              "Email already exists: ${json.decode(checkEmailResponse.body)['email']}");
+          return {"error": "Email already exists"};
+        case 400: // Proceed with signup
           final signupResponse = await http.post(
             Uri.parse('${_baseUrl}signup/$email'),
             headers: {
@@ -569,29 +820,43 @@ class ApiMethod extends ChangeNotifier {
             }),
           );
           print('${_baseUrl}signup/$email');
+
           switch (signupResponse.statusCode) {
             case 200:
               final signupData = json.decode(signupResponse.body);
               print("Signup successful: ${signupResponse.body}");
               return signupData;
+            case 400:
+              print(
+                  "Signup failed: ${signupResponse.body}"); // Handle specific 400 errors
+              return {"error": "Signup failed: ${signupResponse.body}"};
+            case 409:
+              print("Email already exists"); // Handle conflict
+              return {"error": "Email already exists"};
             case 500:
-              print("${signupResponse.statusCode}: ${signupResponse.body}");
-              return null;
+              print("Server error: ${signupResponse.body}");
+              return {"error": "Server error: ${signupResponse.body}"};
             default:
               print(
                   "Signup failed with status code ${signupResponse.statusCode}");
-              return null;
+              return {
+                "error":
+                    "Signup failed with status code ${signupResponse.statusCode}"
+              };
           }
+        case 404:
+          print("Invalid endpoint for checking email");
+          return {"error": "Invalid endpoint for checking email"};
         case 500:
           print("Server error occurred");
-          return null;
+          return {"error": "Server error occurred"};
         default:
           print("Invalid response received");
-          return null;
+          return {"error": "Invalid response received"};
       }
     } on SocketException {
       print("Server error. Please retry");
-      return null;
+      return {"error": "Server error. Please retry"};
     }
   }
 
@@ -818,8 +1083,9 @@ class ApiMethod extends ChangeNotifier {
 
   Future<Uint8List?> getUserPhoto(String userEmail) async {
     final url = '${_baseUrl}getUserPhoto/$userEmail';
-
+    print(url);
     final response = await http.get(Uri.parse(url));
+    print("Get user photot: ${response.body} /n ${response.statusCode}");
     if (response.statusCode == 200) {
       final base64PhotoData = response.body;
       final photoData = base64Decode(base64PhotoData);
@@ -828,6 +1094,85 @@ class ApiMethod extends ChangeNotifier {
       throw Exception('Photo not found');
     } else {
       throw Exception('Unexpected error occurred!');
+    }
+  }
+
+  Future<Uint8List?> getUserPhotoFromFBS(PhotoData photoDataProvider) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user == null) {
+        print("User not authenticated.");
+        return null;
+      } else {
+        print("User authenticated.");
+        Reference storageRef = FirebaseStorage.instance
+            .ref()
+            .child('profile_pics/${user.uid}.jpg');
+
+        // Get the download URL of the stored file
+        String downloadURL = await storageRef.getDownloadURL();
+
+        // Use a network call or any method to fetch the image data
+        // Here, I'm using http package to fetch the image data
+        http.Response response = await http.get(Uri.parse(downloadURL));
+
+        // Check if the request was successful
+        if (response.statusCode == 200) {
+          // Decode the response body to Uint8List
+          Uint8List imageData = response.bodyBytes;
+
+          // Update the PhotoData change notifier
+          photoDataProvider.updatePhotoData(imageData);
+
+          return imageData;
+        } else {
+          print("Failed to fetch image: ${response.statusCode}");
+          return null;
+        }
+      }
+    } catch (error) {
+      print('Error fetching profile picture: $error');
+      return null;
+    }
+  }
+
+  Future<UploadNotes> uploadNotes(
+      String userEmail, String clientEmail, String notes) async {
+    try {
+      print("Email with notes: $userEmail + $notes");
+      final response = await http.post(
+        Uri.parse('${_baseUrl}addNotes/'),
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: jsonEncode({
+          "userEmail": userEmail,
+          "clientEmail": clientEmail,
+          "notes": notes,
+        }),
+      );
+      print('${_baseUrl}uploadNotes/');
+      if (response.statusCode == 200) {
+        return UploadNotes(
+          success: true,
+          title: "Success",
+          message: "Notes uploaded successfully",
+          backgroundColor: AppColors.colorPrimary,
+        );
+      } else {
+        return UploadNotes(
+          success: false,
+          title: "Error",
+          message: "Notes upload failed",
+          backgroundColor: AppColors.colorWarning,
+        );
+      }
+    } on SocketException {
+      throw Exception('Failed to upload notes: network error');
+    } catch (e) {
+      throw Exception('Failed to upload notes: $e');
     }
   }
 }

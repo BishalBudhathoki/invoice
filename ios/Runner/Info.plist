@@ -26,7 +26,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>invoice</string>
+	<string>MoreThanInvoice</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -121,6 +121,9 @@
             </array>
         </dict>
     </array>
-
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>Speech recognition is used to convert voice to text for notes taking.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Microphone is used to record voice for notes taking.</string>
 </dict>
 </plist>

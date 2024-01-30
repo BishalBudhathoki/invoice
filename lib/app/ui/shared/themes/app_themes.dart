@@ -21,13 +21,19 @@ class AppTheme {
 
   static ThemeData themeData = ThemeData(
       primaryColor: AppColors.colorPrimary,
-      primaryColorDark: AppColors.colorPrimaryDark,
+      primaryColorDark: AppColors.colorSecondary,
       brightness: Brightness.light,
       appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.colorPrimary,
           iconTheme: IconThemeData(color: Colors.white),
           systemOverlayStyle: SystemUiOverlayStyle.light),
       textTheme: const TextTheme(
+        titleLarge: TextStyle(
+          color: AppColors.colorFontPrimary,
+          fontSize: AppDimens.fontSizeLarge,
+          fontWeight: FontWeight.w900,
+          fontFamily: 'Lato',
+        ),
         bodyLarge: TextStyle(
           color: AppColors.colorFontPrimary,
           fontSize: AppDimens.fontSizeMedium,

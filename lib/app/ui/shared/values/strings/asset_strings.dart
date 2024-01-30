@@ -13,5 +13,6 @@ class AssetsStrings {
   static const String cardImageBoy =
       "assets/images/he_sitting_with_notebook.png";
   static const String productImg = "assets/images/demo-png-card-view.png";
-  static const List validEmail = ['bishalkc331@gmail.com'];
+  static RegExp validEmailPattern = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+  //r'^[^@]+@[^@]+\.[^@]+'; //r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]';
 }

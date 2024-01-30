@@ -3,28 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:invoice/app/ui/shared/values/strings/asset_strings.dart';
 
-class SignupModel extends ChangeNotifier {
-  // late String email;
-  // late String password;
-  // late String confirmPassword;
-  // late String firstName;
-  // late String lastName;
-  // late String phoneNumber;
-  // late String address;
-  // late String city;
-  // late String state;
-  // late String zipCode;
-  // late String country;
-  // late String companyName;
-  // late String companyAddress;
-  // late String companyCity;
-  // late String companyState;
-  // late String companyZipCode;
-  // late String companyCountry;
-  // late String companyPhoneNumber;
+import 'Base_model.dart';
 
+class SignupModel extends ChangeNotifier implements VisibilityToggleModel {
+  @override
   get isVisible => _isVisible;
   bool _isVisible = false;
+  @override
   set isVisible(value) {
     _isVisible = value;
     notifyListeners();
@@ -34,7 +19,8 @@ class SignupModel extends ChangeNotifier {
   get isValid => _isValid;
 
   void isValidEmail(String input) {
-    if (input == AssetsStrings.validEmail.first) {
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    if (emailRegex.hasMatch(input)) {
       _isValid = true;
     } else {
       _isValid = false;
@@ -50,6 +36,9 @@ class SignupModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  @override
+  late bool isVisible1;
 
   // SignupModel.fromJson(Map<String, dynamic> json) {
   //   email = json['email'];

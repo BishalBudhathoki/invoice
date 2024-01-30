@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:math';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:invoice/app/core/classes/signupResult.dart';
 import 'package:invoice/app/core/controllers/signup_controller.dart';
 import 'package:invoice/app/ui/widgets/alertDialog_widget.dart';
 import 'package:invoice/app/ui/widgets/bottom_navBar_widget.dart';
@@ -10,8 +14,10 @@ import 'package:invoice/app/core/view-models/signup_model.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
 import 'package:invoice/app/ui/widgets/button_widget.dart';
+import 'package:invoice/app/ui/widgets/flushbar_widget.dart';
 import 'package:invoice/app/ui/widgets/textField_widget.dart';
 import 'package:invoice/backend/api_method.dart';
+import 'package:invoice/backend/encryption_utils.dart';
 import 'package:provider/provider.dart';
 
 class SignUpView extends StatefulWidget {
@@ -33,6 +39,7 @@ class _SignupUserNameControllerState extends State<SignUpView> {
   final _signupABNController = TextEditingController();
 
   var ins;
+  dynamic result;
 
   @override
   void dispose() {
@@ -48,8 +55,9 @@ class _SignupUserNameControllerState extends State<SignUpView> {
   Widget build(BuildContext context) {
     final models = Provider.of<SignupModel>(context);
     bool loading = false;
-    final SignupController signupController = SignupController();
-
+    FlushBarWidget flushBarWidget = FlushBarWidget();
+    final passwordVisibleNotifier = ValueNotifier<bool>(true);
+    final textVisibleNotifier = ValueNotifier<bool>(false);
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: AppColors.colorWhite,
@@ -77,7 +85,8 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                   ),
                 ),
                 SizedBox(height: context.height * 0.023),
-                TextFieldWidget(
+                TextFieldWidget<SignupModel>(
+                  suffixIconClickable: false,
                   hintText: 'First Name',
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -85,7 +94,7 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                     }
                     return null;
                   },
-                  obscureText: false,
+                  obscureTextNotifier: textVisibleNotifier,
                   prefixIconData: Icons.person,
                   suffixIconData: null,
                   controller: _signUpUserFirstNameController,
@@ -95,7 +104,8 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                   },
                 ),
                 SizedBox(height: context.height * 0.023),
-                TextFieldWidget(
+                TextFieldWidget<SignupModel>(
+                  suffixIconClickable: false,
                   hintText: 'Last Name',
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -103,7 +113,7 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                     }
                     return null;
                   },
-                  obscureText: false,
+                  obscureTextNotifier: textVisibleNotifier,
                   prefixIconData: Icons.person,
                   suffixIconData: null,
                   controller: _signUpUserLastNameController,
@@ -111,7 +121,8 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                   onSaved: (value) {},
                 ),
                 SizedBox(height: context.height * 0.023),
-                TextFieldWidget(
+                TextFieldWidget<SignupModel>(
+                  suffixIconClickable: false,
                   hintText: 'ABN',
                   validator: (value) {
                     if (value!.isEmpty || value.length < 11) {
@@ -119,7 +130,7 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                     }
                     return null;
                   },
-                  obscureText: false,
+                  obscureTextNotifier: textVisibleNotifier,
                   prefixIconData: Icons.account_balance,
                   suffixIconData: null,
                   controller: _signupABNController,
@@ -127,25 +138,29 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                   onSaved: (value) {},
                 ),
                 SizedBox(height: context.height * 0.023),
-                TextFieldWidget(
+                TextFieldWidget<SignupModel>(
+                  suffixIconClickable: false,
                   hintText: 'Email',
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter correct email';
-                    }
-                    return null;
-                  },
-                  obscureText: false,
-                  prefixIconData: Icons.email,
-                  suffixIconData: null,
+                  obscureTextNotifier: textVisibleNotifier,
+                  prefixIconData: Icons.mail_outline,
+                  suffixIconData: models.isValid ? Icons.check : null,
                   controller: _signUpEmailController,
                   onChanged: (value) {
                     models.isValidEmail(value);
                   },
-                  onSaved: (value) {},
+                  onSaved: (value) {
+                    _signUpEmailController.text = value!;
+                  },
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter email';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: context.height * 0.023),
-                TextFieldWidget(
+                TextFieldWidget<SignupModel>(
+                  suffixIconClickable: true,
                   hintText: 'Password',
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -153,7 +168,7 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                     }
                     return null;
                   },
-                  obscureText: true,
+                  obscureTextNotifier: passwordVisibleNotifier,
                   prefixIconData: Icons.lock,
                   suffixIconData: null,
                   controller: _signUpPasswordController,
@@ -163,7 +178,8 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                   onSaved: (value) {},
                 ),
                 SizedBox(height: context.height * 0.023),
-                TextFieldWidget(
+                TextFieldWidget<SignupModel>(
+                  suffixIconClickable: true,
                   hintText: 'Confirm Password',
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -171,7 +187,7 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                     }
                     return null;
                   },
-                  obscureText: true,
+                  obscureTextNotifier: passwordVisibleNotifier,
                   prefixIconData: Icons.lock,
                   suffixIconData: models.isValid ? Icons.check : null,
                   controller: _signUpConfirmPasswordController,
@@ -190,26 +206,44 @@ class _SignupUserNameControllerState extends State<SignUpView> {
                       showAlertDialog(context);
                       Future.delayed(const Duration(seconds: 3), () async {
                         final response = await _signupUser();
-                        if (response) {
+                        //debugPrint('Sign up Response: ${response.toString()}');
+                        if (response.success) {
+                          // Handle success
+                          flushBarWidget
+                              .flushBar(
+                                title: response.title,
+                                message: response.message,
+                                backgroundColor: AppColors.colorSecondary,
+                                context: _scaffoldKey.currentContext!,
+                              )
+                              .show(_scaffoldKey.currentContext!);
+
+                          // Additional success handling if needed
                           print('Signup button pressed');
-                          Navigator.push(
-                            _scaffoldKey.currentContext!,
-                            MaterialPageRoute(
-                              builder: (context) => BottomNavBarWidget(
+                          Future.delayed(const Duration(seconds: 3), () async {
+                            Navigator.push(
+                              _scaffoldKey.currentContext!,
+                              MaterialPageRoute(
+                                builder: (context) => BottomNavBarWidget(
                                   email: _signUpEmailController.text
                                       .toLowerCase()
                                       .trim(),
-                                  role: 'normal'),
-                            ),
-                          );
+                                  role: 'normal',
+                                ),
+                              ),
+                            );
+                          });
                         } else {
-                          print('Error at signup');
-                          Navigator.of(_scaffoldKey.currentContext!,
-                                  rootNavigator: true)
-                              .pop();
+                          // Handle error
+                          flushBarWidget
+                              .flushBar(
+                                title: response.title,
+                                message: response.message,
+                                backgroundColor: response.backgroundColor,
+                                context: _scaffoldKey.currentContext!,
+                              )
+                              .show(_scaffoldKey.currentContext!);
                         }
-
-                        //_login();
                       });
                     }
 
@@ -225,9 +259,9 @@ class _SignupUserNameControllerState extends State<SignUpView> {
   }
 
   ApiMethod apiMethod = ApiMethod();
-  Future<bool> _signupUser() async {
-    SignupController signupController = SignupController();
 
+  Future<SignupResult> _signupUser() async {
+    SignupController signupController = SignupController();
     if (_signUpPasswordController.text ==
         _signUpConfirmPasswordController.text) {
       bool success = await signupController.signupUser(
@@ -238,37 +272,131 @@ class _SignupUserNameControllerState extends State<SignUpView> {
         _signupABNController.text,
         "normal",
       );
+      print("Success: $success");
+      if (success == true) {
+        final checkEmailResponse = await apiMethod
+            .checkEmail(_signUpEmailController.text.trim().toLowerCase());
+        print("Check Email Response: $checkEmailResponse");
+        if (checkEmailResponse?['message'] == "Email not found") {
+          result = await apiMethod.signupUser(
+            _signUpUserFirstNameController.text,
+            _signUpUserLastNameController.text,
+            _signUpEmailController.text,
+            _signUpPasswordController.text,
+            _signupABNController.text,
+            "normal",
+          );
+          print("Res: $result");
+          await _changePassword(
+            _signUpPasswordController.text,
+            _signUpConfirmPasswordController.text,
+          ).then((response) async {
+            if (response is Map && response!.containsKey('message')) {
+              if (response['message'] == 200) {
+                print('Password changed successfully');
+              }
+            }
+          });
+          String message = "";
 
-      if (success) {
-        ins = await apiMethod.signupUser(
-          _signUpUserFirstNameController.text,
-          _signUpUserLastNameController.text,
-          _signUpEmailController.text,
-          _signUpPasswordController.text,
-          _signupABNController.text,
-          "normal",
+          // Check for success or error based on the server response
+          if (result is Map) {
+            //int statusCode = result["statusCode"];
+            message = result["message"] ?? "Unknown error";
+
+            if (result["message"] == "Signup successful") {
+              print("1");
+              return SignupResult(
+                success: true,
+                title: "Success",
+                message: message,
+                backgroundColor: AppColors.colorPrimary,
+              );
+            } else {
+              print("2");
+              return SignupResult(
+                success: false,
+                title: "Error",
+                message: message,
+                backgroundColor: AppColors.colorWarning,
+              );
+            }
+          } else {
+            print("3");
+            return SignupResult(
+              success: false,
+              title: "Error",
+              message: "Unknown error",
+              backgroundColor: AppColors.colorWarning,
+            );
+          }
+        }
+      } else {
+        print("4");
+        return SignupResult(
+          success: false,
+          title: "Error",
+          message: "The email address is already in use by another account",
+          backgroundColor: AppColors.colorWarning,
         );
       }
-
-      print("Response: $ins");
-      print("Response: $success");
-
-      if (ins != null && success) {
-        if (kDebugMode) {
-          print("Signup Successful");
-        }
-        return true;
-      } else {
-        if (kDebugMode) {
-          print("Signup Failed");
-        }
-        return false;
-      }
     } else {
-      if (kDebugMode) {
-        print("Passwords do not match");
-      }
-      return false;
+      print("5");
+      return SignupResult(
+        success: false,
+        title: "Error",
+        message: "Passwords do not match",
+        backgroundColor: AppColors.colorWarning,
+      );
     }
+    print("6");
+    return SignupResult(
+      success: false,
+      title: "Error",
+      message: "Email exist in database",
+      backgroundColor: AppColors.colorWarning,
+    );
+  }
+
+  Future<Map<String, dynamic>?> _changePassword(
+      String password, String confirmPassword) async {
+    try {
+      if (password != confirmPassword) {
+        throw Exception('Passwords must match'); // Handle mismatch error
+      }
+      EncryptionUtils encryptionUtils = EncryptionUtils();
+      var hashedPasswordWithSalt = encryptionUtils
+          .encryptPasswordWithArgon2andSalt(password, Uint8List(0));
+
+      final email = _signUpEmailController.text.toLowerCase().trim();
+
+      // Send the hashed password and email to the server instead of the plain password
+      // ...Implement your API call here using the hashed password and email...
+      final res = await apiMethod.changePassword(hashedPasswordWithSalt, email);
+      print('Response: $res');
+      return res;
+    } catch (e, stackTrace) {
+      print(e.toString());
+      print(stackTrace.toString());
+
+      // Catch any errors that might occur due to the context issue
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text((e).toString()),
+        ),
+      );
+      // Return an error map with appropriate keys and values
+      return {
+        'statusCode': -1, // or another value indicating an error
+        'message': e.toString(),
+        'stackTrace': stackTrace.toString(),
+      };
+    }
+  }
+
+  Uint8List generateSalt({int length = 32}) {
+    var random = Random.secure();
+    return Uint8List.fromList(
+        List.generate(length, (_) => random.nextInt(256)));
   }
 }

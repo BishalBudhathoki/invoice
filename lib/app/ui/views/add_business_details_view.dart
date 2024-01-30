@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:invoice/app/core/view-models/addBusiness_detail_model.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:invoice/app/ui/views/popupClientDetails.dart';
 import 'package:invoice/app/ui/widgets/alertDialog_widget.dart';
@@ -40,6 +41,7 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final textVisibleNotifier = ValueNotifier<bool>(true);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -56,7 +58,9 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            TextFieldWidget(
+            TextFieldWidget<AddBusinessDetailModel>(
+              suffixIconClickable: false,
+              obscureTextNotifier: textVisibleNotifier,
               hintText: 'Business Name',
               validator: (value) {
                 if (value!.isEmpty) {
@@ -64,7 +68,6 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
                 }
                 return null;
               },
-              obscureText: false,
               prefixIconData: Icons.person,
               suffixIconData: null,
               controller: _businessNameController,
@@ -76,7 +79,9 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
             SizedBox(
               height: size.height * 0.02,
             ),
-            TextFieldWidget(
+            TextFieldWidget<AddBusinessDetailModel>(
+              suffixIconClickable: false,
+              obscureTextNotifier: textVisibleNotifier,
               hintText: 'Business Email',
               validator: (value) {
                 if (value!.isEmpty) {
@@ -84,7 +89,6 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
                 }
                 return null;
               },
-              obscureText: false,
               prefixIconData: Icons.email,
               suffixIconData: null,
               controller: _businessEmailController,
@@ -96,7 +100,9 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
             SizedBox(
               height: size.height * 0.02,
             ),
-            TextFieldWidget(
+            TextFieldWidget<AddBusinessDetailModel>(
+              suffixIconClickable: false,
+              obscureTextNotifier: textVisibleNotifier,
               hintText: 'Business Phone',
               validator: (value) {
                 if (value!.isEmpty) {
@@ -104,7 +110,6 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
                 }
                 return null;
               },
-              obscureText: false,
               prefixIconData: Icons.phone,
               suffixIconData: null,
               controller: _businessPhoneController,
@@ -116,7 +121,9 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
             SizedBox(
               height: size.height * 0.02,
             ),
-            TextFieldWidget(
+            TextFieldWidget<AddBusinessDetailModel>(
+              suffixIconClickable: false,
+              obscureTextNotifier: textVisibleNotifier,
               hintText: 'Business Address',
               validator: (value) {
                 if (value!.isEmpty) {
@@ -124,7 +131,6 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
                 }
                 return null;
               },
-              obscureText: false,
               prefixIconData: Icons.location_on,
               suffixIconData: null,
               controller: _businessAddressController,
@@ -136,7 +142,9 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
             SizedBox(
               height: size.height * 0.02,
             ),
-            TextFieldWidget(
+            TextFieldWidget<AddBusinessDetailModel>(
+              suffixIconClickable: false,
+              obscureTextNotifier: textVisibleNotifier,
               hintText: 'Business City',
               validator: (value) {
                 if (value!.isEmpty) {
@@ -144,7 +152,6 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
                 }
                 return null;
               },
-              obscureText: false,
               prefixIconData: Icons.location_city,
               suffixIconData: null,
               controller: _businessCityController,
@@ -156,7 +163,9 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
             SizedBox(
               height: size.height * 0.02,
             ),
-            TextFieldWidget(
+            TextFieldWidget<AddBusinessDetailModel>(
+              suffixIconClickable: false,
+              obscureTextNotifier: textVisibleNotifier,
               hintText: 'Business State',
               validator: (value) {
                 if (value!.isEmpty) {
@@ -164,7 +173,6 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
                 }
                 return null;
               },
-              obscureText: false,
               prefixIconData: Icons.location_city,
               suffixIconData: null,
               controller: _businessStateController,
@@ -176,7 +184,9 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
             SizedBox(
               height: size.height * 0.02,
             ),
-            TextFieldWidget(
+            TextFieldWidget<AddBusinessDetailModel>(
+              suffixIconClickable: false,
+              obscureTextNotifier: textVisibleNotifier,
               hintText: 'Business Zip',
               validator: (value) {
                 if (value!.isEmpty) {
@@ -184,7 +194,6 @@ class _AddBusinessDetailsState extends State<AddBusinessDetails> {
                 }
                 return null;
               },
-              obscureText: false,
               prefixIconData: Icons.location_city,
               suffixIconData: null,
               controller: _businessZipController,

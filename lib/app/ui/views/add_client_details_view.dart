@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:invoice/app/core/view-models/addClient_detail_model.dart';
 import 'package:invoice/app/ui/views/popupClientDetails.dart';
 import 'package:invoice/app/ui/widgets/alertDialog_widget.dart';
 import 'package:invoice/app/ui/widgets/businessNameDropDown_widget.dart';
@@ -36,7 +37,6 @@ class _AddClientDetailsState extends State<AddClientDetails> {
   void initState() {
     super.initState();
     // apiMethod.getBusinessNameList();
-
   }
 
   @override
@@ -55,8 +55,9 @@ class _AddClientDetailsState extends State<AddClientDetails> {
 
   @override
   Widget build(BuildContext context) {
-
     final size = MediaQuery.of(context).size;
+    final textVisibleNotifier = ValueNotifier<bool>(true);
+    AddClientDetailModel model = AddClientDetailModel();
     //late String selectedBusinessName;
     //print(apiMethod.getBusinessNameList());
     return Scaffold(
@@ -74,7 +75,9 @@ class _AddClientDetailsState extends State<AddClientDetails> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            TextFieldWidget(
+            TextFieldWidget<AddClientDetailModel>(
+              suffixIconClickable: false,
+              obscureTextNotifier: textVisibleNotifier,
               hintText: 'Client First Name',
               validator: (value) {
                 if (value!.isEmpty) {
@@ -82,7 +85,6 @@ class _AddClientDetailsState extends State<AddClientDetails> {
                 }
                 return null;
               },
-              obscureText: false,
               prefixIconData: Icons.person,
               suffixIconData: null,
               controller: _clientFirstNameController,
@@ -94,7 +96,9 @@ class _AddClientDetailsState extends State<AddClientDetails> {
             SizedBox(
               height: size.height * 0.02,
             ),
-            TextFieldWidget(
+            TextFieldWidget<AddClientDetailModel>(
+              suffixIconClickable: false,
+              obscureTextNotifier: textVisibleNotifier,
               hintText: 'Client Last Name',
               validator: (value) {
                 if (value!.isEmpty) {
@@ -102,7 +106,6 @@ class _AddClientDetailsState extends State<AddClientDetails> {
                 }
                 return null;
               },
-              obscureText: false,
               prefixIconData: Icons.person,
               suffixIconData: null,
               controller: _clientLastNameController,
@@ -114,7 +117,9 @@ class _AddClientDetailsState extends State<AddClientDetails> {
             SizedBox(
               height: size.height * 0.02,
             ),
-            TextFieldWidget(
+            TextFieldWidget<AddClientDetailModel>(
+              suffixIconClickable: false,
+              obscureTextNotifier: textVisibleNotifier,
               hintText: 'Email',
               validator: (value) {
                 if (value!.isEmpty) {
@@ -122,7 +127,6 @@ class _AddClientDetailsState extends State<AddClientDetails> {
                 }
                 return null;
               },
-              obscureText: false,
               prefixIconData: Icons.email,
               suffixIconData: null,
               controller: _clientEmailController,
@@ -134,7 +138,9 @@ class _AddClientDetailsState extends State<AddClientDetails> {
             SizedBox(
               height: size.height * 0.02,
             ),
-            TextFieldWidget(
+            TextFieldWidget<AddClientDetailModel>(
+              suffixIconClickable: false,
+              obscureTextNotifier: textVisibleNotifier,
               hintText: 'Phone',
               validator: (value) {
                 if (value!.isEmpty) {
@@ -142,7 +148,6 @@ class _AddClientDetailsState extends State<AddClientDetails> {
                 }
                 return null;
               },
-              obscureText: false,
               prefixIconData: Icons.phone_android,
               suffixIconData: null,
               controller: _clientPhoneController,
@@ -154,7 +159,9 @@ class _AddClientDetailsState extends State<AddClientDetails> {
             SizedBox(
               height: size.height * 0.02,
             ),
-            TextFieldWidget(
+            TextFieldWidget<AddClientDetailModel>(
+              suffixIconClickable: false,
+              obscureTextNotifier: textVisibleNotifier,
               hintText: 'Address',
               validator: (value) {
                 if (value!.isEmpty) {
@@ -162,7 +169,6 @@ class _AddClientDetailsState extends State<AddClientDetails> {
                 }
                 return null;
               },
-              obscureText: false,
               prefixIconData: Icons.location_on,
               suffixIconData: null,
               controller: _clientAddressController,
@@ -174,7 +180,9 @@ class _AddClientDetailsState extends State<AddClientDetails> {
             SizedBox(
               height: size.height * 0.02,
             ),
-            TextFieldWidget(
+            TextFieldWidget<AddClientDetailModel>(
+              suffixIconClickable: false,
+              obscureTextNotifier: textVisibleNotifier,
               hintText: 'City',
               validator: (value) {
                 if (value!.isEmpty) {
@@ -182,7 +190,6 @@ class _AddClientDetailsState extends State<AddClientDetails> {
                 }
                 return null;
               },
-              obscureText: false,
               prefixIconData: Icons.location_city,
               suffixIconData: null,
               controller: _clientCityController,
@@ -194,7 +201,9 @@ class _AddClientDetailsState extends State<AddClientDetails> {
             SizedBox(
               height: size.height * 0.02,
             ),
-            TextFieldWidget(
+            TextFieldWidget<AddClientDetailModel>(
+              suffixIconClickable: false,
+              obscureTextNotifier: textVisibleNotifier,
               hintText: 'State',
               validator: (value) {
                 if (value!.isEmpty) {
@@ -202,7 +211,6 @@ class _AddClientDetailsState extends State<AddClientDetails> {
                 }
                 return null;
               },
-              obscureText: false,
               prefixIconData: Icons.location_city,
               suffixIconData: null,
               controller: _clientStateController,
@@ -214,7 +222,9 @@ class _AddClientDetailsState extends State<AddClientDetails> {
             SizedBox(
               height: size.height * 0.02,
             ),
-            TextFieldWidget(
+            TextFieldWidget<AddClientDetailModel>(
+              suffixIconClickable: false,
+              obscureTextNotifier: textVisibleNotifier,
               hintText: 'Zip',
               validator: (value) {
                 if (value!.isEmpty) {
@@ -222,7 +232,6 @@ class _AddClientDetailsState extends State<AddClientDetails> {
                 }
                 return null;
               },
-              obscureText: false,
               prefixIconData: Icons.location_city,
               suffixIconData: null,
               controller: _clientZipController,
@@ -241,8 +250,6 @@ class _AddClientDetailsState extends State<AddClientDetails> {
                 },
               ),
             ),
-
-
             const SizedBox(height: 16),
             ButtonWidget(
                 title: 'Add Client',
@@ -304,6 +311,4 @@ class _AddClientDetailsState extends State<AddClientDetails> {
       return ins['message'];
     }
   }
-
-
 }

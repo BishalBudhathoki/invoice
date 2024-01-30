@@ -1,22 +1,33 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:invoice/app/core/classes/launchMap_status.dart';
 import 'package:invoice/app/core/view-models/client_model.dart';
 import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:invoice/app/ui/widgets/button_widget.dart';
+import 'package:invoice/app/ui/widgets/flushbar_widget.dart';
 import 'package:invoice/backend/api_method.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
 import 'package:invoice/app/core/timerModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'add_notes_view.dart';
 
 const int kTimerDurationInSeconds = 8 * 60 * 60; // 8 hours
 
 class ClientAndAppointmentDetails extends StatefulWidget {
   final String userEmail;
   final String clientEmail;
+  final PersistentTabController? controller;
 
-  const ClientAndAppointmentDetails(
-      {super.key, required this.userEmail, required this.clientEmail});
+  const ClientAndAppointmentDetails({
+    super.key,
+    required this.userEmail,
+    required this.clientEmail,
+    this.controller,
+  });
 
   @override
   _ClientAndAppointmentDetailsState createState() =>
@@ -25,6 +36,7 @@ class ClientAndAppointmentDetails extends StatefulWidget {
 
 class _ClientAndAppointmentDetailsState
     extends State<ClientAndAppointmentDetails> {
+  late final PersistentTabController controller;
   ApiMethod apiMethod = ApiMethod();
   var setClientAndAppointmentData;
   var clientAndAppointmentData = {};
@@ -89,8 +101,8 @@ class _ClientAndAppointmentDetailsState
     clientAndAppointmentData = (await apiMethod.getClientAndAppointmentData(
         widget.userEmail, widget.clientEmail)) as Map;
     setState(() {
-      print(
-          "Clinet Email: ${widget.clientEmail} ${clientAndAppointmentData['data']?['clientDetails'][0]}");
+      print("Clinet Email: ${widget.clientEmail} "
+          "${clientAndAppointmentData['data']?['clientDetails'][0]}");
       setClientAndAppointmentData = clientAndAppointmentData;
       isCurrentClient = (clientAndAppointmentData['data']?['clientDetails'][0]
               ?['clientEmail'] ==
@@ -98,7 +110,7 @@ class _ClientAndAppointmentDetailsState
     });
     print("client apt det: $clientAndAppointmentData");
     return clientAndAppointmentData;
-    }
+  }
 
   Future<dynamic> _startTimer() async {
     var startTime = await apiMethod.startTimer();
@@ -121,8 +133,7 @@ class _ClientAndAppointmentDetailsState
     if (startTimeForLoading > 0) {
       // Calculate the elapsed time since the start time
       final currentTime = DateTime.now().millisecondsSinceEpoch;
-      final elapsedSeconds =
-          (currentTime - startTimeForLoading) ~/ 1000;
+      final elapsedSeconds = (currentTime - startTimeForLoading) ~/ 1000;
       // Set the elapsed time in your timer model
       timerModel.setElapsedSeconds(elapsedSeconds);
     }
@@ -324,61 +335,73 @@ class _ClientAndAppointmentDetailsState
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(10.0),
                 child: SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (timerModel.isRunning &&
-                          timerModel.getTimerClientEmail() !=
-                              widget.clientEmail) {
-                        return; // disable the button if the timer is already running for another client
-                      }
-                      if (timerModel.isRunning &&
+                  child: Ink(
+                    height: 60.0,
+                    decoration: BoxDecoration(
+                      color: (timerModel.isRunning &&
+                              timerModel.getTimerClientEmail() ==
+                                  widget.clientEmail)
+                          ? AppColors.colorWarning
+                          : AppColors.colorPrimary,
+                      borderRadius: BorderRadius.circular(10),
+                      border: const Border.fromBorderSide(BorderSide.none),
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (timerModel.isRunning &&
+                            timerModel.getTimerClientEmail() !=
+                                widget.clientEmail) {
+                          return; // disable the button if the timer is already running for another client
+                        }
+                        if (timerModel.isRunning &&
+                            timerModel.getTimerClientEmail() ==
+                                widget.clientEmail) {
+                          _stopTimer();
+                          timerModel.stop();
+                          await _setWorkedTime();
+                          print(timerModel
+                              .getFormattedTime(timerModel.elapsedSeconds));
+                          // add your function call here when the timer is stopped
+                        } else {
+                          await updateTimerModel();
+                          // add your function call here when the timer is started
+                        }
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                          (timerModel.isRunning &&
+                                  timerModel.getTimerClientEmail() ==
+                                      widget.clientEmail)
+                              ? AppColors.colorWarning
+                              : AppColors.colorPrimary,
+                        ),
+                        elevation: MaterialStateProperty.all(
                           timerModel.getTimerClientEmail() ==
-                              widget.clientEmail) {
-                        _stopTimer();
-                        timerModel.stop();
-                        await _setWorkedTime();
-                        print(timerModel
-                            .getFormattedTime(timerModel.elapsedSeconds));
-                        // add your function call here when the timer is stopped
-                      } else {
-                        await updateTimerModel();
-                        // add your function call here when the timer is started
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
+                                      widget.clientEmail ||
+                                  timerModel.isRunning
+                              ? 0
+                              : 2,
+                        ),
+                      ),
+                      child: Text(
                         (timerModel.isRunning &&
                                 timerModel.getTimerClientEmail() ==
                                     widget.clientEmail)
-                            ? AppColors.colorWarning
-                            : AppColors.colorPrimary,
-                      ),
-                      elevation: MaterialStateProperty.all(
-                        timerModel.getTimerClientEmail() ==
-                                    widget.clientEmail ||
-                                timerModel.isRunning
-                            ? 0
-                            : 2,
-                      ),
-                    ),
-                    child: Text(
-                      (timerModel.isRunning &&
-                              timerModel.getTimerClientEmail() ==
-                                  widget.clientEmail)
-                          ? 'End shift'
-                          : 'Start shift',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
+                            ? 'End shift'
+                            : 'Start shift',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 32.0),
+              // const SizedBox(height: 15.0),
               Center(
                 child: Text(
                   (timerModel.isRunning &&
@@ -398,10 +421,11 @@ class _ClientAndAppointmentDetailsState
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(10.0),
                 child: SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
+                  child: ButtonWidget(
+                    title: "View in Map",
                     onPressed: () {
                       if (clientDetails != null) {
                         final address = clientDetails?['clientAddress'] ?? '';
@@ -410,22 +434,30 @@ class _ClientAndAppointmentDetailsState
                         final zipCode = clientDetails?['clientZipCode'] ?? '';
                         final fullAddress = '$address, $city, $state, $zipCode';
                         // Use the `fullAddress` variable to open the map
-                        launchMap(fullAddress);
+                        final status = launchMap(fullAddress);
                       }
                     },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                        AppColors.colorPrimary,
-                      ),
-                      elevation: MaterialStateProperty.all(0),
-                    ),
-                    child: const Text(
-                      "View in Map",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                      ),
-                    ),
+                    hasBorder: false,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ButtonWidget(
+                    title: "Add notes",
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddNotesView(
+                              userEmail: widget.userEmail,
+                              clientEmail: widget.clientEmail),
+                        ),
+                      );
+                    },
+                    hasBorder: false,
                   ),
                 ),
               ),
@@ -460,7 +492,7 @@ class _ClientAndAppointmentDetailsState
   }
 }
 
-void launchMap(String address) async {
+Future<LaunchMapStatus> launchMap(String address) async {
   String query = Uri.encodeComponent(address);
   String geoUrl = 'geo:0,0?q=$query';
   String mapsUrl = 'comgooglemaps://?q=$query';
@@ -468,13 +500,29 @@ void launchMap(String address) async {
     if (await canLaunchUrl(Uri.parse(geoUrl))) {
       await launchUrl(Uri.parse(geoUrl));
     } else {
-      throw 'Could not launch Google Maps';
+      return LaunchMapStatus(
+        success: false,
+        title: 'Error',
+        message: 'Could not launch Google Maps',
+        backgroundColor: Colors.red,
+      );
     }
   } else {
     if (await canLaunchUrl(Uri.parse(mapsUrl))) {
       await launchUrl(Uri.parse(mapsUrl));
     } else {
-      throw 'Could not launch Google Maps';
+      return LaunchMapStatus(
+        success: false,
+        title: 'Error',
+        message: 'Could not launch Google Maps',
+        backgroundColor: Colors.red,
+      );
     }
   }
+  return LaunchMapStatus(
+    success: true,
+    title: 'Success',
+    message: 'Launched Google Maps',
+    backgroundColor: Colors.green,
+  );
 }

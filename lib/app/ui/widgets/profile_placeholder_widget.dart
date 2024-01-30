@@ -17,7 +17,7 @@ class ProfilePlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      height: context.height * 0.1,
+      height: context.height * 0.11,
       width: context.width * 0.6,
       child: Column(
         crossAxisAlignment:
@@ -36,12 +36,14 @@ class ProfilePlaceholder extends StatelessWidget {
           // const SizedBox(
           //   height: 5,
           // ),
-          Text(
-            '$firstName $lastName',
-            style: const TextStyle(
-              color: AppColors.colorFontPrimary,
-              fontSize: AppDimens.fontSizeLarge,
-              fontWeight: FontWeight.w600,
+          Expanded(
+            child: Text(
+              '$firstName $lastName',
+              style: const TextStyle(
+                color: AppColors.colorFontPrimary,
+                fontSize: AppDimens.fontSizeLarge,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],

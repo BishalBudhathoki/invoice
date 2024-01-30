@@ -54,11 +54,7 @@ class _DynamicAppointmentCardWidgetState
   Future<dynamic> getFutureClientsData() async {
     //print("getFutureClientsData: ${widget.clientEmailList[0]}");
     String emails = widget.clientEmailList.join(',');
-    futureClientsData = (apiMethod.fetchMultiplePatientData(emails
-        // "${widget.clientEmailList[0].toString()},${widget.clientEmailList[1].toString()}"
-        //"alkc331@gmail.com,bishalkc331@gmail.com"
-
-        ));
+    futureClientsData = (apiMethod.fetchMultiplePatientData(emails));
     setState(() {
       setFutureClientsData = futureClientsData;
     });
@@ -116,27 +112,30 @@ class _DynamicAppointmentCardWidgetState
                               children: [
                                 Row(
                                   children: [
-                                    AppointmentCard(
-                                      currentClientEmail:
-                                          widget.clientEmailList[index],
-                                      currentUserEmail: widget.currentUserEmail,
-                                      title: 'Appointments',
-                                      iconData: Iconsax.user_square,
-                                      label: 'Client\'s Name:',
-                                      text:
-                                          "${snapshot.data![index].clientFirstName} ${snapshot.data![index].clientLastName}",
-                                      iconData1: Iconsax.location,
-                                      label1: 'Address:',
-                                      text1:
-                                          "${snapshot.data![index].clientAddress} ${snapshot.data![index].clientCity} ${snapshot.data![index].clientState} ${snapshot.data![index].clientZip}",
-                                      iconData2: Iconsax.timer_start,
-                                      label2: 'Start Time:',
-                                      text2:
-                                          "${appointmentData['data'][index]['startTimeList'][index]}",
-                                      iconData3: Iconsax.timer_pause,
-                                      label3: 'End Time:',
-                                      text3:
-                                          "${appointmentData['data'][index]['endTimeList'][index]}",
+                                    Flexible(
+                                      child: AppointmentCard(
+                                        currentClientEmail:
+                                            widget.clientEmailList[index],
+                                        currentUserEmail:
+                                            widget.currentUserEmail,
+                                        title: 'Appointments',
+                                        iconData: Iconsax.user_square,
+                                        label: 'Client\'s Name:',
+                                        text:
+                                            "${snapshot.data![index].clientFirstName} ${snapshot.data![index].clientLastName}",
+                                        iconData1: Iconsax.location,
+                                        label1: 'Address:',
+                                        text1:
+                                            "${snapshot.data![index].clientAddress} ${snapshot.data![index].clientCity} ${snapshot.data![index].clientState} ${snapshot.data![index].clientZip}",
+                                        iconData2: Iconsax.timer_start,
+                                        label2: 'Start Time:',
+                                        text2:
+                                            "${appointmentData['data'][index]['startTimeList'][index]}",
+                                        iconData3: Iconsax.timer_pause,
+                                        label3: 'End Time:',
+                                        text3:
+                                            "${appointmentData['data'][index]['endTimeList'][index]}",
+                                      ),
                                     ),
                                   ],
                                 ),

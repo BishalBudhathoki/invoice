@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:invoice/app/core/view-models/addBusiness_detail_model.dart';
+import 'package:invoice/app/core/view-models/addClient_detail_model.dart';
 import 'package:invoice/app/core/view-models/forgotPassword_model.dart';
 import 'package:invoice/app/ui/views/forgot_password_view.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,39 +21,76 @@ import 'package:invoice/app/ui/views/login_view.dart';
 import 'package:invoice/app/ui/views/photoUpload_view.dart';
 import 'package:invoice/app/ui/views/signup_view.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
+import 'app/core/view-models/changePassword_model.dart';
 import 'app/core/view-models/sendEmail_model.dart';
 import 'package:invoice/app/core/timerModel.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'app/ui/views/add_notes_view.dart';
+import 'app/ui/views/changePassword_view.dart';
+import 'app/ui/views/client_and_appointment_details_view.dart';
+import 'app/ui/widgets/navBar_widget.dart';
 import 'app/ui/widgets/splashScreen_widget.dart';
+import 'backend/shared_preferences_utils.dart';
 import 'notificationservice/local_notification_service.dart';
+import 'package:media_store_plus/media_store_plus.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:invoice/firebase_options.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("BGH 1 : ${message.data}");
   print("BGH 2 : ${message.notification?.title}");
 }
 
+final mediaStorePlugin = MediaStore();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load();
-  // Ask for storage permission
-  final storagePermissionStatus = await Permission.storage.request();
+  await dotenv.load(fileName: ".env");
+
   final notificationPermissionStatus = await Permission.notification.request();
   print('Notification permission status: $notificationPermissionStatus');
   //final internetStatus = await Permission.internet.request();
+  // Ask for storage permission
+  final storagePermissionStatus = await Permission.storage.request();
+  List<Permission> permissions = [
+    Permission.storage,
+    Permission.manageExternalStorage,
+  ];
+
+  if ((await mediaStorePlugin.getPlatformSDKInt()) >= 33) {
+    permissions.add(Permission.manageExternalStorage);
+    // permissions.add(Permission.audio);
+  }
+
   if (storagePermissionStatus.isDenied) {
     // Handle denied permission
     print('Storage permission is denied.');
-    await Permission.storage.request();
+    await permissions.request();
     //return;
   }
+  MediaStore.appFolder = "MediaStorePlugin";
   if (notificationPermissionStatus.isDenied) {
     // Handle denied permission
     print('Notification permission is denied.');
     //return;
   }
-  await Firebase.initializeApp();
+
+  SharedPreferencesUtils prefsUtils = SharedPreferencesUtils();
+  await prefsUtils.init();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  // await FirebaseAppCheck.instance.activate(
+  //   androidProvider: AndroidProvider
+  //       .debug, // androidProvider: AndroidProvider.safetyNet, // or PlayIntegrity
+  //   // appleProvider: AppleProvider.debug
+  // );
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.debug,
+    // appleProvider: AppleProvider.appAttest,
+  );
 
   if (Platform.isAndroid) {
     final notificationService = LocalNotificationService();
@@ -81,15 +121,21 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+            create: (_) => PersistentTabController(initialIndex: 0)),
         ChangeNotifierProvider(create: (_) => LoginModel()),
         ChangeNotifierProvider(create: (_) => SignupModel()),
         ChangeNotifierProvider(create: (_) => TimerModel()),
         ChangeNotifierProvider(create: (_) => SendEmailModel()),
         ChangeNotifierProvider(create: (_) => ForgotPasswordModel()),
+        ChangeNotifierProvider(create: (_) => ChangePasswordModel()),
+        ChangeNotifierProvider(create: (_) => AddClientDetailModel()),
+        ChangeNotifierProvider(create: (_) => AddBusinessDetailModel()),
         ChangeNotifierProvider<PhotoData>(
           create: (_) => PhotoData(),
           child: PhotoUploadScreen(email: ''),
         ),
+        Provider<SharedPreferencesUtils>.value(value: prefsUtils),
       ],
       child: MaterialApp(
         title: AppStrings.appName,
@@ -107,7 +153,25 @@ void main() async {
           '/home/addBusinessDetails': (context) => const AddBusinessDetails(),
           '/admin/assignClients': (context) => const AssignClient(),
           '/assignC2E': (context) => const AssignC2E(),
+          '/home/navBar': (context) => NavBarWidget(
+                context: context,
+                email: 'defaultemail@default.com',
+                firstName: 'First Name',
+                lastName: 'Last Name',
+                role: 'normal',
+              ),
+          '/home/ClientAndAppointmentDetails': (context) =>
+              const ClientAndAppointmentDetails(
+                userEmail: '',
+                clientEmail: '',
+              ),
+          '/home/ClientAndAppointmentDetails/addNotes': (context) =>
+              const AddNotesView(
+                userEmail: '',
+                clientEmail: '',
+              ),
           '/photoUploadScreen': (context) => PhotoUploadScreen(email: ''),
+          '/changePassword': (context) => const ChangePasswordView(),
           // '/admin/assignClients/timeAndDatePicker': (context) => TimeAndDatePicker(),
         },
       ),

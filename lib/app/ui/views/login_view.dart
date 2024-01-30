@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:invoice/app/core/view-models/photoData_viewModel.dart';
 import 'package:invoice/app/ui/views/forgot_password_view.dart';
 import 'package:invoice/app/ui/widgets/alertDialog_widget.dart';
 import 'package:invoice/app/ui/widgets/bottom_navBar_widget.dart';
@@ -11,6 +12,7 @@ import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
 import 'package:invoice/app/ui/views/signup_view.dart';
 import 'package:invoice/app/ui/widgets/button_widget.dart';
+import 'package:invoice/app/ui/widgets/showWarningDiaglog_widget.dart';
 import 'package:invoice/app/ui/widgets/textField_widget.dart';
 import 'package:invoice/app/ui/widgets/wave_animation_widget.dart';
 import 'package:invoice/backend/api_method.dart';
@@ -28,8 +30,22 @@ class LoginView extends StatefulWidget {
 class _LoginUserNameControllerState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<State> _keyLoader = GlobalKey<State>();
   final _userEmailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Delay the execution using Future.delayed to wait for the context to be available.
+    Future.delayed(Duration.zero, () {
+      fetchAndUpdateUserPhoto(
+        _userEmailController.text.toLowerCase().trim(),
+        Provider.of<PhotoData>(_keyLoader.currentContext!, listen: false),
+      );
+    });
+  }
 
   @override
   void dispose() {
@@ -38,12 +54,24 @@ class _LoginUserNameControllerState extends State<LoginView> {
     super.dispose();
   }
 
+  Future<void> fetchAndUpdateUserPhoto(
+      String email, PhotoData photoDataProvider) async {
+    print("Fetching and updating user photo for email: $email");
+    Uint8List? imageData =
+        await apiMethod.getUserPhotoFromFBS(photoDataProvider);
+    print("Image data at login: $imageData");
+    photoDataProvider.updatePhotoData(imageData);
+    print("User photo updated successfully");
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     final model = Provider.of<LoginModel>(context);
     final LoginController loginController = LoginController();
+    final passwordVisibleNotifier = ValueNotifier<bool>(true);
+    final textVisibleNotifier = ValueNotifier<bool>(false);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -87,9 +115,10 @@ class _LoginUserNameControllerState extends State<LoginView> {
               SizedBox(
                 height: size.height * 0.03,
               ),
-              TextFieldWidget(
+              TextFieldWidget<LoginModel>(
+                suffixIconClickable: false,
                 hintText: 'Email',
-                obscureText: false,
+                obscureTextNotifier: textVisibleNotifier,
                 prefixIconData: Icons.mail_outline,
                 suffixIconData: model.isValid ? Icons.check : null,
                 controller: _userEmailController,
@@ -109,10 +138,11 @@ class _LoginUserNameControllerState extends State<LoginView> {
               SizedBox(
                 height: size.height * 0.01,
               ),
-              TextFieldWidget(
+              TextFieldWidget<LoginModel>(
+                suffixIconClickable: true,
                 // key: Key("_password"),
                 hintText: 'Password',
-                obscureText: model.isVisible ? false : true,
+                obscureTextNotifier: passwordVisibleNotifier,
                 prefixIconData: Icons.lock,
                 suffixIconData:
                     model.isVisible ? Icons.visibility : Icons.visibility_off,
@@ -191,8 +221,8 @@ class _LoginUserNameControllerState extends State<LoginView> {
                   if (kDebugMode) {
                     print('Login button pressed');
                   }
-                  var currentContext = context; // Capture the current context
-                  Timer timer = Timer(const Duration(seconds: 8), () {
+
+                  Timer timer = Timer(const Duration(seconds: 40), () {
                     // Display warning after 3 seconds (adjust the duration as needed)
                     Navigator.of(context).pop(); // Close the dialog
 
@@ -225,6 +255,11 @@ class _LoginUserNameControllerState extends State<LoginView> {
 
                   if (response!.containsKey('message')) {
                     if (response['message'] == 'user found') {
+                      print("Before fetchAndUpdateUserPhoto");
+                      await fetchAndUpdateUserPhoto(
+                          _userEmailController.text.toLowerCase().trim(),
+                          Provider.of<PhotoData>(context, listen: false));
+                      print("After fetchAndUpdateUserPhoto");
                       Navigator.push(
                         _scaffoldKey.currentContext!,
                         MaterialPageRoute(
@@ -236,21 +271,35 @@ class _LoginUserNameControllerState extends State<LoginView> {
                         ),
                       );
                     } else if (response['message'] == 'User not found') {
-                      showWarningDialog("User not found \n Please Sign up!");
+                      DialogUtils.showWarningDialog(
+                          _scaffoldKey.currentContext!,
+                          "User not found \n Please Sign up!",
+                          "Warning");
                     } else if (response['message'] == 'Wrong password') {
-                      showWarningDialog(
-                          "Wrong password \n Please check password!");
+                      DialogUtils.showWarningDialog(
+                          _scaffoldKey.currentContext!,
+                          "Wrong password \n Please check password!",
+                          "Warning");
                     } else if (response['message'] == 'Invalid Email') {
-                      showWarningDialog(
-                          "Email not found or invalid \n Please check email!");
+                      DialogUtils.showWarningDialog(
+                          _scaffoldKey.currentContext!,
+                          "Email not found or invalid \n Please check email!",
+                          "Warning");
                     } else {
                       print('Error at login');
-                      showWarningDialog("Error at login!");
-                      Navigator.of(context, rootNavigator: true).pop();
+                      DialogUtils.showWarningDialog(
+                          _scaffoldKey.currentContext!,
+                          "Error at login!",
+                          "Warning");
+                      Navigator.of(_scaffoldKey.currentContext!,
+                              rootNavigator: true)
+                          .pop();
                     }
                   } else {
                     print('Error at login');
-                    Navigator.of(context, rootNavigator: true).pop();
+                    Navigator.of(_scaffoldKey.currentContext!,
+                            rootNavigator: true)
+                        .pop();
                   }
                 },
               ),
@@ -337,40 +386,5 @@ class _LoginUserNameControllerState extends State<LoginView> {
 
     // If execution reaches here, handle any other cases or return null as needed
     return null;
-  }
-
-  showWarningDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Warning',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          content: Column(
-            mainAxisSize:
-                MainAxisSize.min, // Ensure the column takes minimal space
-            children: [
-              Text(
-                message,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              child: Text(
-                'OK',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the warning dialog
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 }

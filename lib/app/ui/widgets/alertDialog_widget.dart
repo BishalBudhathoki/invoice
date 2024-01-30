@@ -29,7 +29,7 @@ showAlertDialog(BuildContext context) {
       ),
     ),
   );
-  showDialog(
+  return showDialog(
     barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {

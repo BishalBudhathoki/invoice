@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
 
 class ButtonWidget extends StatelessWidget {
   final String title;

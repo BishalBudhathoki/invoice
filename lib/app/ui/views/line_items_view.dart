@@ -1,8 +1,8 @@
 import 'package:animation_list/animation_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:invoice/app/core/controllers/lineItem_controller.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/core/controllers/lineItem_controller.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
 
 import '../../../backend/api_method.dart';
 

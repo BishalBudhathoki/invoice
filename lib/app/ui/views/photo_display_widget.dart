@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:invoice/app/core/view-models/photoData_viewModel.dart';
-import 'package:invoice/backend/api_method.dart';
-import 'package:invoice/backend/shared_preferences_utils.dart';
+import 'package:MoreThanInvoice/app/core/view-models/photoData_viewModel.dart';
+import 'package:MoreThanInvoice/backend/api_method.dart';
+import 'package:MoreThanInvoice/backend/shared_preferences_utils.dart';
 import 'package:provider/provider.dart';
 
 class PhotoDisplayWidget extends StatefulWidget {

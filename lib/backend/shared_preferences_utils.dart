@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesUtils {
@@ -91,5 +90,13 @@ class SharedPreferencesUtils {
     Uint8List? photo = photoString != null ? base64Decode(photoString) : null;
 
     return photo;
+  }
+
+  Future<void> setRole(String role) async {
+    await _sharedPreferences?.setString('role', role);
+  }
+
+  String? getRole() {
+    return _sharedPreferences?.getString('role').toString();
   }
 }

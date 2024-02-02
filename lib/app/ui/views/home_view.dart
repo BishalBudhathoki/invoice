@@ -2,12 +2,12 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:invoice/app/core/view-models/photoData_viewModel.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
-import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
-import 'package:invoice/app/ui/widgets/appBar_widget.dart';
-import 'package:invoice/app/ui/widgets/dynamic_appointment_card_widget.dart';
-import 'package:invoice/backend/api_method.dart';
+import 'package:MoreThanInvoice/app/core/view-models/photoData_viewModel.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/dimens/app_dimens.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/appBar_widget.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/dynamic_appointment_card_widget.dart';
+import 'package:MoreThanInvoice/backend/api_method.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
 

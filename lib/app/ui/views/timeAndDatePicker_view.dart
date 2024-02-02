@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
-import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
-import 'package:invoice/app/ui/widgets/button_widget.dart';
-import 'package:invoice/app/ui/widgets/button_with_variable_width_height_widget.dart';
-import 'package:invoice/app/ui/widgets/flushbar_widget.dart';
-import 'package:invoice/backend/api_method.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/dimens/app_dimens.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/button_widget.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/button_with_variable_width_height_widget.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/flushbar_widget.dart';
+import 'package:MoreThanInvoice/backend/api_method.dart';
 // import 'package:iconify_flutter/iconify_flutter.dart';
 // import 'package:colorful_iconify_flutter/icons/flat_color_icons.dart';
 

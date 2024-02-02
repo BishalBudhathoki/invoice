@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:invoice/app/ui/shared/base/base_screen.dart';
+import 'package:MoreThanInvoice/app/ui/shared/base/base_screen.dart';
 
 abstract class BasePage extends GetPage {
   BasePage(

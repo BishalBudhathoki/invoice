@@ -1,7 +1,7 @@
-name: invoice
+name: MoreThanInvoice
 description: Conversion of invoice desktop app to mobile
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 2023.01.15
+version: 2023.02.02
 
 environment:
   sdk: ">=2.17.6 <4.9.9"
@@ -68,7 +68,7 @@ dependencies:
 dev_dependencies:
   flutter_lints: ^3.0.1
   lints: ^3.0.0
-  build_runner: ^2.1.5
+  build_runner: ^2.4.8
   json_serializable: ^6.0.1
   flutter_launcher_icons: ^0.13.1
   flutter_test:

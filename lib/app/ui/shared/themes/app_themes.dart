@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:pinput/pinput.dart';
 
 import '../values/dimens/app_dimens.dart';

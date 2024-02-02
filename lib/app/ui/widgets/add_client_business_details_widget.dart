@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 
 class AddClientDetailsWidget extends StatefulWidget {

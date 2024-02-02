@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
-import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
-import 'package:invoice/app/ui/views/changePassword_view.dart';
-import 'package:invoice/app/ui/widgets/button_widget.dart';
-import 'package:invoice/backend/api_method.dart';
-import 'package:invoice/backend/encryption_utils.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/dimens/app_dimens.dart';
+import 'package:MoreThanInvoice/app/ui/views/changePassword_view.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/button_widget.dart';
+import 'package:MoreThanInvoice/backend/api_method.dart';
+import 'package:MoreThanInvoice/backend/encryption_utils.dart';
 import 'package:pinput/pinput.dart';
 
 class VerifyOTPView extends StatefulWidget {

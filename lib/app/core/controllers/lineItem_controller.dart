@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:invoice/backend/api_method.dart';
+import 'package:MoreThanInvoice/backend/api_method.dart';
 
 class LineItemController extends GetxController {
   List<Map<String, dynamic>> _lineItems = [];
@@ -15,7 +15,7 @@ class LineItemController extends GetxController {
   Future<void> getLineItems() async {
     try {
       final List<Map<String, dynamic>> lineItems =
-      await ApiMethod().getLineItems();
+          await ApiMethod().getLineItems();
       print("Line items from controller:::::: \n $lineItems");
       _lineItems = lineItems;
       update();

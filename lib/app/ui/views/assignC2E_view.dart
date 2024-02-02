@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:invoice/app/core/view-models/user_model.dart';
-import 'package:invoice/app/ui/widgets/dropDown_widget.dart';
-import 'package:invoice/backend/api_method.dart';
+import 'package:MoreThanInvoice/app/core/view-models/user_model.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/dropDown_widget.dart';
+import 'package:MoreThanInvoice/backend/api_method.dart';
 
 import '../shared/values/colors/app_colors.dart';
 

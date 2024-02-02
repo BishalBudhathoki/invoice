@@ -7,19 +7,21 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:invoice/app/core/classes/uploadNotes.dart';
-import 'package:invoice/app/core/timerModel.dart';
-import 'package:invoice/app/core/view-models/photoData_viewModel.dart';
-import 'package:invoice/app/core/view-models/user_model.dart' as app;
-import 'package:invoice/app/core/view-models/client_model.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/core/classes/uploadNotes.dart';
+import 'package:MoreThanInvoice/app/core/timerModel.dart';
+import 'package:MoreThanInvoice/app/core/view-models/photoData_viewModel.dart';
+import 'package:MoreThanInvoice/app/core/view-models/user_model.dart' as app;
+import 'package:MoreThanInvoice/app/core/view-models/client_model.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:provider/provider.dart';
 
 import 'encryption_utils.dart';
 
 class ApiMethod extends ChangeNotifier {
 //API to authenticate user login
-  final String _baseUrl = dotenv.env['BASE_URL'].toString();
+  final String _baseUrl = kReleaseMode
+      ? dotenv.env['RELEASE_URL'].toString()
+      : dotenv.env['DEBUG_URL'].toString();
   TimerModel timerModel = TimerModel();
 
   Future<dynamic> authenticateUser(String email, String password) async {
@@ -618,6 +620,7 @@ class ApiMethod extends ChangeNotifier {
           final data = json.decode(response.body);
           if (data != null) {
             holidaysList = List<dynamic>.from(data);
+            print("Holiday list: $holidaysList");
           }
           print("200 ");
           return data;

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as Math;
-
-import 'package:invoice/app/ui/widgets/clipper_Widget.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/clipper_Widget.dart';
 
 class WaveAnimation extends StatefulWidget {
   final Size size;
   final Color color;
   final double yOffset;
 
-  const WaveAnimation({super.key, 
+  const WaveAnimation({
+    super.key,
     required this.size,
     required this.color,
     required this.yOffset,

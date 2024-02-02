@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:invoice/app/ui/views/forgot_password_view.dart';
+import 'package:MoreThanInvoice/app/ui/views/forgot_password_view.dart';
 
 class ForgotPasswordController extends GetxController {
   late final ForgotPasswordView _loginView =

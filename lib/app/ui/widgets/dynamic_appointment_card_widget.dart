@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:invoice/app/core/view-models/client_model.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
-import 'package:invoice/app/ui/widgets/appointment_card_widget.dart';
-import 'package:invoice/backend/api_method.dart';
+import 'package:MoreThanInvoice/app/core/view-models/client_model.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/appointment_card_widget.dart';
+import 'package:MoreThanInvoice/backend/api_method.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 
 class DynamicAppointmentCardWidget extends StatefulWidget {

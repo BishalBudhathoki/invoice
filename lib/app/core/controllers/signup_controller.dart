@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:invoice/app/core/view-models/login_model.dart';
-import 'package:invoice/app/ui/views/signup_view.dart';
+import 'package:MoreThanInvoice/app/core/view-models/login_model.dart';
+import 'package:MoreThanInvoice/app/ui/views/signup_view.dart';
 
 class SignupController extends GetxController {
   final LoginModel _loginModel = Get.put(LoginModel());

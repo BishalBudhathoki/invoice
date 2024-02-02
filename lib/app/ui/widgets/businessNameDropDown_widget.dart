@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
-import 'package:invoice/backend/api_method.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/backend/api_method.dart';
 
 class BusinessNameDropdown extends StatefulWidget {
   final Function(String) onChanged;
@@ -18,6 +18,7 @@ class _BusinessNameDropdownState extends State<BusinessNameDropdown> {
   set businessNameList(List<dynamic> businessNameList) {
     _businessNameList = businessNameList;
   }
+
   ApiMethod apiMethod = ApiMethod();
   @override
   void initState() {
@@ -39,7 +40,6 @@ class _BusinessNameDropdownState extends State<BusinessNameDropdown> {
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -75,19 +75,21 @@ class _BusinessNameDropdownState extends State<BusinessNameDropdown> {
             });
             widget.onChanged(selectedValue!);
           },
-          items: _businessNameList.map<DropdownMenuItem<String>>(
+          items: _businessNameList
+              .map<DropdownMenuItem<String>>(
                 (dynamic businessName) => DropdownMenuItem<String>(
-              value: businessName['businessName'],
-              child: Text(
-                businessName['businessName'],
-                style: const TextStyle(
-                  color: AppColors.colorFontPrimary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                  value: businessName['businessName'],
+                  child: Text(
+                    businessName['businessName'],
+                    style: const TextStyle(
+                      color: AppColors.colorFontPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ).toList(),
+              )
+              .toList(),
         ),
       ),
     );

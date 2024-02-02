@@ -1,21 +1,21 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:invoice/app/core/view-models/photoData_viewModel.dart';
-import 'package:invoice/app/ui/views/forgot_password_view.dart';
-import 'package:invoice/app/ui/widgets/alertDialog_widget.dart';
-import 'package:invoice/app/ui/widgets/bottom_navBar_widget.dart';
+import 'package:MoreThanInvoice/app/core/view-models/photoData_viewModel.dart';
+import 'package:MoreThanInvoice/app/ui/views/forgot_password_view.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/alertDialog_widget.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/bottom_navBar_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:invoice/app/core/controllers/login_controller.dart';
-import 'package:invoice/app/core/view-models/login_model.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
-import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
-import 'package:invoice/app/ui/views/signup_view.dart';
-import 'package:invoice/app/ui/widgets/button_widget.dart';
-import 'package:invoice/app/ui/widgets/showWarningDiaglog_widget.dart';
-import 'package:invoice/app/ui/widgets/textField_widget.dart';
-import 'package:invoice/app/ui/widgets/wave_animation_widget.dart';
-import 'package:invoice/backend/api_method.dart';
+import 'package:MoreThanInvoice/app/core/controllers/login_controller.dart';
+import 'package:MoreThanInvoice/app/core/view-models/login_model.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/dimens/app_dimens.dart';
+import 'package:MoreThanInvoice/app/ui/views/signup_view.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/button_widget.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/showWarningDiaglog_widget.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/textField_widget.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/wave_animation_widget.dart';
+import 'package:MoreThanInvoice/backend/api_method.dart';
 import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
@@ -40,10 +40,14 @@ class _LoginUserNameControllerState extends State<LoginView> {
 
     // Delay the execution using Future.delayed to wait for the context to be available.
     Future.delayed(Duration.zero, () {
-      fetchAndUpdateUserPhoto(
-        _userEmailController.text.toLowerCase().trim(),
-        Provider.of<PhotoData>(_keyLoader.currentContext!, listen: false),
-      );
+      try {
+        fetchAndUpdateUserPhoto(
+          _userEmailController.text.toLowerCase().trim(),
+          Provider.of<PhotoData>(_keyLoader.currentContext!, listen: false),
+        );
+      } catch (e) {
+        print("Null received so no photo uploaded on database");
+      }
     });
   }
 

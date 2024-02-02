@@ -1,12 +1,13 @@
 import 'dart:typed_data';
+import 'package:MoreThanInvoice/backend/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:invoice/app/core/view-models/photoData_viewModel.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
-import 'package:invoice/app/ui/views/adminDashBoard.dart';
-import 'package:invoice/app/ui/views/assignC2E_view.dart';
-import 'package:invoice/app/ui/views/home_view.dart';
-import 'package:invoice/app/ui/views/photoUpload_view.dart';
-import 'package:invoice/backend/api_method.dart';
+import 'package:MoreThanInvoice/app/core/view-models/photoData_viewModel.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/ui/views/adminDashBoard.dart';
+import 'package:MoreThanInvoice/app/ui/views/assignC2E_view.dart';
+import 'package:MoreThanInvoice/app/ui/views/home_view.dart';
+import 'package:MoreThanInvoice/app/ui/views/photoUpload_view.dart';
+import 'package:MoreThanInvoice/backend/api_method.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
 import 'navBar_widget.dart';
@@ -50,14 +51,26 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
 
   @override
   void initState() {
+    super.initState();
+    initializeState();
+  }
+
+  Future<void> initializeState() async {
     _controller = Provider.of<PersistentTabController>(context, listen: false);
     getData();
     _controller = PersistentTabController(initialIndex: 0);
     role = widget.role;
-    super.initState();
+    setRole(role);
+  }
+
+  void setRole(String role) {
+    final prefsUtils =
+        Provider.of<SharedPreferencesUtils>(context, listen: false);
+    prefsUtils.setRole(role);
   }
 
   List<PersistentBottomNavBarItem> _navBarItems() {
+    //saveRole(role);
     if (role == 'admin') {
       return [
         PersistentBottomNavBarItem(

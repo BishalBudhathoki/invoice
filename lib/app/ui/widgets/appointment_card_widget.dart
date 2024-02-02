@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
-import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
-import 'package:invoice/app/ui/views/client_and_appointment_details_view.dart';
-import 'package:invoice/app/ui/widgets/card_label_text_widget.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/dimens/app_dimens.dart';
+import 'package:MoreThanInvoice/app/ui/views/client_and_appointment_details_view.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/card_label_text_widget.dart';
 
 class AppointmentCard extends StatelessWidget {
   final String title;

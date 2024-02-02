@@ -6,11 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
-import 'package:invoice/app/core/view-models/photoData_viewModel.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
-import 'package:invoice/app/ui/widgets/button_widget.dart';
-import 'package:invoice/app/ui/widgets/flushbar_widget.dart';
-import 'package:invoice/backend/api_method.dart';
+import 'package:MoreThanInvoice/app/core/view-models/photoData_viewModel.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/button_widget.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/flushbar_widget.dart';
+import 'package:MoreThanInvoice/backend/api_method.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 

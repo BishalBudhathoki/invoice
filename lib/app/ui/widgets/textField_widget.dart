@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:invoice/app/core/view-models/Base_model.dart';
-import 'package:invoice/app/core/view-models/changePassword_model.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
-import 'package:invoice/app/ui/shared/values/dimens/app_dimens.dart';
+import 'package:MoreThanInvoice/app/core/view-models/Base_model.dart';
+import 'package:MoreThanInvoice/app/core/view-models/changePassword_model.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/dimens/app_dimens.dart';
 import 'package:provider/provider.dart';
 
 class TextFieldWidget<T extends VisibilityToggleModel> extends StatelessWidget {

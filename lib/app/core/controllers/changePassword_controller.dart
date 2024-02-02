@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:invoice/app/ui/views/changePassword_view.dart';
+import 'package:MoreThanInvoice/app/ui/views/changePassword_view.dart';
 
 class ChangePasswordController extends GetxController {
   late final ChangePasswordView _changePasswordView =

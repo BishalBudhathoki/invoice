@@ -1,7 +1,7 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:invoice/app/ui/shared/values/strings/asset_strings.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/strings/asset_strings.dart';
 
 import 'Base_model.dart';
 

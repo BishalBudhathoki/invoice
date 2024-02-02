@@ -2,8 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:invoice/app/ui/views/photo_display_widget.dart';
-import 'package:invoice/app/ui/widgets/profile_placeholder_widget.dart';
+import 'package:MoreThanInvoice/app/ui/views/photo_display_widget.dart';
+import 'package:MoreThanInvoice/app/ui/widgets/profile_placeholder_widget.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String email;

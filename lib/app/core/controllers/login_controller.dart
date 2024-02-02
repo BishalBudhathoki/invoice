@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:invoice/app/ui/views/login_view.dart';
+import 'package:MoreThanInvoice/app/ui/views/login_view.dart';
 
 class LoginController extends GetxController {
   //final LoginModel _loginModel = Get.put(LoginModel());

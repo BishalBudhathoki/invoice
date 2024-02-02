@@ -1,10 +1,14 @@
+import 'dart:io';
 import 'dart:typed_data';
+import 'package:MoreThanInvoice/backend/shared_preferences_utils.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-import 'package:invoice/app/ui/views/assignC2E_view.dart';
-import 'package:invoice/app/ui/views/login_view.dart';
-import 'package:invoice/app/ui/views/photo_display_widget.dart';
+import 'package:MoreThanInvoice/app/ui/views/assignC2E_view.dart';
+import 'package:MoreThanInvoice/app/ui/views/login_view.dart';
+import 'package:MoreThanInvoice/app/ui/views/photo_display_widget.dart';
+import 'package:get/get.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
+import 'package:provider/provider.dart';
 import '../../../backend/api_method.dart';
 import '../shared/values/colors/app_colors.dart';
 import '../views/line_items_view.dart';
@@ -203,21 +207,19 @@ class NavBarWidget extends StatelessWidget {
                       color: AppColors.colorBlack,
                       fontFamily: "ShadowsIntoLightTwo")),
               leading: const Icon(Icons.exit_to_app),
-              onTap: () {
-                if (kIsWeb) {
-                  // Handle exit for web platform
-                  // This will not actually exit the web app, as it is not allowed in most browsers
-                  // You can show a message or perform some other action instead
-                  print('Exit not supported on the web platform');
-                } else if (kReleaseMode) {
-                  // Handle exit for release builds on Android and iOS
-                  // Invoke the platform-specific exit method
-                  const platform = MethodChannel('app.channel.shared.data');
-                  platform.invokeMethod('exitApp');
+              onTap: () async {
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(
+                      context); // Pop the current screen on both platforms
                 } else {
-                  // Handle exit for debug builds (e.g., during development)
-                  // In debug mode, use the SystemNavigator API to exit the app
-                  SystemNavigator.pop();
+                  final role = getRole();
+                  if (Platform.isAndroid) {
+                    SystemNavigator.pop(); // Close the Android app
+                  } else {
+                    //exit(0);
+                    const platform = MethodChannel('app.channel.shared.data');
+                    platform.invokeMethod('exitApp');
+                  }
                 }
               },
             ),
@@ -225,6 +227,14 @@ class NavBarWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String getRole() {
+    final prefsUtils =
+        Provider.of<SharedPreferencesUtils>(context, listen: false);
+    String? role = prefsUtils.getRole();
+    print("Role: $role");
+    return role.toString();
   }
 
   void _showDeleteConfirmationDialog(BuildContext context) {

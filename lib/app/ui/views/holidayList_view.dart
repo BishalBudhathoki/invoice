@@ -1,8 +1,7 @@
+import 'package:MoreThanInvoice/backend/api_method.dart';
 import 'package:flutter/material.dart';
-import 'package:invoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:intl/intl.dart';
-
-import '../../../backend/api_method.dart';
 
 class HolidayListView extends StatefulWidget {
   final List<dynamic> holidays;

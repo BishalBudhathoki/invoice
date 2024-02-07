@@ -1,16 +1,21 @@
+import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 
 void popUpClientDetails(BuildContext context, String message, String title) {
-  if (message == "success") {
+  if (message == "Success") {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Result'),
+          title: Text(message,
+              style: const TextStyle(
+                color: AppColors.colorFontPrimary,
+                fontWeight: FontWeight.w800,
+              )),
           content: Text(
-            'Result  $message \n$title Details Added Successfully',
+            '$title details added successfully',
             style: const TextStyle(
-              color: Colors.green,
+              color: AppColors.colorFontPrimary,
               height: 1.5,
               fontSize: 20,
               fontWeight: FontWeight.w800,
@@ -19,11 +24,15 @@ void popUpClientDetails(BuildContext context, String message, String title) {
           ),
           actions: [
             ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.colorPrimary,
+                ),
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('Go Back',
-                    style: TextStyle(color: Colors.white, fontSize: 16)))
+                child: const Text('OK',
+                    style: TextStyle(
+                        color: AppColors.colorFontSecondary, fontSize: 16)))
           ],
         );
       },
@@ -33,11 +42,15 @@ void popUpClientDetails(BuildContext context, String message, String title) {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(message),
+          title: Text(message,
+              style: const TextStyle(
+                color: AppColors.error,
+                fontWeight: FontWeight.w800,
+              )),
           content: Text(
             'Failed or data already added for $title',
             style: const TextStyle(
-              color: Colors.red,
+              color: AppColors.colorFontPrimary,
               height: 1.5,
               fontSize: 20,
               fontWeight: FontWeight.w800,
@@ -46,11 +59,15 @@ void popUpClientDetails(BuildContext context, String message, String title) {
           ),
           actions: [
             ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.error,
+                ),
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('Go Back',
-                    style: TextStyle(color: Colors.white, fontSize: 16)))
+                child: const Text('OK',
+                    style: TextStyle(
+                        color: AppColors.colorFontSecondary, fontSize: 16)))
           ],
         );
       },

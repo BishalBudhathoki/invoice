@@ -9,12 +9,10 @@ buildscript {
     }
 
     dependencies {
-//        implementation 'androidx.window:window:1.0.0'
-//        implementation 'androidx.window:window-java:1.0.0'
         classpath 'com.android.tools:r8:8.2.42'
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:7.3.0'  // Updated as suggested
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.4.0'
+        classpath 'com.google.gms:google-services:4.3.15'  // Using a compatible version
     }
 }
 

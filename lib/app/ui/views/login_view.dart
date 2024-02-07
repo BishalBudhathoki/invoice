@@ -264,6 +264,7 @@ class _LoginUserNameControllerState extends State<LoginView> {
                           _userEmailController.text.toLowerCase().trim(),
                           Provider.of<PhotoData>(context, listen: false));
                       print("After fetchAndUpdateUserPhoto");
+                      Navigator.pop(_scaffoldKey.currentContext!);
                       Navigator.push(
                         _scaffoldKey.currentContext!,
                         MaterialPageRoute(
@@ -301,6 +302,7 @@ class _LoginUserNameControllerState extends State<LoginView> {
                     }
                   } else {
                     print('Error at login');
+                    Navigator.pop(_scaffoldKey.currentContext!);
                     Navigator.of(_scaffoldKey.currentContext!,
                             rootNavigator: true)
                         .pop();
@@ -344,22 +346,22 @@ class _LoginUserNameControllerState extends State<LoginView> {
     print("Password: ${_passwordController.text.trim()}");
 
     try {
-      final UserCredential userCredential =
-          await _auth.signInWithEmailAndPassword(
-        email: _userEmailController.text.toLowerCase().trim(),
-        password: _passwordController.text.trim(),
+      // final UserCredential userCredential =
+      //     await _auth.signInWithEmailAndPassword(
+      //   email: _userEmailController.text.toLowerCase().trim(),
+      //   password: _passwordController.text.trim(),
+      // );
+      //
+      // print("User: ${userCredential.user}");
+      // if (userCredential.user != null) {
+      //   // User found, continue with your logic
+      //   if (kDebugMode) {
+      //     print('User from firebase: ${userCredential.user!.email}');
+      //   }
+      return await apiMethod.login(
+        _userEmailController.text.toLowerCase().trim(),
+        _passwordController.text.trim(),
       );
-
-      if (userCredential.user != null) {
-        // User found, continue with your logic
-        if (kDebugMode) {
-          print('User from firebase: ${userCredential.user!.email}');
-        }
-        return await apiMethod.login(
-          _userEmailController.text.toLowerCase().trim(),
-          _passwordController.text.trim(),
-        );
-      }
     } on FirebaseAuthException catch (e) {
       // Handle Firebase authentication errors here
       Navigator.of(context, rootNavigator: true).pop();

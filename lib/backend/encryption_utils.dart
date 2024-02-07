@@ -3,7 +3,9 @@ import 'dart:typed_data';
 import 'dart:math';
 
 import 'package:argon2/argon2.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class EncryptionUtils {
   static String? _encryptionKey;

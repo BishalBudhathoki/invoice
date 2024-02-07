@@ -164,6 +164,84 @@ class _ClientAndAppointmentDetailsState
     );
   }
 
+  List<TableRow> _buildTableRows() {
+    List<TableRow> rows = [];
+
+    // Add the heading
+    rows.add(
+      TableRow(children: [
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Text("Appointment Date",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Text("Start Time",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Text("End Time",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Text("Breaks",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge),
+        ),
+      ]),
+    );
+
+    List<dynamic> assignedClients =
+        clientAndAppointmentData['data']?['assignedClient'] ?? [];
+
+    for (var client in assignedClients) {
+      rows.add(
+        TableRow(children: [
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              client['dateList'].join("\n").toString(),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              client['startTimeList'].join("\n").toString(),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              client['endTimeList'].join("\n").toString(),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              client['breakList'].join("\n").toString(),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+        ]),
+      );
+    }
+
+    return rows;
+  }
+
   Widget _buildContent() {
     return Column(
       children: [
@@ -254,84 +332,7 @@ class _ClientAndAppointmentDetailsState
                     2: IntrinsicColumnWidth(),
                     3: IntrinsicColumnWidth(),
                   },
-                  children: [
-                    TableRow(children: [
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Text("Appointment Date",
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyLarge),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Text("Start Time",
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyLarge),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Text("End Time",
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyLarge),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Text("Breaks",
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyLarge),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Text(
-                          textAlign: TextAlign.center,
-                          (clientAndAppointmentData['data']?['assignedClient']
-                                      [0]?['dateList'] ??
-                                  ["No data found"])
-                              .join("\n")
-                              .toString(),
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Text(
-                          textAlign: TextAlign.center,
-                          (clientAndAppointmentData['data']?['assignedClient']
-                                      [0]?['startTimeList'] ??
-                                  ["No data found"])
-                              .join("\n")
-                              .toString(),
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Text(
-                          textAlign: TextAlign.center,
-                          (clientAndAppointmentData['data']?['assignedClient']
-                                      [0]?['endTimeList'] ??
-                                  ["No data found"])
-                              .join("\n")
-                              .toString(),
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Text(
-                          textAlign: TextAlign.center,
-                          (clientAndAppointmentData['data']?['assignedClient']
-                                      [0]?['breakList'] ??
-                                  ["No data found"])
-                              .join("\n")
-                              .toString(),
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ),
-                    ]),
-                  ],
+                  children: _buildTableRows(),
                 ),
               ),
               Padding(

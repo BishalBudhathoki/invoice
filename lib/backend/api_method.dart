@@ -15,6 +15,7 @@ import 'package:MoreThanInvoice/app/core/view-models/client_model.dart';
 import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
 import 'package:provider/provider.dart';
 
+import 'encrypt_decrypt.dart';
 import 'encryption_utils.dart';
 
 class ApiMethod extends ChangeNotifier {
@@ -166,6 +167,7 @@ class ApiMethod extends ChangeNotifier {
   }
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   Future<Map<String, dynamic>> changePassword(
       String newPassword, String email) async {
     Map<String, dynamic> data = {};
@@ -213,6 +215,7 @@ class ApiMethod extends ChangeNotifier {
       return e.toString();
     }
   }
+
   // Future<Map<String, dynamic>> sendOTP(String emailRecipient) async {
   //   print("Send OTP called");
   //   print(Uri.parse('${_baseUrl}sendOTP'));
@@ -584,6 +587,7 @@ class ApiMethod extends ChangeNotifier {
   }
 
   late List<dynamic> businessNameList = [];
+
   Future<dynamic> getBusinessNameList() async {
     try {
       print('${_baseUrl}business-names');
@@ -612,6 +616,7 @@ class ApiMethod extends ChangeNotifier {
   }
 
   late List<dynamic> holidaysList = [];
+
   Future<dynamic> getHolidays() async {
     try {
       final response = await http.get(Uri.parse('${_baseUrl}getHolidays'));
@@ -648,6 +653,7 @@ class ApiMethod extends ChangeNotifier {
           print(data);
           if (data != null && data['userDocs'] is List<dynamic>) {
             list = data['userDocs'];
+            debugPrint("\nlist of all assigned clients:\n $list");
           }
           print("200 ");
           return data;
@@ -669,6 +675,42 @@ class ApiMethod extends ChangeNotifier {
       print("Error get user docs: $e");
     }
   }
+
+  Future<Map<String, dynamic>?> getAssignedClients() async {
+    try {
+      debugPrint("getAssignedClients called");
+      final response =
+          await http.get(Uri.parse('${_baseUrl}assigned-client-data'));
+      switch (response.statusCode) {
+        case 200:
+          Map<String, dynamic> data = json.decode(response.body);
+          print(data);
+          if (data != null && data['assignedClientData'] is List<dynamic>) {
+            list = data['assignedClientData'];
+            //debugPrint("\nlist of all assigned clients:\n $list");
+          }
+          print("200 ");
+          return data;
+        case 400:
+          final data = json.decode(response.body);
+          if (data != null && data['assignedClientData'] is List<dynamic>) {
+            list = data['assignedClientData'];
+          }
+          print("400 ");
+          return data;
+      }
+    } on SocketException catch (e) {
+      if (e.message.contains("Connection refused")) {
+        print("Connection refused");
+      } else {
+        print("Other error: $e");
+      }
+    } catch (e) {
+      print("Error get assigned clients: $e");
+    }
+    return null;
+  }
+
   //
   // Future<dynamic> signupUser(
   //   String firstName,
@@ -1018,7 +1060,7 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
-  Future<List<String>> checkHolidays(List<String> workedDateList) async {
+  Future<List<String>> checkHolidaysSingle(List<String> workedDateList) async {
     try {
       final response = await http.post(
         Uri.parse('${_baseUrl}check-holidays'),
@@ -1043,6 +1085,14 @@ class ApiMethod extends ChangeNotifier {
     } catch (e) {
       throw Exception('Failed to get holidays: $e');
     }
+  }
+
+  Future<List<String>> checkHolidaysMultiple(
+      List<List<String>> workedDateList) async {
+    // Flatten the List<List<String>> to List<String>
+    List<String> flattenedWorkedDateList =
+        workedDateList.expand((i) => i).toList();
+    return checkHolidaysSingle(flattenedWorkedDateList);
   }
 
   Future<dynamic> uploadPhoto(
@@ -1176,6 +1226,249 @@ class ApiMethod extends ChangeNotifier {
       throw Exception('Failed to upload notes: network error');
     } catch (e) {
       throw Exception('Failed to upload notes: $e');
+    }
+  }
+
+  Future<Map<String, String>> addUpdateInvoicingEmailDetail(
+    String userEmail,
+    String invoicingBusinessName,
+    String invoicingEmail,
+    String invoicingEmailAppPassword,
+  ) async {
+    // try {
+    EncryptDecrypt.generateEncryptionKey();
+    final generatedKey = await EncryptDecrypt.getSecureEncryptionKey();
+    print(
+        "Generated key when calling addUpdateInvoicingEmailDetail is: $generatedKey");
+    final encryptedPassword = EncryptDecrypt.encryptPassword(
+        invoicingEmailAppPassword, generatedKey!);
+    print("Encrypted password: $encryptedPassword");
+    print("Hashed password with salt: $generatedKey");
+    print('${_baseUrl}addUpdateInvoicingEmailDetail');
+    final response = await http.post(
+      Uri.parse('${_baseUrl}addUpdateInvoicingEmailDetail'),
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: {
+        'userEmail': userEmail,
+        'invoicingBusinessName': invoicingBusinessName,
+        'email': invoicingEmail,
+        'password': encryptedPassword
+      },
+    );
+
+    print("gen code: $generatedKey");
+    await http.post(
+      Uri.parse('${_baseUrl}invoicingEmailDetailKey'),
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: {
+        'userEmail': userEmail,
+        'invoicingBusinessKey': generatedKey,
+      },
+    );
+
+    print("Resp: ${response.statusCode}");
+
+    Map<String, dynamic> data = {};
+
+    switch (response.statusCode) {
+      case 200:
+        data = Map<String, dynamic>.from(json.decode(response.body));
+        if (kDebugMode) {
+          print("200" + data['message']);
+        }
+
+        return {
+          'message': 'Invoicing email details added successfully',
+        };
+
+      case 400:
+        data = Map<String, dynamic>.from(json.decode(response.body));
+        if (kDebugMode) {
+          print("400" + data['message']);
+        }
+
+        return {
+          'message': 'Invoicing Email Details failed',
+        };
+
+      default:
+        return {
+          'message': 'Unknown error occurred',
+        };
+    }
+    // } catch (e) {
+    //   // Handle any exception that occurs during the adding email details process
+    //   print("Exception api method: $e");
+    //   return {
+    //     'message': 'An error occurred during adding invoicing email details',
+    //   };
+    // }
+  }
+
+  Future<Map<String, dynamic>> getInvoicingEmailDetails(
+      String email, String genKey) async {
+    // try {
+    final response = await http.get(
+      Uri.parse('${_baseUrl}getInvoicingEmailDetails?email=$email'),
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    );
+
+    print("Respsss: ${response.body}");
+
+    switch (response.statusCode) {
+      case 200:
+        Map<String, dynamic> data =
+            Map<String, dynamic>.from(json.decode(response.body));
+        if (kDebugMode) {
+          print("200" + data['message']);
+        }
+        print("Checking message: ${data['message']}");
+        // Check if details exist in the response and return them
+        if (data['message'] == 'Invoicing email details found') {
+          final generatedKey = await EncryptDecrypt.getSecureEncryptionKey();
+          print("Generated key is: $generatedKey");
+          if (generatedKey == null) {
+            if (genKey != null) {
+              EncryptDecrypt.setSecureEncryptionKey(genKey);
+            } else {
+              return {
+                'message': 'Encryption key not found',
+              };
+            }
+          }
+          print("Before $generatedKey $genKey");
+          // Decrypt the password before returning the data
+          final decryptedPassword = EncryptDecrypt.decryptPassword(
+              data['password'], generatedKey ?? genKey);
+          print("After $decryptedPassword");
+          // Update the data map with the decrypted password
+          data['password'] = decryptedPassword;
+          print("DS: ${data.toString()}");
+          return data;
+        } else {
+          return {
+            'message': 'No invoicing email details found',
+          };
+        }
+
+      case 400:
+        Map<String, dynamic> errorData =
+            Map<String, dynamic>.from(json.decode(response.body));
+        if (kDebugMode) {
+          print("400" + errorData['message']);
+        }
+
+        return {
+          'message': 'Error retrieving invoicing email details',
+        };
+
+      default:
+        return {
+          'message': 'Unknown error occurred',
+        };
+    }
+    // } catch (e) {
+    //   // Handle any exception that occurs during the retrieval process
+    //   print("Exception in getInvoicingEmailDetails: $e");
+    //   return {
+    //     'message':
+    //         'An error occurred during retrieving invoicing email details',
+    //   };
+    // }
+  }
+
+  Future<Map<String, dynamic>> checkInvoicingEmailKey(String email) async {
+    // try {
+    final response = await http.get(
+      Uri.parse('${_baseUrl}checkInvoicingEmailKey?email=$email'),
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    );
+
+    print("checkInvoicingEmailKey: ${response.body}");
+
+    switch (response.statusCode) {
+      case 200:
+        Map<String, dynamic> data =
+            Map<String, dynamic>.from(json.decode(response.body));
+        if (kDebugMode) {
+          print("200" + data['message']);
+        }
+        print("checkInvoicingEmailKey message: ${data['message']}");
+        // Check if details exist in the response and return them
+        if (data['message'] == 'Invoicing email key found') {
+          debugPrint("Data key ${data['key']}");
+          if (data['key'] == null) {
+            return {
+              'message': 'Encryption key empty',
+            };
+          }
+          return data;
+        } else {
+          return {
+            'message': 'No invoicing email key found',
+          };
+        }
+
+      case 400:
+        Map<String, dynamic> errorData =
+            Map<String, dynamic>.from(json.decode(response.body));
+        if (kDebugMode) {
+          print("400" + errorData['message']);
+        }
+
+        return {
+          'message': 'Error retrieving invoicing email key details',
+        };
+
+      default:
+        return {
+          'message': 'Unknown error occurred',
+        };
+    }
+    // } catch (e) {
+    //   // Handle any exception that occurs during the retrieval process
+    //   print("Exception in getInvoicingEmailDetails: $e");
+    //   return {
+    //     'message':
+    //         'An error occurred during retrieving invoicing email details',
+    //   };
+    // }
+  }
+
+  Future<Map<String, dynamic>> getEmailDetailToSendEmail(
+      String userEmail) async {
+    try {
+      debugPrint(
+          "getEmailDetailToSendEmail: $userEmail Uri.parse('${_baseUrl}getEmailDetailToSendEmail')");
+      final response = await http.post(
+        Uri.parse('${_baseUrl}getEmailDetailToSendEmail'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'userEmail': userEmail}),
+      );
+      debugPrint("getEmailDetails: ${response.body}");
+      if (response.statusCode == 200) {
+        final emailDetails = json.decode(response.body);
+        if (emailDetails['message'] == 'No user found') {
+          return {'Error': 'No user found'};
+        } else if (emailDetails['message'] == 'No user found') {
+          return {'Error': 'Internal server error'};
+        } else {
+          return {
+            'accessToken': emailDetails['accessToken'],
+            'emailAddress': emailDetails['emailAddress'],
+            'recipientEmail': emailDetails['recipientEmail'],
+          };
+        }
+      } else if (response.statusCode == 500) {
+        debugPrint("Internal server error");
+        return {'Error': 'Internal server error'};
+      } else {
+        debugPrint("Failed to load email details");
+        throw Exception('Failed to load email details');
+      }
+    } catch (e) {
+      print('Failed to get email details: $e');
+      return {'Error': 'Failed to get email details'};
     }
   }
 }

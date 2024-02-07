@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:MoreThanInvoice/backend/encrypt_decrypt.dart';
+import 'package:MoreThanInvoice/backend/encryption_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -24,13 +26,16 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class GenerateInvoice extends StatefulWidget {
-  const GenerateInvoice({super.key});
+  final String email;
+  final String genKey;
+  const GenerateInvoice(this.email, this.genKey, {super.key});
 
   @override
   _GenerateInvoiceState createState() => _GenerateInvoiceState();
 }
 
 class _GenerateInvoiceState extends State<GenerateInvoice> {
+  bool _storagePermissionGranted = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final mediaStorePlugin = MediaStore();
   ApiMethod apiMethod = ApiMethod();
@@ -153,8 +158,10 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
 
     try {
       final userDoc = await apiMethod.getUserDocs();
+      //final userDoc = await apiMethod.getAssignedClients();
+      debugPrint('UserDoc: $userDoc');
       //print("Hello: $userDoc ${(userDoc['userDocs'][0]['docs'][0]['Time'])} ${userDoc.length}");
-      print("This is line items: \n$lineItems\n this is userDoc: \n$userDoc");
+      print("This is line items: \n$lineItems\n ");
       for (var item in lineItems) {
         print("Supperr    ..........Item: $item");
         if (item['itemNumber'] == '01_012_0107_1_1') {
@@ -260,7 +267,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
     print("Day of week: $dayOfWeek");
     final timePeriods = getTimePeriods(workedStartTimeList);
     print("Time Periods: $timePeriods");
-    final holidays = await apiMethod.checkHolidays(workedDateList);
+    final holidays = await apiMethod.checkHolidaysSingle(workedDateList);
     print("Holidays: $holidays");
 
     List<String> computeInvoiceComponent =
@@ -609,29 +616,17 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
         ],
       ),
     );
+    final fileName = 'Invoice Number: $invoiceNumber.pdf';
 
-    const fileName = 'example.pdf';
     late Directory? directory;
 
     if (Platform.isAndroid) {
       print("Android1");
-      final storagePermissionHandler = StoragePermissionHandler();
-// Check and request permissions
-      bool permissionGranted =
-          await storagePermissionHandler.checkAndRequestStoragePermission();
-      final storagePermissionStatus =
-          await Permission.manageExternalStorage.status;
-      print("Storage per status:  $storagePermissionStatus $permissionGranted");
-      if (permissionGranted) {
+      if (!_storagePermissionGranted) {
         print("Permission Denied");
-
-        await Permission.manageExternalStorage.request();
-      } else {
-        await Permission.manageExternalStorage.request();
+        _storagePermissionGranted = await requestStoragePermission();
       }
-      //print(getApplicationDocumentsDirectory().toString());
       directory = await getExternalStorageDirectory();
-      //print("DP: ${directory?.path}");
       if (!await directory!.exists()) {
         print("Directory does not exist");
         await directory.create(recursive: true);
@@ -731,7 +726,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
     print("Download file executed");
     var perm = await requestStoragePermission();
     print("Perm: $perm");
-    if (await requestStoragePermission()) {
+    if (perm) {
       const storage = FlutterSecureStorage();
       final String? pdfPath = await storage.read(key: "pdfPath");
       print("PDF path from download: $pdfPath");
@@ -773,18 +768,46 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
       Permission.storage,
     ];
 
-    if ((await mediaStorePlugin.getPlatformSDKInt()) >= 33) {
-      permissions.add(Permission.photos);
-      //permissions.add(Permission.audio);
+    int sdkInt;
+    try {
+      sdkInt = await mediaStorePlugin.getPlatformSDKInt();
+    } catch (e) {
+      print("Error getting SDK Int: $e");
+      sdkInt = 0; // Fallback value if the method is not implemented
     }
-    PermissionStatus permission = await Permission.manageExternalStorage.status;
-    print("Perm stat: $permission");
-    if (permission != PermissionStatus.granted) {
-      permission = await Permission.storage.request();
+
+    if (sdkInt >= 33) {
+      permissions.add(Permission.photos);
+    }
+
+    if (Platform.isIOS) {
+      PermissionStatus photosPermission = await Permission.photos.status;
+      if (photosPermission != PermissionStatus.granted) {
+        photosPermission = await Permission.photos.request();
+        if (photosPermission != PermissionStatus.granted) {
+          return false;
+        }
+      }
+    } else if (sdkInt >= 30) {
+      PermissionStatus permission =
+          await Permission.manageExternalStorage.status;
+      print("Perm stat: $permission");
       if (permission != PermissionStatus.granted) {
-        return false;
+        permission = await Permission.manageExternalStorage.request();
+        if (permission != PermissionStatus.granted) {
+          return false;
+        }
+      }
+    } else {
+      PermissionStatus readPermission = await Permission.storage.status;
+      if (readPermission != PermissionStatus.granted) {
+        readPermission = await Permission.storage.request();
+        if (readPermission != PermissionStatus.granted) {
+          return false;
+        }
       }
     }
+
     return true;
   }
 
@@ -836,6 +859,9 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
     super.initState();
     initPlatformState();
     _generateInvoiceFuture = generateInvoice();
+    requestStoragePermission().then((value) {
+      _storagePermissionGranted = value;
+    });
     print("Generate invoice future: $_generateInvoiceFuture.toString()");
   }
 
@@ -933,8 +959,15 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
                           ? null
                           : () async {
                               model.setIsLoading(true);
+                              print(
+                                  "Email: ${widget.email} GenKey: ${widget.genKey}");
                               var response = await sendEmailWithAttachment(
-                                  pdfPath, invoiceName, endDate, invoiceNumber);
+                                  pdfPath,
+                                  invoiceName,
+                                  endDate,
+                                  invoiceNumber,
+                                  widget.email,
+                                  widget.genKey);
                               print("Response string: ${response.toString()}");
                               if (response == "Success") {
                                 print("Success");

@@ -172,7 +172,7 @@ class _HomeViewControllerState extends State<HomeView> {
                         .map((item) => item['clientEmail'])
                         .toList();
                     print(
-                        "data for client email: $dataForClientEmail ${getLength()} $index");
+                        "data for client email: $dataForClientEmail ${dataForClientEmail.length} ${getLength()} $index");
                     // display the data for the client email
                     return SizedBox(
                       height: context.height *

@@ -6,6 +6,7 @@ import 'package:MoreThanInvoice/app/ui/widgets/button_widget.dart';
 import 'package:MoreThanInvoice/app/ui/widgets/button_with_variable_width_height_widget.dart';
 import 'package:MoreThanInvoice/app/ui/widgets/flushbar_widget.dart';
 import 'package:MoreThanInvoice/backend/api_method.dart';
+import 'package:intl/intl.dart';
 // import 'package:iconify_flutter/iconify_flutter.dart';
 // import 'package:colorful_iconify_flutter/icons/flat_color_icons.dart';
 
@@ -26,7 +27,7 @@ class TimeAndDatePicker extends StatefulWidget {
 }
 
 class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
-  DateTime _focusedDay = DateTime.now();
+  late String _focusedDay = DateFormat("yyyy-MM-dd").format(DateTime.now());
   TimeOfDay _focusedTime = TimeOfDay.now();
   TimeOfDay _focusedTime1 = TimeOfDay.now();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -60,7 +61,9 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
 
   int count = 0;
   Widget _card() {
-    dateList.add("${_focusedDay.year}-${_focusedDay.month}-${_focusedDay.day}");
+    // dateList.add("${_focusedDay.year}-${_focusedDay.month}-${_focusedDay.day}");
+
+    dateList.add(_focusedDay);
     startTimeList.add(_focusedTime.format(context));
     endTimeList.add(_focusedTime1.format(context));
     breakList.add(_selectedBreak);
@@ -104,16 +107,16 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                                   "Date: ",
                                   style: TextStyle(
                                     color: AppColors.colorFontSecondary,
-                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontSize: AppDimens.fontSizeNormal,
                                     fontWeight: FontWeight.w900,
                                     fontFamily: 'Lato',
                                   ),
                                 ),
                                 Text(
-                                  "${_focusedDay.year}-${_focusedDay.month}-${_focusedDay.day}",
+                                  _focusedDay,
                                   style: const TextStyle(
                                     color: AppColors.colorFontSecondary,
-                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontSize: AppDimens.fontSizeNormal,
                                     fontWeight: FontWeight.w900,
                                     fontFamily: 'Lato',
                                   ),
@@ -127,7 +130,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                                   "Start Time: ",
                                   style: TextStyle(
                                     color: AppColors.colorFontSecondary,
-                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontSize: AppDimens.fontSizeNormal,
                                     fontWeight: FontWeight.w900,
                                     fontFamily: 'Lato',
                                   ),
@@ -137,7 +140,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                                   _focusedTime.format(context),
                                   style: const TextStyle(
                                     color: AppColors.colorFontSecondary,
-                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontSize: AppDimens.fontSizeNormal,
                                     fontWeight: FontWeight.w900,
                                     fontFamily: 'Lato',
                                   ),
@@ -151,7 +154,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                                   "End Time: ",
                                   style: TextStyle(
                                     color: AppColors.colorFontSecondary,
-                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontSize: AppDimens.fontSizeNormal,
                                     fontWeight: FontWeight.w900,
                                     fontFamily: 'Lato',
                                   ),
@@ -160,7 +163,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                                   _focusedTime1.format(context),
                                   style: const TextStyle(
                                     color: AppColors.colorFontSecondary,
-                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontSize: AppDimens.fontSizeNormal,
                                     fontWeight: FontWeight.w900,
                                     fontFamily: 'Lato',
                                   ),
@@ -174,7 +177,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                                   "Break: ",
                                   style: TextStyle(
                                     color: AppColors.colorFontSecondary,
-                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontSize: AppDimens.fontSizeNormal,
                                     fontWeight: FontWeight.w900,
                                     fontFamily: 'Lato',
                                   ),
@@ -183,7 +186,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                                   _selectedBreak,
                                   style: const TextStyle(
                                     color: AppColors.colorFontSecondary,
-                                    fontSize: AppDimens.fontSizeMedium,
+                                    fontSize: AppDimens.fontSizeNormal,
                                     fontWeight: FontWeight.w900,
                                     fontFamily: 'Lato',
                                   ),
@@ -222,11 +225,19 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
         );
       },
     ).then((value) {
+      DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+      String formattedDate = dateFormat.format(value ?? DateTime.now());
+      DateTime tempDateTime = DateTime.parse(formattedDate);
+      DateTime formattedDateTime =
+          DateTime(tempDateTime.year, tempDateTime.month, tempDateTime.day);
+
+      // Format the DateTime object to a string and print it
+      String dateString = dateFormat.format(formattedDateTime);
       setState(() {
         _isVisibleDate = false;
-        _focusedDay = value ?? DateTime.now();
+        _focusedDay = dateString;
+        print("Hello: $value $_focusedDay");
       });
-      print("Hello: $value $_focusedDay");
     });
   }
 
@@ -317,7 +328,8 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                               fontWeight: FontWeight.bold)),
                       child: Text(
                           "Selected Date: "
-                          "${_focusedDay.day}/${_focusedDay.month}/${_focusedDay.year}",
+                          // "${_focusedDay.day}/${_focusedDay.month}/${_focusedDay.year}",
+                          "${_focusedDay}",
                           style: const TextStyle(
                               color: AppColors.colorPrimary,
                               fontWeight: FontWeight.bold)),
@@ -445,17 +457,17 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
               title: 'Submit',
               onPressed: () async {
                 print("$dateList $startTimeList $endTimeList $breakList");
-                showDialog(
-                  context: _scaffoldKey.currentContext!,
-                  builder: (context) {
-                    // Store the reference to the displayed dialog
-                    AlertDialog alertDialog = const AlertDialog(
-                      title: Text("Alert Dialog"),
-                      content: Text("This is an alert dialog."),
-                    );
-                    return alertDialog;
-                  },
-                );
+                // showDialog(
+                //   context: _scaffoldKey.currentContext!,
+                //   builder: (context) {
+                //     // Store the reference to the displayed dialog
+                //     AlertDialog alertDialog = const AlertDialog(
+                //       title: Text("Alert Dialog"),
+                //       content: Text("This is an alert dialog."),
+                //     );
+                //     return alertDialog;
+                //   },
+                // );
 
                 Future.delayed(const Duration(seconds: 3), () async {
                   var response = await _submitAssignedAppointment();
@@ -469,14 +481,14 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
                       message: "Client assigned successfully",
                       backgroundColor: AppColors.colorSecondary,
                     );
-                    Future.delayed(const Duration(seconds: 3), () {
-                      // Close the displayed dialog before navigating back
-                      Navigator.pop(context); // Close the dialog
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    });
+                    // Future.delayed(const Duration(seconds: 3), () {
+                    //   // Close the displayed dialog before navigating back
+                    //   //Navigator.pop(context); // Close the dialog
+                    //   // Navigator.pop(context);
+                    //   // Navigator.pop(context);
+                    //   Navigator.pop(context);
+                    //   Navigator.pop(context);
+                    // });
                   } else {
                     print("Failed");
                     Navigator.pop(_scaffoldKey.currentContext!);
@@ -524,8 +536,7 @@ class _TimeAndDatePickerState extends State<TimeAndDatePicker> {
   Stream<Text> getDate(Duration refreshTime) async* {
     while (true) {
       await Future.delayed(refreshTime);
-      yield Text(
-          "Selected Date: ${_focusedDay.year}-${_focusedDay.month}-${_focusedDay.day}");
+      yield Text("Selected Date: $_focusedDay");
     }
   }
 }

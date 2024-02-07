@@ -18,7 +18,10 @@ import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/button_widget.dart';
+import 'GenerateInvoiceForAllUser.dart';
+import 'add_update_invoicing_email_details.dart';
 import 'generateInvoice.dart';
+import 'invoicing_email_view.dart';
 
 class AdminDashboardView extends StatefulWidget {
   final String email;
@@ -44,6 +47,7 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
   File? retrievedPhoto;
   Future<Uint8List?>? _photoFuture;
   SharedPreferencesUtils prefs = SharedPreferencesUtils();
+  late String key;
 
   @override
   void dispose() {
@@ -53,10 +57,12 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
 
   @override
   void initState() {
-    print('init');
+    debugPrint('init');
     try {
       getData();
-      //_photoFuture = apiMethod.getUserPhoto(widget.email);
+      checkKey(widget.email).then((value) {
+        key = value;
+      });
     } catch (e) {
       print(e);
     }
@@ -65,12 +71,37 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
 
   Future<dynamic> getData() async {
     initialData = await apiMethod.getInitData(widget.email);
-    print(" widget photo data ${widget.photoData}");
+    debugPrint(" widget photo data ${widget.photoData}");
     setState(() {
       getInitialData = initialData;
     });
 
     return initialData;
+  }
+
+  Future<String> checkKey(String email) async {
+    try {
+      debugPrint("checking key for $email");
+      final response = await apiMethod.checkInvoicingEmailKey(email);
+
+      if (response['message'] == 'Invoicing email key found') {
+        if (response['key'] == null) {
+          return 'add';
+        } else {
+          return response['key'];
+        }
+      } else if (response['message'] == 'No invoicing email key found') {
+        return 'add';
+      } else if (response['message'] ==
+          'Error retrieving invoicing email key details') {
+        return 'error';
+      } else {
+        return 'unknown';
+      }
+    } catch (e) {
+      print(e);
+      return 'error';
+    }
   }
 
   final PageController _pageController = PageController();
@@ -97,7 +128,7 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
             cardLabel: 'Know Your Client!',
             image: Image.asset(AssetsStrings.cardImageGirl),
             onPressed: () {
-              print("Client Button Pressed");
+              debugPrint("Client Button Pressed");
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -125,7 +156,7 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
             cardLabel: 'Know Your Business!',
             image: Image.asset(AssetsStrings.cardImageBoy),
             onPressed: () {
-              print("Business Button Pressed");
+              debugPrint("Business Button Pressed");
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -203,12 +234,62 @@ class _AdminDashboardViewControllerState extends State<AdminDashboardView> {
                           Navigator.push(
                             scaffoldKey.currentContext!,
                             MaterialPageRoute(
-                              builder: (context) => const GenerateInvoice(),
+                              builder: (context) =>
+                                  GenerateInvoice(widget.email, key),
                             ),
                           );
                         },
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 20),
+                      ButtonWidget(
+                        title: 'Generate Invoice For All',
+                        hasBorder: false,
+                        onPressed: () async {
+                          Navigator.push(
+                            scaffoldKey.currentContext!,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  GenerateInvoiceForAllUser(widget.email, key),
+                              // GenerateInvoice(widget.email, key),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      ButtonWidget(
+                        title: 'Check Invoicing Email Details',
+                        hasBorder: false,
+                        onPressed: () {
+                          checkKey(widget.email).then((value) {
+                            debugPrint('Value: $value');
+                            if (value == 'add' ||
+                                value == 'error' ||
+                                value == 'unknown') {
+                              Navigator.push(
+                                scaffoldKey.currentContext!,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      AddUpdateInvoicingEmailView(
+                                          widget.email, value),
+                                ),
+                              );
+                            } else if (value == 'error') {
+                              print('Error retrieving invoicing email key');
+                            } else if (value == 'unknown') {
+                              print('Unknown error');
+                            } else {
+                              Navigator.push(
+                                scaffoldKey.currentContext!,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      InvoicingEmailView(widget.email, value),
+                                ),
+                              );
+                            }
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),

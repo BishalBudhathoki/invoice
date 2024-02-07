@@ -59,6 +59,7 @@ class _DynamicAppointmentCardWidgetState
       setFutureClientsData = futureClientsData;
     });
     //return futureClientsData;
+    print("Future Clients Data: $futureClientsData");
     return [setFutureClientsData];
   }
 
@@ -69,6 +70,7 @@ class _DynamicAppointmentCardWidgetState
       setAppointmentData = appointmentData;
       print('DYCW ${appointmentData['data'][0]['startTimeList'][0]}');
     });
+    print("Appointment Data: ${appointmentData.length}");
     return [appointmentData];
   }
 
@@ -76,6 +78,10 @@ class _DynamicAppointmentCardWidgetState
 
   @override
   Widget build(BuildContext context) {
+    print("Client email list: ${(widget.clientEmailList).length}\n");
+    setFutureClientsData.then((list) {
+      print('Length of setFutureClientsData: ${list.length}\n');
+    });
     Future.delayed(const Duration(seconds: 1));
     return Scaffold(
       key: _scaffoldKey,
@@ -89,6 +95,7 @@ class _DynamicAppointmentCardWidgetState
               future: setFutureClientsData,
               builder: (context, snapshot) {
                 if (snapshot.hasData && setAppointmentData != null) {
+                  debugPrint("Snapshot Data: ${snapshot.data!.length}");
                   return Column(
                     children: [
                       Expanded(
@@ -99,6 +106,7 @@ class _DynamicAppointmentCardWidgetState
                           onPageChanged: (int index) {
                             setState(() {
                               _currentPageIndex = index;
+                              debugPrint("Current Page: $_currentPageIndex");
                             });
                           },
                           itemBuilder: (context, index) {
@@ -106,7 +114,7 @@ class _DynamicAppointmentCardWidgetState
                               "Current User Email: ${widget.currentUserEmail}",
                             );
                             print(
-                              "Current Client Email: ${widget.clientEmailList[index]}",
+                              "Current Client Email $index : ${widget.clientEmailList[index]}",
                             );
                             return Column(
                               children: [
@@ -130,11 +138,11 @@ class _DynamicAppointmentCardWidgetState
                                         iconData2: Iconsax.timer_start,
                                         label2: 'Start Time:',
                                         text2:
-                                            "${appointmentData['data'][index]['startTimeList'][index]}",
+                                            "${appointmentData['data'][0]['startTimeList'][0]}",
                                         iconData3: Iconsax.timer_pause,
                                         label3: 'End Time:',
                                         text3:
-                                            "${appointmentData['data'][index]['endTimeList'][index]}",
+                                            "${appointmentData['data'][0]['endTimeList'][0]}",
                                       ),
                                     ),
                                   ],

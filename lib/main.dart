@@ -58,17 +58,19 @@ void main() async {
     Permission.manageExternalStorage,
   ];
 
-  if ((await mediaStorePlugin.getPlatformSDKInt()) >= 33) {
-    permissions.add(Permission.manageExternalStorage);
-    // permissions.add(Permission.audio);
-  }
-
-  if (storagePermissionStatus.isDenied) {
-    // Handle denied permission
-    print('Storage permission is denied.');
-    await permissions.request();
-    //return;
-  }
+  // if (Platform.isAndroid) {
+  //   if ((await mediaStorePlugin.getPlatformSDKInt()) >= 33) {
+  //     permissions.add(Permission.manageExternalStorage);
+  //     // permissions.add(Permission.audio);
+  //   }
+  // }
+  //
+  // if (storagePermissionStatus.isDenied) {
+  //   // Handle denied permission
+  //   print('Storage permission is denied.');
+  //   await permissions.request();
+  //   //return;
+  // }
   MediaStore.appFolder = "MediaStorePlugin";
   if (notificationPermissionStatus.isDenied) {
     // Handle denied permission

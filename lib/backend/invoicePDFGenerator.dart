@@ -4,6 +4,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
 
+
 class InvoicePdfGenerator {
   Future<List<String>> generatePdfs(Map<String, dynamic> processedData, {bool showTax = true}) async {
     List<String> generatedPdfPaths = [];

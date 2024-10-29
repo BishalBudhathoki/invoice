@@ -24,7 +24,7 @@ class _InvoiceEmailViewWidgetState extends State<InvoiceEmailViewWidget> {
       height: context.height * 0.40,
       child: Column(
         children: [
-          //Todo: Add the page view here for invoice email View
+          // Todo: Add the page view here for invoice email View
           // Expanded(
           //   child: PageView.builder(
           //     controller: _pageController,

@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 
+
 class InvoiceHelpers {
   /// Finds the day of the week for a list of date strings.
   List<String> findDayOfWeek(List<String> dateList) {

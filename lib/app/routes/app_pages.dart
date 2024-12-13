@@ -1,6 +1,6 @@
-import 'package:MoreThanInvoice/app/ui/views/home_view.dart';
-import 'package:MoreThanInvoice/app/ui/views/login_view.dart';
-import 'package:MoreThanInvoice/app/ui/views/signup_view.dart';
+import 'package:MoreThanInvoice/app/features/home/views/home_view.dart';
+import 'package:MoreThanInvoice/app/features/auth/views/login_view.dart';
+import 'package:MoreThanInvoice/app/features/auth/views/signup_view.dart';
 part 'app_routes.dart';
 
 class AppPages {

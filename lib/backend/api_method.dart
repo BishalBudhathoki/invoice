@@ -1,5 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:MoreThanInvoice/app/core/utils/Services/uploadNotes.dart';
+import 'package:MoreThanInvoice/app/features/auth/models/user_role.dart';
+import 'package:MoreThanInvoice/app/shared/constants/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/shared/utils/encryption/encrypt_decrypt.dart';
+import 'package:MoreThanInvoice/app/shared/utils/encryption/encryption_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,23 +12,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:MoreThanInvoice/app/core/classes/uploadNotes.dart';
-import 'package:MoreThanInvoice/app/core/timerModel.dart';
-import 'package:MoreThanInvoice/app/core/view-models/photoData_viewModel.dart';
-import 'package:MoreThanInvoice/app/core/view-models/user_model.dart' as app;
-import 'package:MoreThanInvoice/app/core/view-models/client_model.dart';
-import 'package:MoreThanInvoice/app/ui/shared/values/colors/app_colors.dart';
+import 'package:MoreThanInvoice/app/core/services/timer_service.dart';
+import 'package:MoreThanInvoice/app/features/photo/viewmodels/photoData_viewModel.dart';
+import 'package:MoreThanInvoice/app/features/auth/models/user_model.dart'
+    as app;
+import 'package:MoreThanInvoice/app/features/client/models/client_model.dart';
 import 'package:provider/provider.dart';
-
-import 'encrypt_decrypt.dart';
-import 'encryption_utils.dart';
 
 class ApiMethod extends ChangeNotifier {
 //API to authenticate user login
   final String _baseUrl = kReleaseMode
       ? dotenv.env['RELEASE_URL'].toString()
       : dotenv.env['DEBUG_URL'].toString();
-  TimerModel timerModel = TimerModel();
+  TimerService timerModel = TimerService();
 
   Future<dynamic> authenticateUser(String email, String password) async {
     // ApiResponse _apiResponse = new ApiResponse();
@@ -169,13 +170,13 @@ class ApiMethod extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<Map<String, dynamic>> changePassword(
-      String newPassword, String email) async {
+      String hashedPasswordWithSalt, String email) async {
     Map<String, dynamic> data = {};
 
     try {
       final response = await http.post(
         Uri.parse('${_baseUrl}updatePassword'),
-        body: jsonEncode({'newPassword': newPassword, 'email': email}),
+        body: jsonEncode({'newPassword': hashedPasswordWithSalt, 'email': email}),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -511,6 +512,7 @@ class ApiMethod extends ChangeNotifier {
     try {
       EncryptionUtils encryptionUtils = EncryptionUtils();
       final getSaltResponse = await getSalt(email);
+      debugPrint("inside login: $getSaltResponse");
       debugPrint("getSaltResponse: $getSaltResponse.body");
       final salt = getSaltResponse['salt'];
       final Uint8List originalSalt = encryptionUtils.hexStringToUint8List(salt);
@@ -537,7 +539,14 @@ class ApiMethod extends ChangeNotifier {
           }
           // Retrieve the user's role from the response and assign it to a variable
           String role = data['role'];
-
+          UserRole roleEnum;
+          // Convert the string role to the UserRole enum
+          if (role == 'admin') {
+            roleEnum = UserRole.admin;
+          } else {
+            roleEnum = UserRole.normal;
+          }
+          debugPrint("Role enum: \n$roleEnum $role");
           return {
             'message': 'user found',
             'role': role,
@@ -1134,7 +1143,8 @@ class ApiMethod extends ChangeNotifier {
     }
   }
 
-  Future<Uint8List?> getUserPhoto(String userEmail) async {
+  Future<Uint8List?> getUserPhoto(
+      String userEmail) async {
     final url = '${_baseUrl}getUserPhoto/$userEmail';
     print(url);
     final response = await http.get(Uri.parse(url));

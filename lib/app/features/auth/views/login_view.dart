@@ -134,39 +134,43 @@ class LoginView extends StatelessWidget {
                           SizedBox(
                             height: size.height * 0.02,
                           ),
-                          ButtonWidget(
-                            title: 'Login',
-                            hasBorder: false,
-                            onPressed: () async {
-                              if (loginViewModel.formKey.currentState!
-                                  .validate()) {
-                                var response =
-                                    await loginViewModel.login(context);
-                                if (response != null &&
-                                    response.containsKey('message')) {
-                                  if (context.mounted) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text('Warning'),
-                                          content: Text(response['message']),
-                                          actions: [
-                                            TextButton(
-                                              child: const Text('OK'),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
+                          if (loginViewModel
+                              .isLoading) // Show loading indicator
+                            const Center(child: CircularProgressIndicator())
+                          else
+                            ButtonWidget(
+                              title: 'Login',
+                              hasBorder: false,
+                              onPressed: () async {
+                                if (loginViewModel.formKey.currentState!
+                                    .validate()) {
+                                  var response =
+                                      await loginViewModel.login(context);
+                                  if (response != null &&
+                                      response.containsKey('message')) {
+                                    if (context.mounted) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text('Warning'),
+                                            content: Text(response['message']),
+                                            actions: [
+                                              TextButton(
+                                                child: const Text('OK'),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    }
                                   }
                                 }
-                              }
-                            },
-                          ),
+                              },
+                            ),
                           SizedBox(
                             height: size.height * 0.02,
                           ),

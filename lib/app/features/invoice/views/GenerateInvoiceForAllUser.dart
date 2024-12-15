@@ -84,7 +84,7 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
   Future<void> _checkStoragePermission() async {
     final storagePermissionHandler = StoragePermissionHandler();
     _storagePermissionGranted =
-    await storagePermissionHandler.checkAndRequestStoragePermission();
+        await storagePermissionHandler.checkAndRequestStoragePermission();
   }
 
   Future<void> initPlatformState() async {
@@ -113,145 +113,168 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
     await lineItemController.getLineItems();
     final List<Map<String, dynamic>> lineItems = lineItemController.lineItems;
     final assignedClients = await apiMethod.getAssignedClients();
-    debugPrint("Assigned Clients: $assignedClients"); // Debug print
-    // Mapping line items
-    for (var item in lineItems) {
-      if (item['itemNumber'] == '01_012_0107_1_1') {
-        itemMap['Public holiday'] =
-        '${item['itemNumber']}\n${item['itemDescription']}';
-      } else if (item['itemNumber'] == '01_012_0107_1_1_T') {
-        itemMap['Public holiday - TTP'] =
-        '${item['itemNumber']}\n${item['itemDescription']}';
-      } else if (item['itemNumber'] == '01_010_0107_1_1') {
-        itemMap['Night-Time Sleepover'] =
-        '${item['itemNumber']}\n${item['itemDescription']}';
-      } else if (item['itemNumber'] == '01_011_0107_1_1') {
-        itemMap['Weekday Daytime'] =
-        '${item['itemNumber']}\n${item['itemDescription']}';
-      } else if (item['itemNumber'] == '01_011_0107_1_1_T') {
-        itemMap['Weekday Daytime - TTP'] =
-        '${item['itemNumber']}\n${item['itemDescription']}';
-      } else if (item['itemNumber'] == '01_013_0107_1_1') {
-        itemMap['Saturday'] =
-        '${item['itemNumber']}\n${item['itemDescription']}';
-      } else if (item['itemNumber'] == '01_013_0107_1_1_T') {
-        itemMap['Saturday - TTP'] =
-        '${item['itemNumber']}\n${item['itemDescription']}';
-      } else if (item['itemNumber'] == '01_014_0107_1_1') {
-        itemMap['Sunday'] = '${item['itemNumber']}\n${item['itemDescription']}';
-      } else if (item['itemNumber'] == '01_014_0107_1_1_T') {
-        itemMap['Sunday - TTP'] =
-        '${item['itemNumber']}\n${item['itemDescription']}';
-      } else if (item['itemNumber'] == '01_015_0107_1_1') {
-        itemMap['Weekday Evening'] =
-        '${item['itemNumber']}\n${item['itemDescription']}';
-      } else if (item['itemNumber'] == '01_015_0107_1_1_T') {
-        itemMap['Weekday Evening - TTP'] =
-        '${item['itemNumber']}\n${item['itemDescription']}';
-      }
-    }
-
-    if (assignedClients != null) {
-      final user = assignedClients['user'][0];
-      final client = assignedClients['clientDetail'];
-
-      invoiceName.add("${user['firstName']} ${user['lastName']}");
-      invoiceABN.add("${user['abn']}");
-
-      final userDocsFromAssignedClients = assignedClients['userDocs'][0];
-      final docsFromAbove = userDocsFromAssignedClients['docs'];
-
-      for (var doc in docsFromAbove) {
-        final dateList = doc['dateList'];
-        dates = getWeekDates(DateTime.parse(dateList[0]));
-        startDateList.add(dates[0]);
-        endDateList.add(dates[1]);
-      }
-
-      for (final userDocItem in assignedClients['userDocs']) {
-        List<Map<String, dynamic>> clientDetailsList = [];
-
-        for (int i = 0; i < client.length; i++) {
-          Map<String, dynamic> clientDetails = {
-            'clientName':
-            "${client[i]['clientFirstName']} ${client[i]['clientLastName']}",
-            'clientEmail': userDocItem['docs'][i]['clientEmail'],
-            'clientPhone': client[i]['clientPhone'],
-            'clientAddress': [
-              client[i]['clientAddress'],
-              client[i]['clientCity'],
-              client[i]['clientState'],
-              client[i]['clientZip']
-            ],
-            'clientBusinessName': client[i]['clientBusinessName'],
-            'dateList': userDocItem['docs'][i]['dateList'],
-            'startTimeList': userDocItem['docs'][i]['startTimeList'],
-            'endTimeList': userDocItem['docs'][i]['endTimeList'],
-            'breakList': userDocItem['docs'][i]['breakList'],
-            'timeList': userDocItem['docs'][i]['Time'],
-          };
-
-          clientDetailsList.add(clientDetails);
-        }
-
-        emailClientMap[user['email']] = clientDetailsList;
-      }
-    }
-
     List<String> generatedPdfPaths = [];
 
-    for (var email in emailClientMap.keys) {
-      var clientDataList = emailClientMap[email];
+    // Clear previous data
+    emailClientMap.clear();
+    clientData.clear();
 
-      for (var clientData in clientDataList!) {
-        String clientName = clientData["clientName"];
-        String clientEmail = clientData["clientEmail"];
+    // Debug prints
+    debugPrint("\n\n=== Start of Debug Info ===");
+    debugPrint("Users Length: ${assignedClients?['user']?.length}");
+    for (var user in assignedClients?['user'] ?? []) {
+      debugPrint("User: ${user['email']}");
+    }
 
-        List<String> workedDateList = List<String>.from(clientData["dateList"]);
-        List<String> startTimeList =
-        List<String>.from(clientData["startTimeList"]);
-        List<String> endTimeList = List<String>.from(clientData["endTimeList"]);
-        List<String> holidays =
-        await apiMethod.checkHolidaysSingle(workedDateList);
-        List<String> timeList = List<String>.from(clientData["timeList"]);
-        List<String> dayOfWeek = findDayOfWeek(workedDateList);
+    debugPrint("\nUserDocs Length: ${assignedClients?['userDocs']?.length}");
+    for (var doc in assignedClients?['userDocs'] ?? []) {
+      debugPrint("UserDoc email: ${doc['email']}");
+      debugPrint("Number of docs: ${doc['docs']?.length}");
+    }
 
-        List<Map<String, dynamic>> invoiceComponents = getInvoiceComponent(
-            workedDateList,
-            startTimeList,
-            endTimeList,
-            holidays,
-            timeList,
-            clientName);
+    debugPrint(
+        "\nClientDetail Length: ${assignedClients?['clientDetail']?.length}");
+    for (var client in assignedClients?['clientDetail'] ?? []) {
+      debugPrint("Client: ${client['clientEmail']}");
+    }
+    debugPrint("=== End of Debug Info ===\n\n");
 
-        List<double> rate = getRate(dayOfWeek, holidays);
-        List<double> hoursWorked =
-        calculateTotalHours(startTimeList, endTimeList, timeList);
-        List<double> totalAmount =
-        calculateTotalAmount(hoursWorked, rate, holidays);
+    // Process each user
+    for (var user in assignedClients?['user']) {
+      try {
+        final userEmail = user['email'];
+        debugPrint("\nProcessing user: $userEmail");
 
-        processClientData(clientName, clientEmail, invoiceComponents, rate,
-            hoursWorked, totalAmount);
+        var userDocs = assignedClients?['userDocs']
+            .firstWhere((doc) => doc['email'] == userEmail, orElse: () => null);
+
+        debugPrint("Found userDocs for $userEmail: ${userDocs != null}");
+
+        if (userDocs != null && userDocs['docs'] != null) {
+          final docs = userDocs['docs'] as List;
+          debugPrint("Number of docs for $userEmail: ${docs.length}");
+
+          for (var doc in docs) {
+            final clientEmail = doc['clientEmail'];
+            debugPrint("Processing doc for client: $clientEmail");
+
+            // Find matching client details
+            final clientDetail = assignedClients?['clientDetail'].firstWhere(
+                (client) => client['clientEmail'] == clientEmail,
+                orElse: () => null);
+
+            if (clientDetail != null) {
+              Map<String, dynamic> clientDetails = {
+                'clientName':
+                    "${clientDetail['clientFirstName']} ${clientDetail['clientLastName']}",
+                'clientEmail': clientEmail,
+                'clientPhone': clientDetail['clientPhone'],
+                'clientAddress': [
+                  clientDetail['clientAddress'],
+                  clientDetail['clientCity'],
+                  clientDetail['clientState'],
+                  clientDetail['clientZip']
+                ],
+                'clientBusinessName': clientDetail['clientBusinessName'],
+                'dateList': doc['dateList'],
+                'startTimeList': doc['startTimeList'],
+                'endTimeList': doc['endTimeList'],
+                'breakList': doc['breakList'],
+                'timeList': doc['Time'],
+                'userDetails': {
+                  'name': "${user['firstName']} ${user['lastName']}",
+                  'abn': user['abn'],
+                  'email': userEmail
+                }
+              };
+
+              if (emailClientMap[userEmail] == null) {
+                emailClientMap[userEmail] = [];
+              }
+              emailClientMap[userEmail]!.add(clientDetails);
+            }
+          }
+        }
+      } catch (e, stackTrace) {
+        debugPrint("\nError processing user: $e");
+        debugPrint("Stack trace: $stackTrace");
       }
     }
 
-    for (var clientName in clientData.keys) {
-      final pdf = await generatePdfForClient(clientName);
-      final fileName =
-          'Invoice_${invoiceNumber}_${clientName.replaceAll(
-          ' ', '_')}_${DateTime
-          .now()
-          .millisecondsSinceEpoch}.pdf';
-      final output = await getTemporaryDirectory();
-      final file = File('${output.path}/$fileName');
-      await file.writeAsBytes(await pdf.save());
-      generatedPdfPaths.add(file.path);
+    // Generate PDFs for each client of each user
+    for (var userEmail in emailClientMap.keys) {
+      debugPrint("\nGenerating PDFs for user: $userEmail");
+      var userClients = emailClientMap[userEmail]!;
+
+      for (var clientDetails in userClients) {
+        try {
+          final clientName = clientDetails['clientName'];
+          debugPrint("Generating PDF for client: $clientName");
+
+          // Clear previous data
+          invoiceName.clear();
+          invoiceABN.clear();
+
+          // Set current invoice data
+          invoiceName.add(clientDetails['userDetails']['name']);
+          invoiceABN.add(clientDetails['userDetails']['abn']);
+
+          debugPrint("Invoice Name: $invoiceName");
+          debugPrint("Invoice ABN: $invoiceABN");
+
+          // Process client data for invoice components
+          List<String> workedDateList =
+              List<String>.from(clientDetails["dateList"]);
+          List<String> startTimeList =
+              List<String>.from(clientDetails["startTimeList"]);
+          List<String> endTimeList =
+              List<String>.from(clientDetails["endTimeList"]);
+          List<String> holidays =
+              await apiMethod.checkHolidaysSingle(workedDateList);
+          List<String> timeList = List<String>.from(clientDetails["timeList"]);
+          List<String> dayOfWeek = findDayOfWeek(workedDateList);
+
+          // Calculate invoice components
+          List<Map<String, dynamic>> invoiceComponents = getInvoiceComponent(
+              workedDateList,
+              startTimeList,
+              endTimeList,
+              holidays,
+              timeList,
+              clientName);
+
+          List<double> rate = getRate(dayOfWeek, holidays);
+          List<double> hoursWorked =
+              calculateTotalHours(startTimeList, endTimeList, timeList);
+          List<double> totalAmount =
+              calculateTotalAmount(hoursWorked, rate, holidays);
+
+          // Process client data for PDF
+          processClientData(clientName, clientDetails['clientEmail'],
+              invoiceComponents, rate, hoursWorked, totalAmount);
+
+          // Generate PDF
+          final pdf = await generatePdfForClient(clientName);
+          final fileName =
+              'Invoice_${userEmail}_${clientName.replaceAll(' ', '_')}_${DateTime.now().millisecondsSinceEpoch}.pdf';
+          final output = await getTemporaryDirectory();
+          final file = File('${output.path}/$fileName');
+          await file.writeAsBytes(await pdf.save());
+          generatedPdfPaths.add(file.path);
+
+          debugPrint("Generated PDF: $fileName");
+        } catch (e, stackTrace) {
+          debugPrint("Error generating PDF for client: $e");
+          debugPrint("Stack trace: $stackTrace");
+        }
+      }
     }
 
     return generatedPdfPaths;
   }
 
-  void processClientData(String clientName,
+  void processClientData(
+      String clientName,
       String clientEmail,
       List<Map<String, dynamic>> components,
       List<double> rates,
@@ -296,73 +319,273 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
   }
 
   Future<pw.Document> generatePdfForClient(String clientName) async {
+    debugPrint("Generate PDF for Client\n\n: $invoiceName");
     final pdf = pw.Document();
 
+    if (invoiceName.isEmpty || invoiceABN.isEmpty) {
+      throw Exception('Required invoice data is missing');
+    }
+
+    // Find the client data based on the clientName
+    List<Map<String, dynamic>>? clientDetailsList;
+    for (var email in emailClientMap.keys) {
+      var foundClient = emailClientMap[email]?.firstWhere(
+          (element) => element['clientName'] == clientName,
+          orElse: () => {});
+      if (foundClient != null && foundClient.isNotEmpty) {
+        clientDetailsList = [foundClient];
+        break;
+      }
+    }
+
+    String clientAddress = '';
+    String clientCity = '';
+    String clientState = '';
+    String clientZip = '';
+    String clientBusinessName = '';
+    String clientStartDate = '';
+    String clientEndDate = '';
+    double grandTotalHours = 0.0;
+
+    if (clientDetailsList != null && clientDetailsList.isNotEmpty) {
+      clientAddress = clientDetailsList[0]['clientAddress'][0] ?? '';
+      clientCity = clientDetailsList[0]['clientAddress'][1] ?? '';
+      clientState = clientDetailsList[0]['clientAddress'][2] ?? '';
+      clientZip = clientDetailsList[0]['clientAddress'][3] ?? '';
+      clientBusinessName = clientDetailsList[0]['clientBusinessName'] ?? '';
+
+      // start date and end date
+      final dateList = clientDetailsList[0]['dateList'];
+      if (dateList != null && dateList.isNotEmpty) {
+        List<DateTime> dates = getWeekDates(DateTime.parse(dateList[0]));
+        clientStartDate = DateFormat('dd-MM-yyyy').format(dates[0]);
+        clientEndDate = DateFormat('dd-MM-yyyy').format(dates[1]);
+      }
+
+      if (clientData[clientName] != null) {
+        // Calculate grand total hours
+        for (int i = 1; i < (clientData[clientName]!.length - 1); i++) {
+          grandTotalHours +=
+              double.tryParse(clientData[clientName]![i][2]) ?? 0.0;
+        }
+      }
+    }
+
+    // Define table data
+    final tableData = [
+      [
+        invoiceName[0],
+      ],
+      [
+        'ABN:',
+        invoiceABN[0],
+      ],
+      ['Period Starting:', clientStartDate],
+      ['Period Ending:', clientEndDate],
+      ['Total Amount:', (clientData[clientName]?.last[4] ?? "0.00")],
+      ['Hours Completed:', grandTotalHours.toStringAsFixed(2)],
+    ];
+    final bankDetail = [
+      [
+        'Bank Details:',
+      ],
+      [
+        'Bank Name:',
+        'Commonwealth Bank',
+      ],
+      ['Account Name:', 'Pratiksha Tiwari'],
+      ['BSB:', '06263242'],
+      ['Account Number:', '47022'],
+    ];
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4.copyWith(
             marginLeft: 15, marginRight: 15, marginTop: 35, marginBottom: 25),
-        build: (pw.Context context) =>
-        [
-          pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
+        build: (pw.Context context) => [
+          pw.Stack(
             children: [
               // Invoice header
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text(invoiceName[0],
-                          style: pw.TextStyle(
-                              fontSize: 24, fontWeight: pw.FontWeight.bold)),
-                      pw.Text('ABN: ${invoiceABN[0]}'),
-                      pw.Text('Period Starting: $startDate'),
-                      pw.Text('Period Ending: $endDate'),
-                    ],
+              pw.Container(
+                width: PdfPageFormat.a4.width / 2.4,
+                child: pw.Table.fromTextArray(
+                  headerStyle: pw.TextStyle(
+                    fontSize: 16,
+                    fontWeight: pw.FontWeight.bold,
                   ),
-                  pw.Text('INVOICE',
-                      style: pw.TextStyle(
-                          fontSize: 40, fontWeight: pw.FontWeight.bold)),
-                ],
+                  data: tableData,
+                  cellAlignments: {
+                    0: pw.Alignment.centerLeft,
+                    1: pw.Alignment
+                        .centerRight, // aligns the rightmost column to the right
+                  },
+                  cellStyle: const pw.TextStyle(fontSize: 12),
+                  border: const pw.TableBorder(
+                    left: pw.BorderSide(
+                      color: PdfColors.black,
+                      width: 1,
+                    ),
+                    right: pw.BorderSide(
+                      color: PdfColors.black,
+                      width: 1,
+                    ),
+                    top: pw.BorderSide(
+                      color: PdfColors.black,
+                      width: 1,
+                    ),
+                    bottom: pw.BorderSide(
+                      color: PdfColors.black,
+                      width: 1,
+                    ),
+                    verticalInside: pw.BorderSide(
+                      color: PdfColors.white,
+                      width: 1,
+                    ),
+                  ),
+                ),
               ),
-              pw.SizedBox(height: 20),
-
-              // Billing information
-              pw.Text('BILL TO:',
-                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-              pw.Text(clientName),
-              // Add more client details here
-
-              pw.SizedBox(height: 20),
-
-              // Invoice details
-              pw.Table.fromTextArray(
-                headerStyle:
-                pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
-                headerAlignment: pw.Alignment.center,
-                cellStyle: const pw.TextStyle(fontSize: 10),
-                cellAlignment: pw.Alignment.center,
-                data: clientData[clientName] ?? [],
-              ),
-              pw.SizedBox(height: 20),
-
-              // Invoice total
               pw.Align(
-                alignment: pw.Alignment.centerRight,
-                child: pw.Text(
-                  'TOTAL: ${clientData[clientName]?.last[4] ?? "0.00"}',
-                  style: pw.TextStyle(
-                      fontSize: 16, fontWeight: pw.FontWeight.bold),
+                alignment: pw.Alignment.topRight,
+                child: pw.Container(
+                  //padding: const pw.EdgeInsets.symmetric(vertical: 20),
+                  child: pw.Text(
+                    'INVOICE',
+                    style: pw.TextStyle(
+                      fontSize: 24,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
+          pw.SizedBox(height: 24),
+          pw.SizedBox(height: 1, child: pw.Divider(color: PdfColors.black)),
+          pw.SizedBox(height: 24),
+
+          // Billing information
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text('BILL TO: ',
+                        style: pw.TextStyle(
+                            fontSize: 12, fontWeight: pw.FontWeight.bold)),
+                    pw.SizedBox(width: 10),
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text(clientName,
+                            style: pw.TextStyle(
+                                fontSize: 12, fontWeight: pw.FontWeight.bold)),
+                        pw.SizedBox(height: 4),
+                        pw.Text(clientAddress,
+                            style: const pw.TextStyle(fontSize: 12)),
+                        pw.SizedBox(height: 4),
+                        pw.Text('$clientCity, $clientState $clientZip',
+                            style: const pw.TextStyle(fontSize: 12)),
+                        pw.SizedBox(height: 4),
+                        pw.Text('($clientBusinessName)',
+                            style: const pw.TextStyle(fontSize: 12)),
+                      ],
+                    ),
+                  ]),
+              pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text('Invoice Number: $invoiceNumber',
+                            style: pw.TextStyle(
+                                fontSize: 12, fontWeight: pw.FontWeight.bold)),
+                        pw.SizedBox(height: 4),
+                        pw.Text('Job Title: Home Care Assistance',
+                            style: pw.TextStyle(
+                                fontSize: 12, fontWeight: pw.FontWeight.bold)),
+                      ],
+                    ),
+                  ]),
+            ],
+          ),
+
+          pw.SizedBox(height: 20),
+
+          // Invoice details
+          pw.Table.fromTextArray(
+            headerStyle:
+                pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+            headerAlignment: pw.Alignment.center,
+            cellStyle: const pw.TextStyle(fontSize: 10),
+            cellAlignment: pw.Alignment.center,
+            columnWidths: {
+              0: const pw.FixedColumnWidth(
+                  160), //Invoice Components, give more space
+              1: const pw.FixedColumnWidth(180), //Time Worked, give more space
+              2: const pw.FixedColumnWidth(80), //Hours/Units,
+              3: const pw.FixedColumnWidth(80), //Rate
+              4: const pw.FixedColumnWidth(80), //Total amount
+            },
+            data: clientData[clientName] ?? [],
+          ),
+          pw.SizedBox(height: 20),
+
+          // Invoice total
+          pw.Align(
+            alignment: pw.Alignment.centerRight,
+            child: pw.Text(
+              'TOTAL: ${clientData[clientName]?.last[4] ?? "0.00"}',
+              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+            ),
+          ),
+          pw.SizedBox(height: 20),
+          // Bank details
+          pw.Container(
+            width: PdfPageFormat.a4.width,
+            //padding: const pw.EdgeInsets.symmetric(vertical: 20),
+            child: pw.Table.fromTextArray(
+              headerStyle: pw.TextStyle(
+                fontSize: 16,
+                fontWeight: pw.FontWeight.bold,
+              ),
+              data: bankDetail,
+              cellAlignments: {
+                0: pw.Alignment.centerLeft,
+                1: pw.Alignment
+                    .centerRight, // aligns the rightmost column to the right
+              },
+              cellStyle: const pw.TextStyle(fontSize: 12),
+              border: const pw.TableBorder(
+                left: pw.BorderSide(
+                  color: PdfColors.black,
+                  width: 1,
+                ),
+                right: pw.BorderSide(
+                  color: PdfColors.black,
+                  width: 1,
+                ),
+                top: pw.BorderSide(
+                  color: PdfColors.black,
+                  width: 1,
+                ),
+                bottom: pw.BorderSide(
+                  color: PdfColors.black,
+                  width: 1,
+                ),
+                verticalInside: pw.BorderSide(
+                  color: PdfColors.white,
+                  width: 1,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
-
+    debugPrint(
+        "Table data: $tableData\n bank detail: $bankDetail\n Total amount: ${clientData[clientName]?.last[4]}\n Invoice table data: ${clientData[clientName]}");
     return pdf;
   }
 
@@ -379,9 +602,7 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
       'Saturday'
     ];
     return dateList.map((date) {
-      final dayOfWeekIndex = DateTime
-          .parse(date)
-          .weekday;
+      final dayOfWeekIndex = DateTime.parse(date).weekday;
       return daysOfWeek[dayOfWeekIndex % 7];
     }).toList();
   }
@@ -424,8 +645,8 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
     return hoursWorkedList;
   }
 
-  List<double> calculateTotalAmount(List<double> hours, List<double> rates,
-      List<String> holidays) {
+  List<double> calculateTotalAmount(
+      List<double> hours, List<double> rates, List<String> holidays) {
     List<double> totalAmount = [];
     for (int i = 0; i < hours.length; i++) {
       double amount = hours[i] * rates[i];
@@ -437,7 +658,8 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
     return totalAmount;
   }
 
-  List<Map<String, dynamic>> getInvoiceComponent(List<String> workedDateList,
+  List<Map<String, dynamic>> getInvoiceComponent(
+      List<String> workedDateList,
       List<String> startTimeList,
       List<String> endTimeList,
       List<String> holidays,
@@ -449,10 +671,10 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
 
     for (int i = 0; i < workedDateList.length; i++) {
       String description =
-      getComponentDescription(dayOfWeek[i], timePeriods[i], holidays[i]);
+          getComponentDescription(dayOfWeek[i], timePeriods[i], holidays[i]);
       double hoursWorked = hoursFromTimeString(timeList[i]);
       double assignedHour =
-      hoursBetweenPerListItem(startTimeList[i], endTimeList[i]);
+          hoursBetweenPerListItem(startTimeList[i], endTimeList[i]);
 
       invoiceComponents.add({
         'clientName': clientName,
@@ -470,8 +692,8 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
     return invoiceComponents;
   }
 
-  String getComponentDescription(String dayOfWeek, String timePeriod,
-      String holiday) {
+  String getComponentDescription(
+      String dayOfWeek, String timePeriod, String holiday) {
     bool isHoliday = holiday == 'Holiday';
     String key;
 
@@ -533,9 +755,7 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
     if (endTime.isBefore(startTime)) {
       endTime = endTime.add(const Duration(days: 1));
     }
-    return endTime
-        .difference(startTime)
-        .inMinutes / 60;
+    return endTime.difference(startTime).inMinutes / 60;
   }
 
   List<DateTime> getWeekDates(DateTime date) {
@@ -572,14 +792,8 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
                 children: [
                   Text('Error: ${snapshot.error}'),
                   SizedBox(
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width / 1.5,
-                    height: MediaQuery
-                        .of(context)
-                        .size
-                        .height / 15,
+                    width: MediaQuery.of(context).size.width / 1.5,
+                    height: MediaQuery.of(context).size.height / 15,
                     child: ButtonWidget(
                       title: 'Try Again',
                       hasBorder: false,
@@ -622,14 +836,8 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
               ),
               const SizedBox(height: 20),
               SizedBox(
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width / 1.5,
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height / 15,
+                width: MediaQuery.of(context).size.width / 1.5,
+                height: MediaQuery.of(context).size.height / 15,
                 child: ButtonWidget(
                   title: 'Download PDFs',
                   onPressed: () async {
@@ -642,61 +850,55 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
               ),
               const SizedBox(height: 20),
               SizedBox(
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width / 1.5,
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height / 15,
+                width: MediaQuery.of(context).size.width / 1.5,
+                height: MediaQuery.of(context).size.height / 15,
                 child: Consumer<InvoiceEmailViewModel>(
                   builder: (context, model, child) {
                     return ElevatedButton(
                       onPressed: model.isLoading
                           ? null
                           : () async {
-                        model.setIsLoading(true);
-                        final invoiceEmailService =
-                        locator<InvoiceEmailService>();
-                        final downloadService =
-                        locator<DownloadService>();
-                        zipFilePath = await downloadService
-                            .downloadFiles(pdfPaths);
+                              model.setIsLoading(true);
+                              final invoiceEmailService =
+                                  locator<InvoiceEmailService>();
+                              final downloadService =
+                                  locator<DownloadService>();
+                              zipFilePath =
+                                  await downloadService.downloadFiles(pdfPaths);
 
-                        var response = await invoiceEmailService
-                            .sendInvoiceEmail(
-                          zipFilePath,
-                          invoiceName,
-                          endDate,
-                          invoiceNumber,
-                          widget.email,
-                          widget.genKey,
-                        );
-                        if (response == "Success") {
-                          model.setIsResponseReceived(true);
-                          FlushBarWidget().flushBar(
-                            context: _scaffoldKey.currentContext!,
-                            title: "Success",
-                            message: "Email sent successfully",
-                            backgroundColor: AppColors.colorSecondary,
-                          );
-                          Future.delayed(const Duration(seconds: 3), () {
-                            if (Navigator.canPop(context)) {
-                              Navigator.pop(context);
-                            }
-                          });
-                        } else {
-                          model.setIsResponseReceived(false);
-                          FlushBarWidget().flushBar(
-                            context: _scaffoldKey.currentContext!,
-                            title: "Error",
-                            message: "Email not sent",
-                            backgroundColor: AppColors.colorWarning,
-                          );
-                        }
-                        model.setIsLoading(false);
-                      },
+                              var response =
+                                  await invoiceEmailService.sendInvoiceEmail(
+                                zipFilePath,
+                                invoiceName,
+                                endDate,
+                                invoiceNumber,
+                                widget.email,
+                                widget.genKey,
+                              );
+                              if (response == "Success") {
+                                model.setIsResponseReceived(true);
+                                FlushBarWidget().flushBar(
+                                  context: _scaffoldKey.currentContext!,
+                                  title: "Success",
+                                  message: "Email sent successfully",
+                                  backgroundColor: AppColors.colorSecondary,
+                                );
+                                Future.delayed(const Duration(seconds: 3), () {
+                                  if (Navigator.canPop(context)) {
+                                    Navigator.pop(context);
+                                  }
+                                });
+                              } else {
+                                model.setIsResponseReceived(false);
+                                FlushBarWidget().flushBar(
+                                  context: _scaffoldKey.currentContext!,
+                                  title: "Error",
+                                  message: "Email not sent",
+                                  backgroundColor: AppColors.colorWarning,
+                                );
+                              }
+                              model.setIsLoading(false);
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.colorPrimary,
                         shape: RoundedRectangleBorder(
@@ -706,12 +908,9 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
                       child: model.isLoading
                           ? const CircularProgressIndicator()
                           : Text(
-                        'Send Email',
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .titleMedium,
-                      ),
+                              'Send Email',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
                     );
                   },
                 ),

@@ -13,7 +13,16 @@ class LoginViewModel extends ChangeNotifier {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
 
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  set isLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
   Future<Map<String, dynamic>?> login(BuildContext context) async {
+    isLoading = true;
+    notifyListeners();
     void _handleLoginError(BuildContext context, String message) {
       String errorMessage;
       switch (message) {
@@ -50,14 +59,16 @@ class LoginViewModel extends ChangeNotifier {
 
     debugPrint('Form valid: ${formKey.currentState!.validate()}');
     if (formKey.currentState!.validate()) {
+      await Future.delayed(const Duration(seconds: 2));
 // Show loading dialog
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return const Center(child: CircularProgressIndicator());
-        },
-      );
-      debugPrint("email: ${model.emailController.text} ${model.passwordController.text}");
+      // showDialog(
+      //   context: context,
+      //   builder: (BuildContext context) {
+      //     return const Center(child: CircularProgressIndicator());
+      //   },
+      // );
+      debugPrint(
+          "email: ${model.emailController.text} ${model.passwordController.text}");
       final response = await apiMethod.login(
         model.emailController.text.toLowerCase().trim(),
         model.passwordController.text.trim(),
@@ -70,10 +81,12 @@ class LoginViewModel extends ChangeNotifier {
           String roleString = response['role']; // Get the role as a string
           UserRole enumRole;
 // Get the PhotoData provider
-          final photoDataProvider = Provider.of<PhotoData>(context, listen: false);
+          final photoDataProvider =
+              Provider.of<PhotoData>(context, listen: false);
 
           // Load the photo data with the user's email
-          await photoDataProvider.loadPhotoData(model.emailController.text.trim());
+          await photoDataProvider
+              .loadPhotoData(model.emailController.text.trim());
           // Convert the string to UserRole enum
           if (roleString == 'admin') {
             enumRole = UserRole.admin;
@@ -81,8 +94,13 @@ class LoginViewModel extends ChangeNotifier {
             enumRole = UserRole.normal; // Default to normal if not admin
           }
           debugPrint("User is $enumRole, ${model.emailController.text}");
+
+          // After login logic
+          _isLoading = false;
+          notifyListeners();
+
           // Navigate to the appropriate home view based on role
-          Navigator.pushReplacement(
+          Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => BottomNavBarWidget(

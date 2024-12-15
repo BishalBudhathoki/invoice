@@ -225,22 +225,22 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
         String timeString =
             userDoc['userDocs']?.first['docs']?.first['Time']?.toString() ?? '';
         String formattedTime =
-            timeString.replaceAll('[', '').replaceAll(']', '');
+        timeString.replaceAll('[', '').replaceAll(']', '');
         workedTimePeriodList.add(formattedTime);
         print("Worked period list: $workedTimePeriodList");
         clientBusinessName
             .add("${userDoc['clientDetail'][0]['clientBusinessName']}");
         for (final date
-            in userDoc['userDocs']?.first['docs']?.first['dateList'] ?? []) {
+        in userDoc['userDocs']?.first['docs']?.first['dateList'] ?? []) {
           workedDateList.add("$date");
         }
         for (final date
-            in userDoc['userDocs']?.first['docs']?.first['startTimeList'] ??
-                []) {
+        in userDoc['userDocs']?.first['docs']?.first['startTimeList'] ??
+            []) {
           workedStartTimeList.add("$date");
         }
         for (final date
-            in userDoc['userDocs']?.first['docs']?.first['endTimeList'] ?? []) {
+        in userDoc['userDocs']?.first['docs']?.first['endTimeList'] ?? []) {
           workedEndTimeList.add("$date");
         }
         print(
@@ -271,7 +271,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
     print("Holidays: $holidays");
 
     List<String> computeInvoiceComponent =
-        await Future.delayed(const Duration(seconds: 3), () {
+    await Future.delayed(const Duration(seconds: 3), () {
       return computeInvoiceComp(dayOfWeek, timePeriods, holidays);
     });
     print("Compute Invoice Component: $computeInvoiceComponent");
@@ -296,10 +296,10 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
     double grandTotalHours = 0.00;
     double grandTotalAmount = 0.00;
     double workedHours =
-        hoursBetween(workedStartTimeList[0], workedEndTimeList[0]);
+    hoursBetween(workedStartTimeList[0], workedEndTimeList[0]);
     timeString = (workedTimePeriodList[0].split(', ')[0]).split(' ')[0];
     double totalAmount =
-        (hoursFromTimeString(timeString) * getRate(0, dayOfWeek, holidays));
+    (hoursFromTimeString(timeString) * getRate(0, dayOfWeek, holidays));
     grandTotalAmount += totalAmount; // add first row total to grandTotalAmount
     grandTotalHours += double.parse(hoursFromTimeString(timeString)
         .toString()); // add first row hours to grandTotalHours
@@ -342,7 +342,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
                 '${workedDateList[i + 1]} - ${workedStartTimeList[i + 1]} '
                 'to ${workedEndTimeList[0]} - ($workedHours hrs)';
             timeString =
-                (workedTimePeriodList[0].split(', ')[i + 1]).split(' ')[0];
+            (workedTimePeriodList[0].split(', ')[i + 1]).split(' ')[0];
             print(
                 "Time string $timeString ${workedDateList.length} $workedTimePeriodList");
             totalHours =
@@ -525,7 +525,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
               // Invoice details
               pw.Table.fromTextArray(
                 headerStyle:
-                    pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+                pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
                 headerAlignment: pw.Alignment.center,
                 columnWidths: const {
                   0: pw.FixedColumnWidth(90),
@@ -627,7 +627,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
     final fileName = 'Invoice Number: $invoiceNumber.pdf';
 
     late Directory? directory;
-
+    String? filePath;
     if (Platform.isAndroid) {
       print("Android1");
       if (!_storagePermissionGranted) {
@@ -635,29 +635,58 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
         _storagePermissionGranted = await requestStoragePermission();
       }
       directory = await getExternalStorageDirectory();
-      if (!await directory!.exists()) {
+      if(directory == null){
+        print("Error getting external storage directory");
+        return "";
+      }
+      if (!await directory.exists()) {
         print("Directory does not exist");
         await directory.create(recursive: true);
+      } else {
+        debugPrint("Dir exist:  $directory");
       }
+      filePath = '${directory.path}/$fileName';
     } else if (Platform.isIOS) {
       print("iOS1");
       directory = await getApplicationDocumentsDirectory();
+      if(directory == null){
+        print("Error getting application documents directory");
+        return "";
+      }
+      filePath = '${directory.path}/$fileName';
     } else if (kIsWeb) {
       print("Web1");
       directory = await getDownloadsDirectory();
+      if(directory == null){
+        print("Error getting downloads directory");
+        return "";
+      }
+      filePath = '${directory.path}/$fileName';
     }
 
-    final fileDirectory = Directory(directory!.path);
+    if(filePath == null || filePath.isEmpty){
+      print("Error invalid path");
+      return "";
+    }
 
-    final file = File('${fileDirectory.path}/$fileName');
+
+    final file = File(filePath);
     print("File: $file \n");
     await file.writeAsBytes(await pdf.save());
+    debugPrint("Generated PDF path: '${file.path}'");
 
     const storage = FlutterSecureStorage();
     await storage.write(key: "pdfPath", value: file.path);
-    print("PDF path: ${file.path}");
+    print("PDF path in secure storage: ${file.path}");
+
+    // const output = getExternalStorageDirectory;
+    // final files = File('${output}/$fileName');
+    // await files.writeAsBytes(await pdf.save());
+    // debugPrint("File:\n\n${files.path}\n");
+    debugPrint("File path: \n\n${file.path}\n");
     return file.path;
   }
+
 
   List<String> computeInvoiceComp(
       List<String> dayOfWeek, List<String> timePeriods, List<String> holidays) {
@@ -771,6 +800,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
     }
   }
 
+
   Future<bool> requestStoragePermission() async {
     List<Permission> permissions = [
       Permission.storage,
@@ -867,6 +897,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
     super.initState();
     initPlatformState();
     _generateInvoiceFuture = generateInvoice();
+    debugPrint("\n\nInitially: ${_generateInvoiceFuture.toString()}\n\n");
     requestStoragePermission().then((value) {
       _storagePermissionGranted = value;
     });
@@ -896,139 +927,54 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
 
   @override
   Widget build(BuildContext context) {
-    print("inv name date numer: $invoiceName $endDate $invoiceNumber");
-    return Container(
-      key: _scaffoldKey,
-      color: Colors.white,
-      child:
-          // Text('Hello'),
-          FutureBuilder<String>(
-        future: _generateInvoiceFuture,
-        // .then((value) => value)
-        // .catchError((error) => error),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Error: ${snapshot.error}'),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 1.5,
-                    height: MediaQuery.of(context).size.height / 15,
-                    child: ButtonWidget(
-                      title: 'Try Again',
-                      hasBorder: false,
-                      onPressed: () {
-                        setState(() {
-                          _generateInvoiceFuture = generateInvoice();
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-          if (snapshot.data == null) {
-            return const Center(child: Text('Generating invoice...'));
-          }
-          pdfPaths = snapshot.data!;
-          path = snapshot.data!;
-          print("Build PDF path: $pdfPath");
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height / 1.5,
-                child: PdfViewPage(pdfPath: pdfPath),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width / 1.5,
-                height: MediaQuery.of(context).size.height / 15,
-                child: ButtonWidget(
-                  title: 'Download PDF',
-                  onPressed: downloadFile,
-                  hasBorder: false,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width / 1.5,
-                height: MediaQuery.of(context).size.height / 15,
-                child: Consumer<InvoiceEmailViewModel>(
-                  builder: (context, model, child) {
-                    return ElevatedButton(
-                      onPressed: model.isLoading
-                          ? null
-                          : () async {
-                              // Retrieve the InvoiceEmailService from the service locator
-                              final invoiceEmailService =
-                                  locator<InvoiceEmailService>();
-                              model.setIsLoading(true);
-                              print(
-                                  "Email: ${widget.email} GenKey: ${widget.genKey}");
-                              var response =
-                                  await invoiceEmailService.sendInvoiceEmail(
-                                      pdfPath,
-                                      invoiceName,
-                                      endDate,
-                                      invoiceNumber,
-                                      widget.email,
-                                      widget.genKey);
-                              print("Response string: ${response.toString()}");
-                              if (response == "Success") {
-                                print("Success");
-                                model.setIsResponseReceived(true);
-                                FlushBarWidget fbw = FlushBarWidget();
-                                fbw.flushBar(
-                                  context: _scaffoldKey.currentContext!,
-                                  title: "Success",
-                                  message: "Email send successfully",
-                                  backgroundColor: AppColors.colorSecondary,
-                                );
-                                Future.delayed(const Duration(seconds: 3), () {
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                });
-                              } else {
-                                print("Error");
-                                model.setIsResponseReceived(false);
-                                FlushBarWidget fbw = FlushBarWidget();
-                                fbw.flushBar(
-                                  context: _scaffoldKey.currentContext!,
-                                  title: "Error",
-                                  message: "Email not send",
-                                  backgroundColor: AppColors.colorWarning,
-                                );
-                              }
-                              model.setIsLoading(false);
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.colorPrimary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: model.isLoading
-                          ? const CircularProgressIndicator()
-                          : Text(
-                              'Send Email',
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
+    return FutureBuilder<String>(
+      future: _generateInvoiceFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
           );
-        },
-      ),
+        }
+        if (snapshot.data == null) {
+          return const Center(child: Text('Generating invoice...'));
+        }
+
+        String pdfPath = snapshot.data!;
+        debugPrint("Path received from FutureBuilder: $pdfPath");
+        //pdfPath = pdfPath.replaceAll(':', '_'); // Sanitize the path
+        debugPrint("Path received from FutureBuilder: $pdfPath");
+        return FutureBuilder<String>(
+          future: _generateInvoiceFuture,
+          builder: (context, uriSnapshot) {
+            if (uriSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (uriSnapshot.hasError) {
+              return Center(
+                child: Text('Error: ${uriSnapshot.error}'),
+              );
+            }
+            if (!File(pdfPath).existsSync()) {
+              return const Center(child: Text('File not found.'));
+            }
+
+
+            return PdfViewPage(pdfPath: pdfPath);
+          },
+        );
+      },
     );
   }
+
+  Future<Uri> getPDFPath() async {
+    // Convert the pdfPath (String) to a Uri
+    final uri = Uri.file(pdfPath);  // This converts the file path (String) to a Uri
+    return uri;
+  }
+
+
 }
+

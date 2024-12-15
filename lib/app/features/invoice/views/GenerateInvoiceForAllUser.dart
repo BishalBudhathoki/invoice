@@ -115,6 +115,43 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
     final assignedClients = await apiMethod.getAssignedClients();
     List<String> generatedPdfPaths = [];
 
+    // Map line items
+    for (var item in lineItems) {
+      if (item['itemNumber'] == '01_012_0107_1_1') {
+        itemMap['Public holiday'] =
+        '${item['itemNumber']}\n${item['itemDescription']}';
+      } else if (item['itemNumber'] == '01_012_0107_1_1_T') {
+        itemMap['Public holiday - TTP'] =
+        '${item['itemNumber']}\n${item['itemDescription']}';
+      } else if (item['itemNumber'] == '01_010_0107_1_1') {
+        itemMap['Night-Time Sleepover'] =
+        '${item['itemNumber']}\n${item['itemDescription']}';
+      } else if (item['itemNumber'] == '01_011_0107_1_1') {
+        itemMap['Weekday Daytime'] =
+        '${item['itemNumber']}\n${item['itemDescription']}';
+      } else if (item['itemNumber'] == '01_011_0107_1_1_T') {
+        itemMap['Weekday Daytime - TTP'] =
+        '${item['itemNumber']}\n${item['itemDescription']}';
+      } else if (item['itemNumber'] == '01_013_0107_1_1') {
+        itemMap['Saturday'] =
+        '${item['itemNumber']}\n${item['itemDescription']}';
+      } else if (item['itemNumber'] == '01_013_0107_1_1_T') {
+        itemMap['Saturday - TTP'] =
+        '${item['itemNumber']}\n${item['itemDescription']}';
+      } else if (item['itemNumber'] == '01_014_0107_1_1') {
+        itemMap['Sunday'] = '${item['itemNumber']}\n${item['itemDescription']}';
+      } else if (item['itemNumber'] == '01_014_0107_1_1_T') {
+        itemMap['Sunday - TTP'] =
+        '${item['itemNumber']}\n${item['itemDescription']}';
+      } else if (item['itemNumber'] == '01_015_0107_1_1') {
+        itemMap['Weekday Evening'] =
+        '${item['itemNumber']}\n${item['itemDescription']}';
+      } else if (item['itemNumber'] == '01_015_0107_1_1_T') {
+        itemMap['Weekday Evening - TTP'] =
+        '${item['itemNumber']}\n${item['itemDescription']}';
+      }
+    }
+
     // Clear previous data
     emailClientMap.clear();
     clientData.clear();
@@ -231,8 +268,16 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
               List<String>.from(clientDetails["endTimeList"]);
           List<String> holidays =
               await apiMethod.checkHolidaysSingle(workedDateList);
+          // First, when processing client data:
           List<String> timeList = List<String>.from(clientDetails["timeList"]);
           List<String> dayOfWeek = findDayOfWeek(workedDateList);
+          List<String> timePeriods = getTimePeriods(startTimeList, endTimeList);
+
+          // Add this computation
+          List<String> computeInvoiceComponent = await Future.delayed(
+              const Duration(seconds: 3),
+              () => computeInvoiceComp(dayOfWeek, timePeriods, holidays));
+          debugPrint("Compute Invoice Component: $computeInvoiceComponent");
 
           // Calculate invoice components
           List<Map<String, dynamic>> invoiceComponents = getInvoiceComponent(
@@ -241,8 +286,9 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
               endTimeList,
               holidays,
               timeList,
-              clientName);
-
+              clientName,
+              computeInvoiceComponent);
+          debugPrint("Iinvoice Compontnets: \n$invoiceComponents\n");
           List<double> rate = getRate(dayOfWeek, holidays);
           List<double> hoursWorked =
               calculateTotalHours(startTimeList, endTimeList, timeList);
@@ -293,28 +339,34 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
     double clientGrandTotalHours = 0.0;
     double clientGrandTotalAmount = 0.0;
 
+    // Process each component with its corresponding data
     for (int i = 0; i < components.length; i++) {
       var component = components[i];
+      double workedHours =
+          hoursBetweenPerListItem(component['startTime'], component['endTime']);
+
       clientRows.add([
-        component['description'],
-        '${component['date']} - ${component['startTime']} to ${component['endTime']} - (${component['assignedHour']} hrs)',
-        '${hoursWorked[i].toStringAsFixed(2)}',
+        component['description'] ?? 'Unknown',
+        '${component['date']} - ${component['startTime']} to ${component['endTime']} - ($workedHours hrs)',
+        hoursWorked[i].toStringAsFixed(2),
         '\$${rates[i].toStringAsFixed(2)}',
-        '\$${totalAmount[i].toStringAsFixed(2)}',
+        '\$${totalAmount[i].toStringAsFixed(2)}'
       ]);
 
       clientGrandTotalHours += hoursWorked[i];
       clientGrandTotalAmount += totalAmount[i];
     }
 
+    // Add total row
     clientRows.add([
       'TOTAL',
       '',
       clientGrandTotalHours.toStringAsFixed(2),
       '',
-      '\$${clientGrandTotalAmount.toStringAsFixed(2)}',
+      '\$${clientGrandTotalAmount.toStringAsFixed(2)}'
     ]);
 
+    // Store the processed data
     clientData[clientName] = clientRows;
   }
 
@@ -664,10 +716,11 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
       List<String> endTimeList,
       List<String> holidays,
       List<String> timeList,
-      String clientName) {
+      String clientName,
+      List<String> computeInvoiceComponent) {
     List<Map<String, dynamic>> invoiceComponents = [];
     List<String> dayOfWeek = findDayOfWeek(workedDateList);
-    List<String> timePeriods = getTimePeriods(startTimeList);
+    List<String> timePeriods = getTimePeriods(startTimeList, endTimeList);
 
     for (int i = 0; i < workedDateList.length; i++) {
       String description =
@@ -724,7 +777,8 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
     return itemMap[key] ?? 'Unknown';
   }
 
-  List<String> getTimePeriods(List<String> startTimeList) {
+  List<String> getTimePeriods(
+      List<String> startTimeList, List<String> endTimeList) {
     return startTimeList.map((time) => getTimePeriod(time)).toList();
   }
 
@@ -763,6 +817,41 @@ class _GenerateInvoiceForAllUserState extends State<GenerateInvoiceForAllUser> {
     DateTime startDate = date.subtract(Duration(days: weekday - 1));
     DateTime endDate = startDate.add(const Duration(days: 6));
     return [startDate, endDate];
+  }
+
+  List<String> computeInvoiceComp(
+      List<String> dayOfWeek, List<String> timePeriods, List<String> holidays) {
+    List<String> invoiceComponents = [];
+
+    for (int i = 0; i < dayOfWeek.length; i++) {
+      String day = dayOfWeek[i];
+      String timePeriod = timePeriods[i];
+      bool isHoliday = holidays[i] == 'true';
+
+      if (isHoliday) {
+        invoiceComponents.add(itemMap['Public holiday'] ?? 'Unknown');
+      } else {
+        switch (day) {
+          case 'Saturday':
+            invoiceComponents.add(itemMap['Saturday'] ?? 'Unknown');
+            break;
+          case 'Sunday':
+            invoiceComponents.add(itemMap['Sunday'] ?? 'Unknown');
+            break;
+          default:
+            if (timePeriod == 'Night') {
+              invoiceComponents
+                  .add(itemMap['Night-Time Sleepover'] ?? 'Unknown');
+            } else if (timePeriod == 'Evening') {
+              invoiceComponents.add(itemMap['Weekday Evening'] ?? 'Unknown');
+            } else {
+              invoiceComponents.add(itemMap['Weekday Daytime'] ?? 'Unknown');
+            }
+        }
+      }
+    }
+
+    return invoiceComponents;
   }
 
   @override
